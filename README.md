@@ -11,3 +11,9 @@ The Survey of Financial Security (SFS) is a cross-sectional household survey foc
 The Public Use Microdata File (PUMF) is a subset of the data which is publicly available. 
 
 These data are located in `data/sfs_pumf`. 
+
+# Wealth Inequality: SFS PUMF
+
+# Wealth Inequality: SFS PUMF + NBSA
+
+# Wealth Inequality: SFS PUMF + NBSA + Rich Lists
