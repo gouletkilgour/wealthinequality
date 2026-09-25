@@ -1,0 +1,3866 @@
+1                                        The SAS System         13:51 Tuesday, December 23, 2003
+
+NOTE: Copyright (c) 1999-2001 by SAS Institute Inc., Cary, NC, USA. 
+NOTE: SAS (r) Proprietary Software Release 8.2 (TS2M0)
+      Licensed to STATISTICS CANADA, Site 0034698008.
+NOTE: This session is executing on the WIN_PRO  platform.
+
+
+
+NOTE: SAS initialization used:
+      real time           0.66 seconds
+      cpu time            0.23 seconds
+      
+1          %LET Refyear  = 1999;        /* Reference Year   */
+2          %LET Dyear  = 2000;        /* Dissemination Year   */
+3          %LET Pufname  = ec1999ef;      /* Pubilc use file name  */
+4          %LET Interim  = ;        /* If is an interim version write i  */
+5          %LET inex  = EXTERNAL;         /* Internal\external indicator  */
+6          %LET srcedir  = K:\PAWSSFS\adssys\SFS99\PUMF\Freq\;        /* Source Directory
+6        ! */
+7          %LET IncPath  = \\LHS5\INC\DISSMNTN\Programs\Freqpuf\INCLUDES\;        /* Include
+7        ! Freqpuf Directory   */
+8          %LET VIncPath  = \\LHS3\Paws\Pawssfs\adssys\outputs\meta2000\PROGRAMS\INCLUDES\;
+8        !    /* Include Code Directory   */
+9          %LET OutPAth  = K:\PAWSSFS\adssys\SFS99\PUMF\Freq\Frequencies\;        /* Output
+9        ! Directory   */
+10         %LET by  = *;        /* If by = * no frequencies by variable  */
+11         %LET ByProv  = pvres25;        /* Province variable   */
+12         %LET INPRSN  = INPRSN;        /* Libname value   */
+13         
+14         proc access dbms=dbf;
+15         	
+15       !  create work.b.access;
+16         	
+16       !  path = "K:\PAWSSFS\adssys\SFS99\PUMF\Freq\ec1999ef.DBF";
+17         	
+17       !  create work.request1.view;
+NOTE: The access descriptor WORK.B was written.
+18         	%include
+18       ! "\\LHS3\Paws\Pawssfs\adssys\outputs\meta2000\PROGRAMS\INCLUDES\EXTERNAL\ec1999ef.rn1"
+18       ! ;
+28         	
+28       !  select all;
+29         Run;
+
+NOTE: The view descriptor WORK.REQUEST1 was written.
+NOTE: PROCEDURE ACCESS used:
+      real time           0.05 seconds
+      cpu time            0.04 seconds
+      
+
+30         
+31         data ec1999ef(drop=delete_f);
+32         	set request1;
+33         	%include
+2                                        The SAS System         13:51 Tuesday, December 23, 2003
+
+33       ! "\\LHS3\Paws\Pawssfs\adssys\outputs\meta2000\PROGRAMS\INCLUDES\EXTERNAL\ec1999ef.rn2"
+33       ! ;
+43         Run;
+
+NOTE: There were 15933 observations read from the data set WORK.REQUEST1.
+NOTE: The data set WORK.EC1999EF has 15933 observations and 80 variables.
+NOTE: DATA statement used:
+      real time           7.56 seconds
+      cpu time            0.46 seconds
+      
+
+44         
+45         %LET INPRSN  = WORK;        /* Libname value   */
+46         %Include '\\LHS5\INC\DISSMNTN\Programs\Freqpuf\Freqpuf.sas';
+NOTE: Libref INPRSN was successfully assigned as follows: 
+      Engine:        V8 
+      Physical Name: K:\PAWSSFS\adssys\SFS99\PUMF\Freq
+NOTE: Format $TL has been output.
+NOTE: Format LSX has been output.
+NOTE: Format $F_PROV has been output.
+NOTE: Format R20A has been output.
+NOTE: Format R20B has been output.
+NOTE: Format Z20A has been output.
+NOTE: Format R30A has been output.
+NOTE: Format R30B has been output.
+NOTE: Format Z30A has been output.
+NOTE: Format R40A has been output.
+NOTE: Format Z40A has been output.
+NOTE: Format Z41A has been output.
+NOTE: Format R50A has been output.
+NOTE: Format Z50A has been output.
+NOTE: Format R51A has been output.
+NOTE: Format Z51A has been output.
+NOTE: Format R60A has been output.
+NOTE: Format R62A has been output.
+NOTE: Format R62B has been output.
+NOTE: Format Z64A has been output.
+NOTE: Format Z64B has been output.
+NOTE: Format Z64C has been output.
+NOTE: Format R74A has been output.
+NOTE: Format Z80A has been output.
+NOTE: Format Z84A has been output.
+NOTE: Format Z104A has been output.
+
+
+
+NOTE: The data set WORK.FULLM has 0 observations and 0 variables.
+NOTE: The data set WORK.COLLF has 0 observations and 0 variables.
+NOTE: The data set WORK.COLLWF has 0 observations and 0 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.EC1999EF.
+NOTE: The data set WORK.TEMP1 has 15933 observations and 81 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 82 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 1 observations and 3 variables.
+
+3                                The SAS System 13:51 Tuesday, December 23, 2003
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 1 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 1 observations and 3 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 1 observations and 9 variables.
+
+
+NOTE: There were 0 observations read from the data set WORK.COLLF.
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 1 observations and 8 variables.
+
+
+NOTE: There were 0 observations read from the data set WORK.COLLWF.
+NOTE: There were 1 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 1 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 81 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2511:1   
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 81 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+NOTE: The data set WORK.FREQS has 1 observations and 5 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 1 observations and 7 variables.
+
+
+NOTE: There were 0 observations read from the data set WORK.FULLM.
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FULLM has 1 observations and 7 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 28 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2511:2   
+NOTE: There were 28 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 28 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 28 observations and 3 variables.
+
+4                                The SAS System 13:51 Tuesday, December 23, 2003
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2511:2   
+NOTE: There were 28 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 28 observations and 9 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.COLLF.
+NOTE: There were 28 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 29 observations and 8 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.COLLWF.
+NOTE: There were 28 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 29 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 81 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 10 observations and 3 variables.
+
+
+NOTE: There were 10 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 10 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 10 observations and 3 variables.
+
+
+NOTE: There were 10 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 10 observations and 9 variables.
+
+
+NOTE: There were 29 observations read from the data set WORK.COLLF.
+NOTE: There were 10 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 39 observations and 8 variables.
+
+
+NOTE: There were 29 observations read from the data set WORK.COLLWF.
+NOTE: There were 10 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 39 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 81 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 7 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2513:15   
+NOTE: There were 7 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 7 observations and 9 variables.
+5                                The SAS System 13:51 Tuesday, December 23, 2003
+
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 7 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2513:15   
+NOTE: There were 7 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 7 observations and 9 variables.
+
+
+NOTE: There were 39 observations read from the data set WORK.COLLF.
+NOTE: There were 7 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 46 observations and 8 variables.
+
+
+NOTE: There were 39 observations read from the data set WORK.COLLWF.
+NOTE: There were 7 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 46 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 81 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 5 observations and 3 variables.
+
+
+NOTE: There were 5 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 5 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 5 observations and 3 variables.
+
+
+NOTE: There were 5 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 5 observations and 9 variables.
+
+
+NOTE: There were 46 observations read from the data set WORK.COLLF.
+NOTE: There were 5 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 51 observations and 8 variables.
+
+
+NOTE: There were 46 observations read from the data set WORK.COLLWF.
+NOTE: There were 5 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 51 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 81 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 3 observations and 3 variables.
+
+
+6                                The SAS System 13:51 Tuesday, December 23, 2003
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2515:15   
+NOTE: There were 3 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 3 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 3 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2515:15   
+NOTE: There were 3 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 3 observations and 9 variables.
+
+
+NOTE: There were 51 observations read from the data set WORK.COLLF.
+NOTE: There were 3 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 54 observations and 8 variables.
+
+
+NOTE: There were 51 observations read from the data set WORK.COLLWF.
+NOTE: There were 3 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 54 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 81 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 3 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2516:15   
+NOTE: There were 3 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 3 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 3 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2516:15   
+NOTE: There were 3 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 3 observations and 9 variables.
+
+
+NOTE: There were 54 observations read from the data set WORK.COLLF.
+NOTE: There were 3 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 57 observations and 8 variables.
+
+
+NOTE: There were 54 observations read from the data set WORK.COLLWF.
+NOTE: There were 3 observations read from the data set WORK.FREQWT.
+7                                The SAS System 13:51 Tuesday, December 23, 2003
+
+NOTE: The data set WORK.COLLWF has 57 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 81 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 2 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2517:15   
+NOTE: There were 2 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 2 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 2 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2517:15   
+NOTE: There were 2 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 2 observations and 9 variables.
+
+
+NOTE: There were 57 observations read from the data set WORK.COLLF.
+NOTE: There were 2 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 59 observations and 8 variables.
+
+
+NOTE: There were 57 observations read from the data set WORK.COLLWF.
+NOTE: There were 2 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 59 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 81 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 2 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2518:15   
+NOTE: There were 2 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 2 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 2 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2518:15   
+8                                The SAS System 13:51 Tuesday, December 23, 2003
+
+NOTE: There were 2 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 2 observations and 9 variables.
+
+
+NOTE: There were 59 observations read from the data set WORK.COLLF.
+NOTE: There were 2 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 61 observations and 8 variables.
+
+
+NOTE: There were 59 observations read from the data set WORK.COLLWF.
+NOTE: There were 2 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 61 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 81 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 2 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2519:15   
+NOTE: There were 2 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 2 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 2 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2519:15   
+NOTE: There were 2 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 2 observations and 9 variables.
+
+
+NOTE: There were 61 observations read from the data set WORK.COLLF.
+NOTE: There were 2 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 63 observations and 8 variables.
+
+
+NOTE: There were 61 observations read from the data set WORK.COLLWF.
+NOTE: There were 2 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 63 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 81 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 2 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2520:15   
+9                                The SAS System 13:51 Tuesday, December 23, 2003
+
+NOTE: There were 2 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 2 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 2 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2520:15   
+NOTE: There were 2 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 2 observations and 9 variables.
+
+
+NOTE: There were 63 observations read from the data set WORK.COLLF.
+NOTE: There were 2 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 65 observations and 8 variables.
+
+
+NOTE: There were 63 observations read from the data set WORK.COLLWF.
+NOTE: There were 2 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 65 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 81 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 4 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2521:15   
+NOTE: There were 4 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 4 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 4 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2521:15   
+NOTE: There were 4 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 4 observations and 9 variables.
+
+
+NOTE: There were 65 observations read from the data set WORK.COLLF.
+NOTE: There were 4 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 69 observations and 8 variables.
+
+
+NOTE: There were 65 observations read from the data set WORK.COLLWF.
+NOTE: There were 4 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 69 observations and 8 variables.
+
+
+10                               The SAS System 13:51 Tuesday, December 23, 2003
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 81 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 3 observations and 3 variables.
+
+
+NOTE: There were 3 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 3 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 3 observations and 3 variables.
+
+
+NOTE: There were 3 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 3 observations and 9 variables.
+
+
+NOTE: There were 69 observations read from the data set WORK.COLLF.
+NOTE: There were 3 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 72 observations and 8 variables.
+
+
+NOTE: There were 69 observations read from the data set WORK.COLLWF.
+NOTE: There were 3 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 72 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 81 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 3 observations and 3 variables.
+
+
+NOTE: There were 3 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 3 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 3 observations and 3 variables.
+
+
+NOTE: There were 3 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 3 observations and 9 variables.
+
+
+NOTE: There were 72 observations read from the data set WORK.COLLF.
+NOTE: There were 3 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 75 observations and 8 variables.
+
+
+NOTE: There were 72 observations read from the data set WORK.COLLWF.
+NOTE: There were 3 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 75 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+11                               The SAS System 13:51 Tuesday, December 23, 2003
+
+NOTE: The data set WORK.TEMP2 has 15933 observations and 81 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 2 observations and 3 variables.
+
+
+NOTE: There were 2 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 2 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 2 observations and 3 variables.
+
+
+NOTE: There were 2 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 2 observations and 9 variables.
+
+
+NOTE: There were 75 observations read from the data set WORK.COLLF.
+NOTE: There were 2 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 77 observations and 8 variables.
+
+
+NOTE: There were 75 observations read from the data set WORK.COLLWF.
+NOTE: There were 2 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 77 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 81 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 5 observations and 3 variables.
+
+
+NOTE: There were 5 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 5 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 5 observations and 3 variables.
+
+
+NOTE: There were 5 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 5 observations and 9 variables.
+
+
+NOTE: There were 77 observations read from the data set WORK.COLLF.
+NOTE: There were 5 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 82 observations and 8 variables.
+
+
+NOTE: There were 77 observations read from the data set WORK.COLLWF.
+NOTE: There were 5 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 82 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 81 variables.
+12                               The SAS System 13:51 Tuesday, December 23, 2003
+
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 3 observations and 3 variables.
+
+
+NOTE: There were 3 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 3 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 3 observations and 3 variables.
+
+
+NOTE: There were 3 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 3 observations and 9 variables.
+
+
+NOTE: There were 82 observations read from the data set WORK.COLLF.
+NOTE: There were 3 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 85 observations and 8 variables.
+
+
+NOTE: There were 82 observations read from the data set WORK.COLLWF.
+NOTE: There were 3 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 85 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 81 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 3 observations and 3 variables.
+
+
+NOTE: There were 3 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 3 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 3 observations and 3 variables.
+
+
+NOTE: There were 3 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 3 observations and 9 variables.
+
+
+NOTE: There were 85 observations read from the data set WORK.COLLF.
+NOTE: There were 3 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 88 observations and 8 variables.
+
+
+NOTE: There were 85 observations read from the data set WORK.COLLWF.
+NOTE: There were 3 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 88 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 81 variables.
+
+13                               The SAS System 13:51 Tuesday, December 23, 2003
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 2 observations and 3 variables.
+
+
+NOTE: There were 2 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 2 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 2 observations and 3 variables.
+
+
+NOTE: There were 2 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 2 observations and 9 variables.
+
+
+NOTE: There were 88 observations read from the data set WORK.COLLF.
+NOTE: There were 2 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 90 observations and 8 variables.
+
+
+NOTE: There were 88 observations read from the data set WORK.COLLWF.
+NOTE: There were 2 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 90 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 81 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 2 observations and 3 variables.
+
+
+NOTE: There were 2 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 2 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 2 observations and 3 variables.
+
+
+NOTE: There were 2 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 2 observations and 9 variables.
+
+
+NOTE: There were 90 observations read from the data set WORK.COLLF.
+NOTE: There were 2 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 92 observations and 8 variables.
+
+
+NOTE: There were 90 observations read from the data set WORK.COLLWF.
+NOTE: There were 2 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 92 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 81 variables.
+
+
+14                               The SAS System 13:51 Tuesday, December 23, 2003
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 2 observations and 3 variables.
+
+
+NOTE: There were 2 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 2 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 2 observations and 3 variables.
+
+
+NOTE: There were 2 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 2 observations and 9 variables.
+
+
+NOTE: There were 92 observations read from the data set WORK.COLLF.
+NOTE: There were 2 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 94 observations and 8 variables.
+
+
+NOTE: There were 92 observations read from the data set WORK.COLLWF.
+NOTE: There were 2 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 94 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 81 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 2 observations and 3 variables.
+
+
+NOTE: There were 2 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 2 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 2 observations and 3 variables.
+
+
+NOTE: There were 2 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 2 observations and 9 variables.
+
+
+NOTE: There were 94 observations read from the data set WORK.COLLF.
+NOTE: There were 2 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 96 observations and 8 variables.
+
+
+NOTE: There were 94 observations read from the data set WORK.COLLWF.
+NOTE: There were 2 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 96 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 81 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+15                               The SAS System 13:51 Tuesday, December 23, 2003
+
+NOTE: The data set WORK.FREQS has 3 observations and 3 variables.
+
+
+NOTE: There were 3 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 3 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 3 observations and 3 variables.
+
+
+NOTE: There were 3 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 3 observations and 9 variables.
+
+
+NOTE: There were 96 observations read from the data set WORK.COLLF.
+NOTE: There were 3 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 99 observations and 8 variables.
+
+
+NOTE: There were 96 observations read from the data set WORK.COLLWF.
+NOTE: There were 3 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 99 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 81 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 3 observations and 3 variables.
+
+
+NOTE: There were 3 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 3 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 3 observations and 3 variables.
+
+
+NOTE: There were 3 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 3 observations and 9 variables.
+
+
+NOTE: There were 99 observations read from the data set WORK.COLLF.
+NOTE: There were 3 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 102 observations and 8 variables.
+
+
+NOTE: There were 99 observations read from the data set WORK.COLLWF.
+NOTE: There were 3 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 102 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 81 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 2 observations and 3 variables.
+16                               The SAS System 13:51 Tuesday, December 23, 2003
+
+
+
+NOTE: There were 2 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 2 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 2 observations and 3 variables.
+
+
+NOTE: There were 2 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 2 observations and 9 variables.
+
+
+NOTE: There were 102 observations read from the data set WORK.COLLF.
+NOTE: There were 2 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 104 observations and 8 variables.
+
+
+NOTE: There were 102 observations read from the data set WORK.COLLWF.
+NOTE: There were 2 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 104 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 81 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 3 observations and 3 variables.
+
+
+NOTE: There were 3 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 3 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 3 observations and 3 variables.
+
+
+NOTE: There were 3 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 3 observations and 9 variables.
+
+
+NOTE: There were 104 observations read from the data set WORK.COLLF.
+NOTE: There were 3 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 107 observations and 8 variables.
+
+
+NOTE: There were 104 observations read from the data set WORK.COLLWF.
+NOTE: There were 3 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 107 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 81 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 3 observations and 3 variables.
+
+17                               The SAS System 13:51 Tuesday, December 23, 2003
+
+
+NOTE: There were 3 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 3 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 3 observations and 3 variables.
+
+
+NOTE: There were 3 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 3 observations and 9 variables.
+
+
+NOTE: There were 107 observations read from the data set WORK.COLLF.
+NOTE: There were 3 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 110 observations and 8 variables.
+
+
+NOTE: There were 107 observations read from the data set WORK.COLLWF.
+NOTE: There were 3 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 110 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 81 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 3 observations and 3 variables.
+
+
+NOTE: There were 3 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 3 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 3 observations and 3 variables.
+
+
+NOTE: There were 3 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 3 observations and 9 variables.
+
+
+NOTE: There were 110 observations read from the data set WORK.COLLF.
+NOTE: There were 3 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 113 observations and 8 variables.
+
+
+NOTE: There were 110 observations read from the data set WORK.COLLWF.
+NOTE: There were 3 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 113 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 81 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 2 observations and 3 variables.
+
+
+18                               The SAS System 13:51 Tuesday, December 23, 2003
+
+NOTE: There were 2 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 2 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 2 observations and 3 variables.
+
+
+NOTE: There were 2 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 2 observations and 9 variables.
+
+
+NOTE: There were 113 observations read from the data set WORK.COLLF.
+NOTE: There were 2 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 115 observations and 8 variables.
+
+
+NOTE: There were 113 observations read from the data set WORK.COLLWF.
+NOTE: There were 2 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 115 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 81 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 4 observations and 3 variables.
+
+
+NOTE: There were 4 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 4 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 4 observations and 3 variables.
+
+
+NOTE: There were 4 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 4 observations and 9 variables.
+
+
+NOTE: There were 115 observations read from the data set WORK.COLLF.
+NOTE: There were 4 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 119 observations and 8 variables.
+
+
+NOTE: There were 115 observations read from the data set WORK.COLLWF.
+NOTE: There were 4 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 119 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 81 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 8 observations and 3 variables.
+
+
+NOTE: There were 8 observations read from the data set WORK.FREQS.
+19                               The SAS System 13:51 Tuesday, December 23, 2003
+
+NOTE: The data set WORK.FREQS has 8 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 8 observations and 3 variables.
+
+
+NOTE: There were 8 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 8 observations and 9 variables.
+
+
+NOTE: There were 119 observations read from the data set WORK.COLLF.
+NOTE: There were 8 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 127 observations and 8 variables.
+
+
+NOTE: There were 119 observations read from the data set WORK.COLLWF.
+NOTE: There were 8 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 127 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 81 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 8 observations and 3 variables.
+
+
+NOTE: There were 8 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 8 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 8 observations and 3 variables.
+
+
+NOTE: There were 8 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 8 observations and 9 variables.
+
+
+NOTE: There were 127 observations read from the data set WORK.COLLF.
+NOTE: There were 8 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 135 observations and 8 variables.
+
+
+NOTE: There were 127 observations read from the data set WORK.COLLWF.
+NOTE: There were 8 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 135 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 81 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 3 observations and 3 variables.
+
+
+NOTE: There were 3 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 3 observations and 9 variables.
+20                               The SAS System 13:51 Tuesday, December 23, 2003
+
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 3 observations and 3 variables.
+
+
+NOTE: There were 3 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 3 observations and 9 variables.
+
+
+NOTE: There were 135 observations read from the data set WORK.COLLF.
+NOTE: There were 3 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 138 observations and 8 variables.
+
+
+NOTE: There were 135 observations read from the data set WORK.COLLWF.
+NOTE: There were 3 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 138 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 81 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 3 observations and 3 variables.
+
+
+NOTE: There were 3 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 3 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 3 observations and 3 variables.
+
+
+NOTE: There were 3 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 3 observations and 9 variables.
+
+
+NOTE: There were 138 observations read from the data set WORK.COLLF.
+NOTE: There were 3 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 141 observations and 8 variables.
+
+
+NOTE: There were 138 observations read from the data set WORK.COLLWF.
+NOTE: There were 3 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 141 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 81 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 4 observations and 3 variables.
+
+
+NOTE: There were 4 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 4 observations and 9 variables.
+
+21                               The SAS System 13:51 Tuesday, December 23, 2003
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 4 observations and 3 variables.
+
+
+NOTE: There were 4 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 4 observations and 9 variables.
+
+
+NOTE: There were 141 observations read from the data set WORK.COLLF.
+NOTE: There were 4 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 145 observations and 8 variables.
+
+
+NOTE: There were 141 observations read from the data set WORK.COLLWF.
+NOTE: There were 4 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 145 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 81 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 7 observations and 3 variables.
+
+
+NOTE: There were 7 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 7 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 7 observations and 3 variables.
+
+
+NOTE: There were 7 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 7 observations and 9 variables.
+
+
+NOTE: There were 145 observations read from the data set WORK.COLLF.
+NOTE: There were 7 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 152 observations and 8 variables.
+
+
+NOTE: There were 145 observations read from the data set WORK.COLLWF.
+NOTE: There were 7 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 152 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 82 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2546:1   
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 82 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+22                               The SAS System 13:51 Tuesday, December 23, 2003
+
+NOTE: The data set WORK.FREQS has 1 observations and 5 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 1 observations and 7 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FULLM.
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FULLM has 2 observations and 7 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 31 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2546:208   
+NOTE: There were 31 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 31 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 31 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2546:208   
+NOTE: There were 31 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 31 observations and 9 variables.
+
+
+NOTE: There were 152 observations read from the data set WORK.COLLF.
+NOTE: There were 31 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 183 observations and 8 variables.
+
+
+NOTE: There were 152 observations read from the data set WORK.COLLWF.
+NOTE: There were 31 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 183 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 82 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2547:1   
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 82 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+NOTE: The data set WORK.FREQS has 1 observations and 5 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 1 observations and 7 variables.
+23                               The SAS System 13:51 Tuesday, December 23, 2003
+
+
+
+NOTE: There were 2 observations read from the data set WORK.FULLM.
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FULLM has 3 observations and 7 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 28 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2547:208   
+NOTE: There were 28 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 28 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 28 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2547:208   
+NOTE: There were 28 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 28 observations and 9 variables.
+
+
+NOTE: There were 183 observations read from the data set WORK.COLLF.
+NOTE: There were 28 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 211 observations and 8 variables.
+
+
+NOTE: There were 183 observations read from the data set WORK.COLLWF.
+NOTE: There were 28 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 211 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 82 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2548:1   
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 82 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+NOTE: The data set WORK.FREQS has 1 observations and 5 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 1 observations and 7 variables.
+
+
+NOTE: There were 3 observations read from the data set WORK.FULLM.
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FULLM has 4 observations and 7 variables.
+24                               The SAS System 13:51 Tuesday, December 23, 2003
+
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 31 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2548:208   
+NOTE: There were 31 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 31 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 31 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2548:208   
+NOTE: There were 31 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 31 observations and 9 variables.
+
+
+NOTE: There were 211 observations read from the data set WORK.COLLF.
+NOTE: There were 31 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 242 observations and 8 variables.
+
+
+NOTE: There were 211 observations read from the data set WORK.COLLWF.
+NOTE: There were 31 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 242 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 82 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2549:1   
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 82 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+NOTE: The data set WORK.FREQS has 1 observations and 5 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 1 observations and 7 variables.
+
+
+NOTE: There were 4 observations read from the data set WORK.FULLM.
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FULLM has 5 observations and 7 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 30 observations and 3 variables.
+
+25                               The SAS System 13:51 Tuesday, December 23, 2003
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2549:208   
+NOTE: There were 30 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 30 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 30 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2549:208   
+NOTE: There were 30 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 30 observations and 9 variables.
+
+
+NOTE: There were 242 observations read from the data set WORK.COLLF.
+NOTE: There were 30 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 272 observations and 8 variables.
+
+
+NOTE: There were 242 observations read from the data set WORK.COLLWF.
+NOTE: There were 30 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 272 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 82 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2550:1   
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 82 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+NOTE: The data set WORK.FREQS has 1 observations and 5 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 1 observations and 7 variables.
+
+
+NOTE: There were 5 observations read from the data set WORK.FULLM.
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FULLM has 6 observations and 7 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 25 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2550:155   
+NOTE: There were 25 observations read from the data set WORK.FREQS.
+26                               The SAS System 13:51 Tuesday, December 23, 2003
+
+NOTE: The data set WORK.FREQS has 25 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 25 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2550:155   
+NOTE: There were 25 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 25 observations and 9 variables.
+
+
+NOTE: There were 272 observations read from the data set WORK.COLLF.
+NOTE: There were 25 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 297 observations and 8 variables.
+
+
+NOTE: There were 272 observations read from the data set WORK.COLLWF.
+NOTE: There were 25 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 297 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 82 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2551:1   
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 82 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+NOTE: The data set WORK.FREQS has 1 observations and 5 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 1 observations and 7 variables.
+
+
+NOTE: There were 6 observations read from the data set WORK.FULLM.
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FULLM has 7 observations and 7 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 17 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2551:135   
+NOTE: There were 17 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 17 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 17 observations and 3 variables.
+27                               The SAS System 13:51 Tuesday, December 23, 2003
+
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2551:135   
+NOTE: There were 17 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 17 observations and 9 variables.
+
+
+NOTE: There were 297 observations read from the data set WORK.COLLF.
+NOTE: There were 17 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 314 observations and 8 variables.
+
+
+NOTE: There were 297 observations read from the data set WORK.COLLWF.
+NOTE: There were 17 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 314 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 82 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2552:1   
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 82 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+NOTE: The data set WORK.FREQS has 1 observations and 5 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 1 observations and 7 variables.
+
+
+NOTE: There were 7 observations read from the data set WORK.FULLM.
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FULLM has 8 observations and 7 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 21 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2552:135   
+NOTE: There were 21 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 21 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 21 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2552:135   
+28                               The SAS System 13:51 Tuesday, December 23, 2003
+
+NOTE: There were 21 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 21 observations and 9 variables.
+
+
+NOTE: There were 314 observations read from the data set WORK.COLLF.
+NOTE: There were 21 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 335 observations and 8 variables.
+
+
+NOTE: There were 314 observations read from the data set WORK.COLLWF.
+NOTE: There were 21 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 335 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 82 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2553:1   
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 82 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+NOTE: The data set WORK.FREQS has 1 observations and 5 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 1 observations and 7 variables.
+
+
+NOTE: There were 8 observations read from the data set WORK.FULLM.
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FULLM has 9 observations and 7 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 18 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2553:208   
+NOTE: There were 18 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 18 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 18 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2553:208   
+NOTE: There were 18 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 18 observations and 9 variables.
+
+
+NOTE: There were 335 observations read from the data set WORK.COLLF.
+29                               The SAS System 13:51 Tuesday, December 23, 2003
+
+NOTE: There were 18 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 353 observations and 8 variables.
+
+
+NOTE: There were 335 observations read from the data set WORK.COLLWF.
+NOTE: There were 18 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 353 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 82 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2554:1   
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 82 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+NOTE: The data set WORK.FREQS has 1 observations and 5 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 1 observations and 7 variables.
+
+
+NOTE: There were 9 observations read from the data set WORK.FULLM.
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FULLM has 10 observations and 7 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 31 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2554:208   
+NOTE: There were 31 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 31 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 31 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2554:208   
+NOTE: There were 31 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 31 observations and 9 variables.
+
+
+NOTE: There were 353 observations read from the data set WORK.COLLF.
+NOTE: There were 31 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 384 observations and 8 variables.
+
+
+NOTE: There were 353 observations read from the data set WORK.COLLWF.
+30                               The SAS System 13:51 Tuesday, December 23, 2003
+
+NOTE: There were 31 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 384 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 82 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2555:1   
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 82 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+NOTE: The data set WORK.FREQS has 1 observations and 5 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 1 observations and 7 variables.
+
+
+NOTE: There were 10 observations read from the data set WORK.FULLM.
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FULLM has 11 observations and 7 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 17 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2555:228   
+NOTE: There were 17 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 17 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 17 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2555:228   
+NOTE: There were 17 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 17 observations and 9 variables.
+
+
+NOTE: There were 384 observations read from the data set WORK.COLLF.
+NOTE: There were 17 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 401 observations and 8 variables.
+
+
+NOTE: There were 384 observations read from the data set WORK.COLLWF.
+NOTE: There were 17 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 401 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+31                               The SAS System 13:51 Tuesday, December 23, 2003
+
+NOTE: The data set WORK.TEMP2 has 15933 observations and 82 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2556:1   
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 82 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+NOTE: The data set WORK.FREQS has 1 observations and 5 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 1 observations and 7 variables.
+
+
+NOTE: There were 11 observations read from the data set WORK.FULLM.
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FULLM has 12 observations and 7 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 20 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2556:228   
+NOTE: There were 20 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 20 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 20 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2556:228   
+NOTE: There were 20 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 20 observations and 9 variables.
+
+
+NOTE: There were 401 observations read from the data set WORK.COLLF.
+NOTE: There were 20 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 421 observations and 8 variables.
+
+
+NOTE: There were 401 observations read from the data set WORK.COLLWF.
+NOTE: There were 20 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 421 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 82 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+32                               The SAS System 13:51 Tuesday, December 23, 2003
+
+      2557:1   
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 82 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+NOTE: The data set WORK.FREQS has 1 observations and 5 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 1 observations and 7 variables.
+
+
+NOTE: There were 12 observations read from the data set WORK.FULLM.
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FULLM has 13 observations and 7 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 14 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2557:228   
+NOTE: There were 14 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 14 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 14 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2557:228   
+NOTE: There were 14 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 14 observations and 9 variables.
+
+
+NOTE: There were 421 observations read from the data set WORK.COLLF.
+NOTE: There were 14 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 435 observations and 8 variables.
+
+
+NOTE: There were 421 observations read from the data set WORK.COLLWF.
+NOTE: There were 14 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 435 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 81 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 3 observations and 3 variables.
+
+
+NOTE: There were 3 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 3 observations and 9 variables.
+
+33                               The SAS System 13:51 Tuesday, December 23, 2003
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 3 observations and 3 variables.
+
+
+NOTE: There were 3 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 3 observations and 9 variables.
+
+
+NOTE: There were 435 observations read from the data set WORK.COLLF.
+NOTE: There were 3 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 438 observations and 8 variables.
+
+
+NOTE: There were 435 observations read from the data set WORK.COLLWF.
+NOTE: There were 3 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 438 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 81 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 5 observations and 3 variables.
+
+
+NOTE: There were 5 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 5 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 5 observations and 3 variables.
+
+
+NOTE: There were 5 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 5 observations and 9 variables.
+
+
+NOTE: There were 438 observations read from the data set WORK.COLLF.
+NOTE: There were 5 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 443 observations and 8 variables.
+
+
+NOTE: There were 438 observations read from the data set WORK.COLLWF.
+NOTE: There were 5 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 443 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 82 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2560:1   
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 82 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+34                               The SAS System 13:51 Tuesday, December 23, 2003
+
+NOTE: The data set WORK.FREQS has 1 observations and 5 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 1 observations and 7 variables.
+
+
+NOTE: There were 13 observations read from the data set WORK.FULLM.
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FULLM has 14 observations and 7 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 38 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2560:208   
+NOTE: There were 38 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 38 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 38 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2560:208   
+NOTE: There were 38 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 38 observations and 9 variables.
+
+
+NOTE: There were 443 observations read from the data set WORK.COLLF.
+NOTE: There were 38 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 481 observations and 8 variables.
+
+
+NOTE: There were 443 observations read from the data set WORK.COLLWF.
+NOTE: There were 38 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 481 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 82 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2561:1   
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 82 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+NOTE: The data set WORK.FREQS has 1 observations and 5 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 1 observations and 7 variables.
+35                               The SAS System 13:51 Tuesday, December 23, 2003
+
+
+
+NOTE: There were 14 observations read from the data set WORK.FULLM.
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FULLM has 15 observations and 7 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 38 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2561:208   
+NOTE: There were 38 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 38 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 38 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2561:208   
+NOTE: There were 38 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 38 observations and 9 variables.
+
+
+NOTE: There were 481 observations read from the data set WORK.COLLF.
+NOTE: There were 38 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 519 observations and 8 variables.
+
+
+NOTE: There were 481 observations read from the data set WORK.COLLWF.
+NOTE: There were 38 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 519 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 82 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2562:1   
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 82 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+NOTE: The data set WORK.FREQS has 1 observations and 5 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 1 observations and 7 variables.
+
+
+NOTE: There were 15 observations read from the data set WORK.FULLM.
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FULLM has 16 observations and 7 variables.
+36                               The SAS System 13:51 Tuesday, December 23, 2003
+
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 28 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2562:228   
+NOTE: There were 28 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 28 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 28 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2562:228   
+NOTE: There were 28 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 28 observations and 9 variables.
+
+
+NOTE: There were 519 observations read from the data set WORK.COLLF.
+NOTE: There were 28 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 547 observations and 8 variables.
+
+
+NOTE: There were 519 observations read from the data set WORK.COLLWF.
+NOTE: There were 28 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 547 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 82 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2563:1   
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 82 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+NOTE: The data set WORK.FREQS has 1 observations and 5 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 1 observations and 7 variables.
+
+
+NOTE: There were 16 observations read from the data set WORK.FULLM.
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FULLM has 17 observations and 7 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 29 observations and 3 variables.
+
+37                               The SAS System 13:51 Tuesday, December 23, 2003
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2563:228   
+NOTE: There were 29 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 29 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 29 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2563:228   
+NOTE: There were 29 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 29 observations and 9 variables.
+
+
+NOTE: There were 547 observations read from the data set WORK.COLLF.
+NOTE: There were 29 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 576 observations and 8 variables.
+
+
+NOTE: There were 547 observations read from the data set WORK.COLLWF.
+NOTE: There were 29 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 576 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 82 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2564:1   
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 82 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+NOTE: The data set WORK.FREQS has 1 observations and 5 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 1 observations and 7 variables.
+
+
+NOTE: There were 17 observations read from the data set WORK.FULLM.
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FULLM has 18 observations and 7 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 24 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2564:228   
+NOTE: There were 24 observations read from the data set WORK.FREQS.
+38                               The SAS System 13:51 Tuesday, December 23, 2003
+
+NOTE: The data set WORK.FREQS has 24 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 24 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2564:228   
+NOTE: There were 24 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 24 observations and 9 variables.
+
+
+NOTE: There were 576 observations read from the data set WORK.COLLF.
+NOTE: There were 24 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 600 observations and 8 variables.
+
+
+NOTE: There were 576 observations read from the data set WORK.COLLWF.
+NOTE: There were 24 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 600 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 82 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2565:1   
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 82 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+NOTE: The data set WORK.FREQS has 1 observations and 5 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 1 observations and 7 variables.
+
+
+NOTE: There were 18 observations read from the data set WORK.FULLM.
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FULLM has 19 observations and 7 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 33 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2565:228   
+NOTE: There were 33 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 33 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 33 observations and 3 variables.
+39                               The SAS System 13:51 Tuesday, December 23, 2003
+
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2565:228   
+NOTE: There were 33 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 33 observations and 9 variables.
+
+
+NOTE: There were 600 observations read from the data set WORK.COLLF.
+NOTE: There were 33 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 633 observations and 8 variables.
+
+
+NOTE: There were 600 observations read from the data set WORK.COLLWF.
+NOTE: There were 33 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 633 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 82 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2566:1   
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 82 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+NOTE: The data set WORK.FREQS has 1 observations and 5 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 1 observations and 7 variables.
+
+
+NOTE: There were 19 observations read from the data set WORK.FULLM.
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FULLM has 20 observations and 7 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 27 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2566:228   
+NOTE: There were 27 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 27 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 27 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2566:228   
+40                               The SAS System 13:51 Tuesday, December 23, 2003
+
+NOTE: There were 27 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 27 observations and 9 variables.
+
+
+NOTE: There were 633 observations read from the data set WORK.COLLF.
+NOTE: There were 27 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 660 observations and 8 variables.
+
+
+NOTE: There were 633 observations read from the data set WORK.COLLWF.
+NOTE: There were 27 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 660 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 82 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2567:1   
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 82 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+NOTE: The data set WORK.FREQS has 1 observations and 5 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 1 observations and 7 variables.
+
+
+NOTE: There were 20 observations read from the data set WORK.FULLM.
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FULLM has 21 observations and 7 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 30 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2567:208   
+NOTE: There were 30 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 30 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 30 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2567:208   
+NOTE: There were 30 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 30 observations and 9 variables.
+
+
+NOTE: There were 660 observations read from the data set WORK.COLLF.
+41                               The SAS System 13:51 Tuesday, December 23, 2003
+
+NOTE: There were 30 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 690 observations and 8 variables.
+
+
+NOTE: There were 660 observations read from the data set WORK.COLLWF.
+NOTE: There were 30 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 690 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 82 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2568:1   
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 82 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+NOTE: The data set WORK.FREQS has 1 observations and 5 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 1 observations and 7 variables.
+
+
+NOTE: There were 21 observations read from the data set WORK.FULLM.
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FULLM has 22 observations and 7 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 28 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2568:155   
+NOTE: There were 28 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 28 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 28 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2568:155   
+NOTE: There were 28 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 28 observations and 9 variables.
+
+
+NOTE: There were 690 observations read from the data set WORK.COLLF.
+NOTE: There were 28 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 718 observations and 8 variables.
+
+
+NOTE: There were 690 observations read from the data set WORK.COLLWF.
+42                               The SAS System 13:51 Tuesday, December 23, 2003
+
+NOTE: There were 28 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 718 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 82 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2569:1   
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 82 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+NOTE: The data set WORK.FREQS has 1 observations and 5 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 1 observations and 7 variables.
+
+
+NOTE: There were 22 observations read from the data set WORK.FULLM.
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FULLM has 23 observations and 7 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 31 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2569:208   
+NOTE: There were 31 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 31 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 31 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2569:208   
+NOTE: There were 31 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 31 observations and 9 variables.
+
+
+NOTE: There were 718 observations read from the data set WORK.COLLF.
+NOTE: There were 31 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 749 observations and 8 variables.
+
+
+NOTE: There were 718 observations read from the data set WORK.COLLWF.
+NOTE: There were 31 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 749 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+43                               The SAS System 13:51 Tuesday, December 23, 2003
+
+NOTE: The data set WORK.TEMP2 has 15933 observations and 82 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2570:1   
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 82 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+NOTE: The data set WORK.FREQS has 1 observations and 5 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 1 observations and 7 variables.
+
+
+NOTE: There were 23 observations read from the data set WORK.FULLM.
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FULLM has 24 observations and 7 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 31 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2570:228   
+NOTE: There were 31 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 31 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 31 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2570:228   
+NOTE: There were 31 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 31 observations and 9 variables.
+
+
+NOTE: There were 749 observations read from the data set WORK.COLLF.
+NOTE: There were 31 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 780 observations and 8 variables.
+
+
+NOTE: There were 749 observations read from the data set WORK.COLLWF.
+NOTE: There were 31 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 780 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 82 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+44                               The SAS System 13:51 Tuesday, December 23, 2003
+
+      2571:1   
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 82 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+NOTE: The data set WORK.FREQS has 1 observations and 5 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 1 observations and 7 variables.
+
+
+NOTE: There were 24 observations read from the data set WORK.FULLM.
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FULLM has 25 observations and 7 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 22 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2571:228   
+NOTE: There were 22 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 22 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 22 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2571:228   
+NOTE: There were 22 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 22 observations and 9 variables.
+
+
+NOTE: There were 780 observations read from the data set WORK.COLLF.
+NOTE: There were 22 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 802 observations and 8 variables.
+
+
+NOTE: There were 780 observations read from the data set WORK.COLLWF.
+NOTE: There were 22 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 802 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 82 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2572:1   
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 82 variables.
+
+
+45                               The SAS System 13:51 Tuesday, December 23, 2003
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+NOTE: The data set WORK.FREQS has 1 observations and 5 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 1 observations and 7 variables.
+
+
+NOTE: There were 25 observations read from the data set WORK.FULLM.
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FULLM has 26 observations and 7 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 28 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2572:228   
+NOTE: There were 28 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 28 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 28 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2572:228   
+NOTE: There were 28 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 28 observations and 9 variables.
+
+
+NOTE: There were 802 observations read from the data set WORK.COLLF.
+NOTE: There were 28 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 830 observations and 8 variables.
+
+
+NOTE: There were 802 observations read from the data set WORK.COLLWF.
+NOTE: There were 28 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 830 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 82 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2573:1   
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 82 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+NOTE: The data set WORK.FREQS has 1 observations and 5 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+46                               The SAS System 13:51 Tuesday, December 23, 2003
+
+NOTE: The data set WORK.FREQS has 1 observations and 7 variables.
+
+
+NOTE: There were 26 observations read from the data set WORK.FULLM.
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FULLM has 27 observations and 7 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 29 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2573:155   
+NOTE: There were 29 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 29 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 29 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2573:155   
+NOTE: There were 29 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 29 observations and 9 variables.
+
+
+NOTE: There were 830 observations read from the data set WORK.COLLF.
+NOTE: There were 29 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 859 observations and 8 variables.
+
+
+NOTE: There were 830 observations read from the data set WORK.COLLWF.
+NOTE: There were 29 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 859 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 82 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2574:1   
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 82 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+NOTE: The data set WORK.FREQS has 1 observations and 5 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 1 observations and 7 variables.
+
+
+NOTE: There were 27 observations read from the data set WORK.FULLM.
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+47                               The SAS System 13:51 Tuesday, December 23, 2003
+
+NOTE: The data set WORK.FULLM has 28 observations and 7 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 29 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2574:155   
+NOTE: There were 29 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 29 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 29 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2574:155   
+NOTE: There were 29 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 29 observations and 9 variables.
+
+
+NOTE: There were 859 observations read from the data set WORK.COLLF.
+NOTE: There were 29 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 888 observations and 8 variables.
+
+
+NOTE: There were 859 observations read from the data set WORK.COLLWF.
+NOTE: There were 29 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 888 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 82 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2575:1   
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 82 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+NOTE: The data set WORK.FREQS has 1 observations and 5 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 1 observations and 7 variables.
+
+
+NOTE: There were 28 observations read from the data set WORK.FULLM.
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FULLM has 29 observations and 7 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 22 observations and 3 variables.
+48                               The SAS System 13:51 Tuesday, December 23, 2003
+
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2575:208   
+NOTE: There were 22 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 22 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 22 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2575:208   
+NOTE: There were 22 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 22 observations and 9 variables.
+
+
+NOTE: There were 888 observations read from the data set WORK.COLLF.
+NOTE: There were 22 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 910 observations and 8 variables.
+
+
+NOTE: There were 888 observations read from the data set WORK.COLLWF.
+NOTE: There were 22 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 910 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 81 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 2 observations and 3 variables.
+
+
+NOTE: There were 2 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 2 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 2 observations and 3 variables.
+
+
+NOTE: There were 2 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 2 observations and 9 variables.
+
+
+NOTE: There were 910 observations read from the data set WORK.COLLF.
+NOTE: There were 2 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 912 observations and 8 variables.
+
+
+NOTE: There were 910 observations read from the data set WORK.COLLWF.
+NOTE: There were 2 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 912 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+49                               The SAS System 13:51 Tuesday, December 23, 2003
+
+NOTE: The data set WORK.TEMP2 has 15933 observations and 82 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2577:1   
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 82 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+NOTE: The data set WORK.FREQS has 1 observations and 5 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 1 observations and 7 variables.
+
+
+NOTE: There were 29 observations read from the data set WORK.FULLM.
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FULLM has 30 observations and 7 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 37 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2577:155   
+NOTE: There were 37 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 37 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 37 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2577:155   
+NOTE: There were 37 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 37 observations and 9 variables.
+
+
+NOTE: There were 912 observations read from the data set WORK.COLLF.
+NOTE: There were 37 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 949 observations and 8 variables.
+
+
+NOTE: There were 912 observations read from the data set WORK.COLLWF.
+NOTE: There were 37 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 949 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 82 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+50                               The SAS System 13:51 Tuesday, December 23, 2003
+
+      2578:1   
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 82 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+NOTE: The data set WORK.FREQS has 1 observations and 5 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 1 observations and 7 variables.
+
+
+NOTE: There were 30 observations read from the data set WORK.FULLM.
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FULLM has 31 observations and 7 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 29 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2578:208   
+NOTE: There were 29 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 29 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 29 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2578:208   
+NOTE: There were 29 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 29 observations and 9 variables.
+
+
+NOTE: There were 949 observations read from the data set WORK.COLLF.
+NOTE: There were 29 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 978 observations and 8 variables.
+
+
+NOTE: There were 949 observations read from the data set WORK.COLLWF.
+NOTE: There were 29 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 978 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 82 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2579:1   
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 82 variables.
+
+
+51                               The SAS System 13:51 Tuesday, December 23, 2003
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+NOTE: The data set WORK.FREQS has 1 observations and 5 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 1 observations and 7 variables.
+
+
+NOTE: There were 31 observations read from the data set WORK.FULLM.
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FULLM has 32 observations and 7 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 26 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2579:208   
+NOTE: There were 26 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 26 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 26 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2579:208   
+NOTE: There were 26 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 26 observations and 9 variables.
+
+
+NOTE: There were 978 observations read from the data set WORK.COLLF.
+NOTE: There were 26 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 1004 observations and 8 variables.
+
+
+NOTE: There were 978 observations read from the data set WORK.COLLWF.
+NOTE: There were 26 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 1004 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 82 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2580:1   
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 82 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+NOTE: The data set WORK.FREQS has 1 observations and 5 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+52                               The SAS System 13:51 Tuesday, December 23, 2003
+
+NOTE: The data set WORK.FREQS has 1 observations and 7 variables.
+
+
+NOTE: There were 32 observations read from the data set WORK.FULLM.
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FULLM has 33 observations and 7 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 25 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2580:228   
+NOTE: There were 25 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 25 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 25 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2580:228   
+NOTE: There were 25 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 25 observations and 9 variables.
+
+
+NOTE: There were 1004 observations read from the data set WORK.COLLF.
+NOTE: There were 25 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 1029 observations and 8 variables.
+
+
+NOTE: There were 1004 observations read from the data set WORK.COLLWF.
+NOTE: There were 25 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 1029 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 82 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2581:1   
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 82 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+NOTE: The data set WORK.FREQS has 1 observations and 5 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 1 observations and 7 variables.
+
+
+NOTE: There were 33 observations read from the data set WORK.FULLM.
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+53                               The SAS System 13:51 Tuesday, December 23, 2003
+
+NOTE: The data set WORK.FULLM has 34 observations and 7 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 16 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2581:228   
+NOTE: There were 16 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 16 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 16 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2581:228   
+NOTE: There were 16 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 16 observations and 9 variables.
+
+
+NOTE: There were 1029 observations read from the data set WORK.COLLF.
+NOTE: There were 16 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 1045 observations and 8 variables.
+
+
+NOTE: There were 1029 observations read from the data set WORK.COLLWF.
+NOTE: There were 16 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 1045 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 82 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2582:1   
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 82 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+NOTE: The data set WORK.FREQS has 1 observations and 5 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 1 observations and 7 variables.
+
+
+NOTE: There were 34 observations read from the data set WORK.FULLM.
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FULLM has 35 observations and 7 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 20 observations and 3 variables.
+54                               The SAS System 13:51 Tuesday, December 23, 2003
+
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2582:208   
+NOTE: There were 20 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 20 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 20 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2582:208   
+NOTE: There were 20 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 20 observations and 9 variables.
+
+
+NOTE: There were 1045 observations read from the data set WORK.COLLF.
+NOTE: There were 20 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 1065 observations and 8 variables.
+
+
+NOTE: There were 1045 observations read from the data set WORK.COLLWF.
+NOTE: There were 20 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 1065 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 82 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2583:1   
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 82 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+NOTE: The data set WORK.FREQS has 1 observations and 5 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 1 observations and 7 variables.
+
+
+NOTE: There were 35 observations read from the data set WORK.FULLM.
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FULLM has 36 observations and 7 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 19 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2583:228   
+55                               The SAS System 13:51 Tuesday, December 23, 2003
+
+NOTE: There were 19 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 19 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 19 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2583:228   
+NOTE: There were 19 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 19 observations and 9 variables.
+
+
+NOTE: There were 1065 observations read from the data set WORK.COLLF.
+NOTE: There were 19 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 1084 observations and 8 variables.
+
+
+NOTE: There were 1065 observations read from the data set WORK.COLLWF.
+NOTE: There were 19 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 1084 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 82 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2584:1   
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 82 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+NOTE: The data set WORK.FREQS has 1 observations and 5 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 1 observations and 7 variables.
+
+
+NOTE: There were 36 observations read from the data set WORK.FULLM.
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FULLM has 37 observations and 7 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 22 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2584:208   
+NOTE: There were 22 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 22 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+56                               The SAS System 13:51 Tuesday, December 23, 2003
+
+NOTE: The data set WORK.FREQWT has 22 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2584:208   
+NOTE: There were 22 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 22 observations and 9 variables.
+
+
+NOTE: There were 1084 observations read from the data set WORK.COLLF.
+NOTE: There were 22 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 1106 observations and 8 variables.
+
+
+NOTE: There were 1084 observations read from the data set WORK.COLLWF.
+NOTE: There were 22 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 1106 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 82 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2585:1   
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 82 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+NOTE: The data set WORK.FREQS has 1 observations and 5 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 1 observations and 7 variables.
+
+
+NOTE: There were 37 observations read from the data set WORK.FULLM.
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FULLM has 38 observations and 7 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 22 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2585:228   
+NOTE: There were 22 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 22 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 22 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+57                               The SAS System 13:51 Tuesday, December 23, 2003
+
+      2585:228   
+NOTE: There were 22 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 22 observations and 9 variables.
+
+
+NOTE: There were 1106 observations read from the data set WORK.COLLF.
+NOTE: There were 22 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 1128 observations and 8 variables.
+
+
+NOTE: There were 1106 observations read from the data set WORK.COLLWF.
+NOTE: There were 22 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 1128 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 82 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2586:1   
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 82 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+NOTE: The data set WORK.FREQS has 1 observations and 5 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 1 observations and 7 variables.
+
+
+NOTE: There were 38 observations read from the data set WORK.FULLM.
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FULLM has 39 observations and 7 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 39 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2586:208   
+NOTE: There were 39 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 39 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 39 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2586:208   
+NOTE: There were 39 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 39 observations and 9 variables.
+
+
+58                               The SAS System 13:51 Tuesday, December 23, 2003
+
+NOTE: There were 1128 observations read from the data set WORK.COLLF.
+NOTE: There were 39 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 1167 observations and 8 variables.
+
+
+NOTE: There were 1128 observations read from the data set WORK.COLLWF.
+NOTE: There were 39 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 1167 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 82 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2587:1   
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 82 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+NOTE: The data set WORK.FREQS has 1 observations and 5 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 1 observations and 7 variables.
+
+
+NOTE: There were 39 observations read from the data set WORK.FULLM.
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FULLM has 40 observations and 7 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 39 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2587:208   
+NOTE: There were 39 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 39 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 39 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2587:208   
+NOTE: There were 39 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 39 observations and 9 variables.
+
+
+NOTE: There were 1167 observations read from the data set WORK.COLLF.
+NOTE: There were 39 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 1206 observations and 8 variables.
+
+
+59                               The SAS System 13:51 Tuesday, December 23, 2003
+
+NOTE: There were 1167 observations read from the data set WORK.COLLWF.
+NOTE: There were 39 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 1206 observations and 8 variables.
+
+
+NOTE: Character values have been converted to numeric 
+      values at the places given by: (Line):(Column).
+      2588:2   
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 82 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2588:1   
+NOTE: Character values have been converted to numeric 
+      values at the places given by: (Line):(Column).
+      2588:2   
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 82 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+NOTE: The data set WORK.FREQS has 1 observations and 5 variables.
+
+
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 1 observations and 7 variables.
+
+
+NOTE: There were 40 observations read from the data set WORK.FULLM.
+NOTE: There were 1 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FULLM has 41 observations and 7 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 7 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2588:95   
+NOTE: There were 7 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 7 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 7 observations and 3 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2588:95   
+NOTE: There were 7 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 7 observations and 9 variables.
+
+
+NOTE: There were 1206 observations read from the data set WORK.COLLF.
+NOTE: There were 7 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 1213 observations and 8 variables.
+
+60                               The SAS System 13:51 Tuesday, December 23, 2003
+
+
+NOTE: There were 1206 observations read from the data set WORK.COLLWF.
+NOTE: There were 7 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 1213 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 81 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 5 observations and 3 variables.
+
+
+NOTE: There were 5 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 5 observations and 9 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 5 observations and 3 variables.
+
+
+NOTE: There were 5 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 5 observations and 9 variables.
+
+
+NOTE: There were 1213 observations read from the data set WORK.COLLF.
+NOTE: There were 5 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 1218 observations and 8 variables.
+
+
+NOTE: There were 1213 observations read from the data set WORK.COLLWF.
+NOTE: There were 5 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 1218 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP1.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 81 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2592:1   
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 81 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+NOTE: The data set WORK.TEMP3 has 15933 observations and 81 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP3.
+NOTE: The data set WORK.FREQS has 10 observations and 6 variables.
+
+
+NOTE: There were 10 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 10 observations and 8 variables.
+
+
+NOTE: There were 41 observations read from the data set WORK.FULLM.
+NOTE: There were 10 observations read from the data set WORK.FREQS.
+61                               The SAS System 13:51 Tuesday, December 23, 2003
+
+NOTE: The data set WORK.FULLM has 51 observations and 8 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.TEMP2 has 15933 observations and 81 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQS has 206 observations and 4 variables.
+
+
+NOTE: There were 206 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 206 observations and 4 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2592:2   
+NOTE: There were 206 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.FREQS has 206 observations and 10 variables.
+
+
+NOTE: There were 15933 observations read from the data set WORK.TEMP2.
+NOTE: The data set WORK.FREQWT has 206 observations and 4 variables.
+
+
+NOTE: There were 206 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 206 observations and 4 variables.
+
+
+NOTE: Numeric values have been converted to character 
+      values at the places given by: (Line):(Column).
+      2592:2   
+NOTE: There were 206 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.FREQWT has 206 observations and 10 variables.
+
+
+NOTE: There were 1218 observations read from the data set WORK.COLLF.
+NOTE: There were 206 observations read from the data set WORK.FREQS.
+NOTE: The data set WORK.COLLF has 1424 observations and 9 variables.
+
+
+NOTE: There were 1218 observations read from the data set WORK.COLLWF.
+NOTE: There were 206 observations read from the data set WORK.FREQWT.
+NOTE: The data set WORK.COLLWF has 1424 observations and 9 variables.
+
+
+NOTE: There were 51 observations read from the data set WORK.FULLM.
+NOTE: The data set WORK.FULLM has 51 observations and 8 variables.
+
+
+NOTE: There were 1424 observations read from the data set WORK.COLLF.
+NOTE: The data set WORK.COLLF has 1424 observations and 9 variables.
+
+
+NOTE: There were 1424 observations read from the data set WORK.COLLWF.
+NOTE: The data set WORK.COLLWF has 1424 observations and 9 variables.
+
+
+NOTE: There were 1424 observations read from the data set WORK.COLLWF.
+NOTE: There were 1424 observations read from the data set WORK.COLLF.
+62                               The SAS System 13:51 Tuesday, December 23, 2003
+
+NOTE: The data set WORK.COLL has 1424 observations and 11 variables.
+
+
+NOTE: There were 1424 observations read from the data set WORK.COLL.
+NOTE: The data set WORK.COLL has 1424 observations and 11 variables.
+
+
+NOTE: There were 51 observations read from the data set WORK.FULLM.
+NOTE: The data set WORK.FULLM has 51 observations and 8 variables.
+
+
+NOTE: There were 1424 observations read from the data set WORK.COLL.
+NOTE: There were 51 observations read from the data set WORK.FULLM.
+NOTE: The data set WORK.FULL has 1424 observations and 12 variables.
+
+
+NOTE: There were 1424 observations read from the data set WORK.FULL.
+NOTE: The data set WORK.FULL has 1424 observations and 12 variables.
+
+
+NOTE: There were 1424 observations read from the data set WORK.FULL.
+NOTE: The data set WORK.FULL has 1424 observations and 12 variables.
+
+
+NOTE: 1424 records written to the output DBASE file.
+
+
+NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414

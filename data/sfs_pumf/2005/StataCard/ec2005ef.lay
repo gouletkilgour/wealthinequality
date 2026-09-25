@@ -1,0 +1,87 @@
+INFIX DICTIONARY USING ??? {
+    str ECFKEY       1 - 5
+    double WEIGHT       6 - 15
+    str REGION       16 - 16
+    FMSZ27       17 - 17
+    str DVFMCOMP       18 - 18
+    str ECFSZ0004       19 - 19
+    str ECFSZ0517       20 - 20
+    str ECFSZ1824       21 - 21
+    str ECFSZ2544       22 - 22
+    str ECFSZ4564       23 - 23
+    str ECFSZ65PL       24 - 24
+    NBEAR27       25 - 25
+    str ATTCRC       26 - 26
+    str DVFCRN       27 - 27
+    str ATTCRP       28 - 28
+    str ATTCRR       29 - 29
+    str ATTSEL       30 - 30
+    str ATTPAYDAY       31 - 31
+    str ATTPAW       32 - 32
+    str ATTFAS       33 - 33
+    str DVFRSPST       34 - 34
+    str ATTRSP       35 - 35
+    str ATTRSA       36 - 36
+    str ATTRSH       37 - 37
+    str ATTRSL       38 - 38
+    str ATTRSR       39 - 39
+    str ATTBUD       40 - 40
+    str DVFATT5H       41 - 41
+    str DVFATT5K       42 - 42
+    str ATTSPD       43 - 43
+    str ATTSIT       44 - 44
+    str MJSIF27       45 - 46
+    MTINC27       47 - 54
+    ATINC27       55 - 62
+    GTR27       63 - 70
+    str RTRETIRE       71 - 71
+    str RTREPH       72 - 72
+    str RTREPFR       73 - 73
+    str RTRESFS       74 - 74
+    str RTREMAN       75 - 75
+    str RTREYRS       76 - 76
+    str RTREINC       77 - 77
+    str RTRELOFF       78 - 78
+    str RTREOTH       79 - 79
+    str RTRETWK       80 - 80
+    str RTRETWKT       81 - 81
+    str RTPLNAGE       82 - 84
+    str RTPLNNOT       85 - 85
+    ECFEXCHR       86 - 92
+    ECFEXHMR       93 - 99
+    ECFEXVHR       100 - 106
+    ECFEXANM       107 - 113
+    str DVFTENUR       114 - 114
+    str ECFDWELLTP       115 - 115
+    WATOTPT       116 - 127
+    WATOTPG       128 - 139
+    WASTDEPT       140 - 151
+    WASTMUIC       152 - 163
+    WASTBOND       164 - 175
+    WASTSTCK       176 - 187
+    WASTOINP       188 - 199
+    WARRSPL       200 - 211
+    WARRIF       212 - 223
+    WAPRVAL       224 - 235
+    WASTREST       236 - 247
+    WASTVHLE       248 - 259
+    WASTONOF       260 - 271
+    WARPPT       272 - 283
+    WARPPG       284 - 295
+    WAOTPEN       296 - 307
+    str BUSIND       308 - 308
+    WBUSEQ       309 - 320
+    WDTOTAL       321 - 332
+    WDPRMOR       333 - 344
+    WDSTOMOR       345 - 356
+    WDSTCRED       357 - 368
+    WDSLOAN       369 - 380
+    WDSTVHLN       381 - 392
+    WDSTLOC       393 - 404
+    WDSTODBT       405 - 416
+    WNETWPT       417 - 428
+    WNETWPG       429 - 440
+    str ECPAGE       441 - 443
+    str DVPHLV2G       444 - 444
+    str HCSEX_R       445 - 445
+}

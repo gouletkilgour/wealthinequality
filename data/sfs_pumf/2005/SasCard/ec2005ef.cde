@@ -1,0 +1,328 @@
+PROC FORMAT;
+VALUE   $V1_F
+    1   = "Yes"
+    2   = "No"
+    6   = "Not Stated"
+    7   = "Don't know"
+    8   = "Refusal"
+    9   = "Not applicable"
+;
+VALUE   $V2_F
+    1   = "Yes"
+    2   = "No"
+    6   = "Not Stated"
+    7   = "Don't know"
+    8   = "Refusal"
+    9   = "Not applicable"
+;
+VALUE   $V3_F
+    1   = "Yes"
+    2   = "No"
+    6   = "Not Stated"
+    7   = "Don't know"
+    8   = "Refusal"
+    9   = "Not applicable"
+;
+VALUE   $V4_F
+    1   = "Yes"
+    2   = "No"
+    6   = "Not stated"
+    7   = "Don't know"
+    8   = "Refusal"
+    9   = "Not applicable"
+;
+VALUE   $V5_F
+    1   = "Yes"
+    2   = "No"
+    3   = "Would not be necessary"
+    6   = "Not Stated"
+    7   = "Don't know"
+    8   = "Refusal"
+    9   = "Not applicable"
+;
+VALUE   $V6_F
+    1   = "Yes"
+    2   = "No"
+    6   = "Not Stated"
+    7   = "Don't know"
+    8   = "Refusal"
+    9   = "Not applicable"
+;
+VALUE   $V7_F
+    1   = "Yes"
+    2   = "No"
+    6   = "Not stated"
+    7   = "Don't know"
+    8   = "Refusal"
+    9   = "Not applicable"
+;
+VALUE   $V8_F
+    1   = "Yes"
+    2   = "No"
+    6   = "Not Stated"
+    7   = "Don't know"
+    8   = "Refusal"
+    9   = "Not applicable"
+;
+VALUE   $V9_F
+    1   = "Yes"
+    2   = "No"
+    6   = "Not Stated"
+    7   = "Don't know"
+    8   = "Refusal"
+    9   = "Not applicable"
+;
+VALUE   $V10_F
+    1   = "Yes"
+    2   = "No"
+    6   = "Not stated"
+    7   = "Don't know"
+    8   = "Refusal"
+    9   = "Not applicable"
+;
+VALUE   $V11_F
+    1   = "Yes"
+    2   = "No"
+    6   = "Not Stated"
+    7   = "Don't know"
+    8   = "Refusal"
+    9   = "Not applicable"
+;
+VALUE   $V12_F
+    1   = "Yes"
+    2   = "No"
+    6   = "Not Stated"
+    7   = "Don't know"
+    8   = "Refusal"
+    9   = "Not applicable"
+;
+VALUE   $V13_F
+    1   = "Yes"
+    2   = "No"
+    6   = "Not Stated"
+    7   = "Don't know"
+    8   = "Refusal"
+    9   = "Not applicable"
+;
+VALUE   $V14_F
+    1   = "Better"
+    2   = "Worse"
+    3   = "Same"
+    6   = "not stated"
+    7   = "Don't know"
+;
+VALUE   $V15_F
+    1   = "Exceeded income"
+    2   = "Equalled income"
+    3   = "Was less than income"
+    6   = "Not Stated"
+    7   = "Don't know"
+    8   = "Refusal"
+    9   = "Not applicable"
+;
+VALUE   $V16_F
+    1   = "Yes"
+    2   = "No"
+    6   = "Not Stated"
+    7   = "Don't know"
+    8   = "Refusal"
+    9   = "Not applicable"
+;
+VALUE   $V17_F
+    1   = "Use savings"
+    2   = "Borrow from friend or relative"
+    3   = "Use credit cards"
+    4   = "Use line of credit"
+    5   = "Arrange for a loan"
+    6   = "Sell an asset"
+    7   = "Could not handle it"
+    8   = "Other"
+;
+VALUE   $V18_F
+    1   = "Use savings"
+    2   = "Borrow from friend or relative"
+    3   = "Use credit cards"
+    4   = "Use line of credit"
+    5   = "Arrange for a loan"
+    6   = "Sell an asset"
+    7   = "Could not handle it"
+    8   = "Other"
+;
+VALUE   $V19_F
+    1   = "Unattached individuals"
+    2   = "Couples, no children"
+    3   = "Couples with children"
+    4   = "Loneparent families"
+    5   = "Other family types"
+;
+VALUE   $V20_F
+    1   = "Have RRSP, have never withdrawn money (If O2 is yes, K12 is yes and all parts of K13 are no.)"
+    2   = "Had RRSP and have withdrawn it  (If O2 is no, K12 is yes and at least one part of K13 is yes.)"
+    3   = "Never had money in RRSP (If O2 is no, K12 is no.)"
+    4   = "Not known (all other cases)"
+;
+VALUE   $V21_F
+    1   = "Own without mortgage"
+    2   = "Own with mortgage"
+    3   = "Do not own"
+;
+VALUE   $V22_F
+    1   = "Less than high school"
+    2   = "Graduated high school"
+    3   = "Non-university post-secondary certificate"
+    4   = "University degree or certificate"
+    7   = "Not stated"
+;
+VALUE   $V23_F
+    1   = "Single detached"
+    2   = "Double/semi-detached,row or terrace,duplex"
+    3   = "Apartment"
+    4   = "Mobile home, condominium - type of building unspecified, other-specify"
+    7   = "Not stated"
+;
+VALUE   $V24_F
+    0   = "No"
+    1   = "Yes"
+    7   = "Not stated"
+;
+VALUE   $V25_F
+    0   = "No"
+    1   = "Yes"
+    7   = "Not stated"
+;
+VALUE   $V26_F
+    0   = "No"
+    1   = "Yes"
+    7   = "Not stated"
+;
+VALUE   $V27_F
+    0   = "No"
+    1   = "Yes"
+    7   = "Not stated"
+;
+VALUE   $V28_F
+    0   = "No"
+    1   = "Yes"
+    7   = "Not stated"
+;
+VALUE   $V29_F
+    0   = "No"
+    1   = "Yes"
+    7   = "Not stated"
+;
+VALUE   $V30_F
+    1   = "Male"
+    2   = "Female"
+;
+VALUE   $V31_F
+    01   = "No income"
+    02   = "Wages and salaries"
+    03   = "Self-employment income"
+    04   = "Government transfers"
+    05   = "Investment income"
+    06   = "Retirement pensions"
+    07   = "Other income"
+    96   = "Not Stated"
+    97   = "Don't know"
+    98   = "Refusal"
+    99   = "Not applicable"
+;
+VALUE   V32_F
+    00:06   = ""
+    96   = "Not Stated"
+    97   = "Don't know"
+    98   = "Refusal"
+    99   = "Not applicable"
+;
+VALUE   $V33_F
+    1   = "Atlantic"
+    2   = "Québec"
+    3   = "Ontario"
+    4   = "Prairies"
+    5   = "British Columbia"
+;
+VALUE   $V34_F
+    045:095   = "Valid age range"
+    997   = "Not stated"
+    999   = "Not applicable"
+;
+VALUE   $V35_F
+    1   = "Do not plan to retire"
+    2   = "Plan to retire"
+    7   = "Not stated"
+    9   = "Not applicable"
+;
+VALUE   $V36_F
+    1   = "Yes"
+    2   = "No"
+    7   = "Not stated"
+    9   = "No applicable"
+;
+VALUE   $V37_F
+    1   = "Yes"
+    2   = "No"
+    7   = "Not stated"
+    9   = "No applicable"
+;
+VALUE   $V38_F
+    1   = "Yes"
+    2   = "No"
+    7   = "Not stated"
+    9   = "No applicable"
+;
+VALUE   $V39_F
+    1   = "Yes"
+    2   = "No"
+    7   = "Not stated"
+    9   = "No applicable"
+;
+VALUE   $V40_F
+    1   = "Yes"
+    2   = "No"
+    7   = "Not stated"
+    9   = "No applicable"
+;
+VALUE   $V41_F
+    1   = "Yes"
+    2   = "No"
+    7   = "Not stated"
+    9   = "No applicable"
+;
+VALUE   $V42_F
+    1   = "Yes"
+    2   = "No"
+    7   = "Not stated"
+    9   = "No applicable"
+;
+VALUE   $V43_F
+    1   = "Yes"
+    2   = "No"
+    7   = "Not stated"
+    9   = "No applicable"
+;
+VALUE   $V44_F
+    1   = "Yes"
+    2   = "No"
+    7   = "Not stated"
+    9   = "No applicable"
+;
+VALUE   $V45_F
+    1   = "Yes"
+    2   = "No"
+    7   = "Not stated"
+    9   = "No applicable"
+;
+VALUE   $V46_F
+    1   = "Yes"
+    2   = "No"
+    7   = "Not stated"
+    9   = "No applicable"
+;
+VALUE   V47_F
+    999999999   = "Not applicable"
+;
+VALUE   V48_F
+    999999999   = "Not applicable"
+;
+
+RUN;

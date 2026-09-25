@@ -1,0 +1,12 @@
+* The job ec1999efLoad.sps contains the SPSS control card to load the publi use microdata file into SPSS.
+
+
+* NOTE:  The following variable names have been shortened/modified to comply with SPSS's naming convention (maximum variable name length of eight).
+* ECFSZ0004  --> ECF0004
+* ECFSZ0517  --> ECF0517
+* ECFSZ1824  --> ECF1824
+* ECFSZ2544  --> ECF2544
+* ECFSZ4564  --> ECF4564
+* ECFSZ65pl  --> ECF65PL
+* ECFDWELLTP --> ECFDWELL
+* DVPHLV2G_M --> DVPHLV2G

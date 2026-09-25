@@ -1,0 +1,43 @@
+INFILE &datafid LRECL = 101;
+INPUT
+    @    1   PEFAMID                              $   5.      
+    @    6   PWEIGHT                                 12.4     
+    @   18   REFATINC                             $   2.      
+    @   20   REFGTR                               $   2.      
+    @   22   REFMTINC                             $   2.      
+    @   24   RWAOTPEN                             $   2.      
+    @   26   RWAPRVAL                             $   2.      
+    @   28   RWARPPG                              $   2.      
+    @   30   RWARPPT                              $   2.      
+    @   32   RWARRIF                              $   2.      
+    @   34   RWARRSPL                             $   2.      
+    @   36   RWASTBND                             $   2.      
+    @   38   RWASTDEP                             $   2.      
+    @   40   RWASTMUI                             $   2.      
+    @   42   RWASTOIN                             $   2.      
+    @   44   RWASTONF                             $   2.      
+    @   46   RWASTRST                             $   2.      
+    @   48   RWASTSTK                             $   2.      
+    @   50   RWASTVHE                             $   2.      
+    @   52   RWATFS                               $   2.      
+    @   54   RWATOTPG                             $   2.      
+    @   56   RWATOTPT                             $   2.      
+    @   58   RWBUSEQ                              $   2.      
+    @   60   RWDPRMOR                             $   2.      
+    @   62   RWDSLOAN                             $   2.      
+    @   64   RWDSTCRD                             $   2.      
+    @   66   RWDSTLOC                             $   2.      
+    @   68   RWDSTODB                             $   2.      
+    @   70   RWDSTOMR                             $   2.      
+    @   72   RWDSTVHN                             $   2.      
+    @   74   RWDTOTAL                             $   2.      
+    @   76   RWEIGHT                              $   2.      
+    @   78   RWNETWPG                             $   2.      
+    @   80   RWNETWPT                             $   2.      
+    @   82   RATTCRLM                             $   2.      
+    @   84   RASRCST                              $   2.      
+    @   86   RASR1MFA                             $   2.      
+    @   88   REXMG1A                              $   2.      
+    @   90   RINHERT                              $   2.      
+    @   92   VERDATE                              $  10.      
+         ;

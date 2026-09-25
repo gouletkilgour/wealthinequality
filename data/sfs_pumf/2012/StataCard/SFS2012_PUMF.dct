@@ -1,0 +1,98 @@
+infix dictionary using ??? {
+    str    PEFAMID  1 - 5
+    double PWEIGHT  6 - 17
+    str    RWEIGHT  18 - 19
+    str    PPVRES   20 - 21
+    str    PREGION  22 - 22
+           PFSZ     23 - 23
+    str    PFSZ0004 24 - 24
+    str    PFSZ0517 25 - 25
+    str    PFSZ1824 26 - 26
+    str    PFSZ2544 27 - 27
+    str    PFSZ4564 28 - 28
+    str    PFSZ65UP 29 - 29
+           PAGEMIE  30 - 32
+           PSEXMIE  33 - 33
+    str    PDWTYP   34 - 34
+    str    PFRSPST  35 - 35
+    str    PFCRN    36 - 36
+    str    PEDUCMIE 37 - 37
+    str    PFMTYPG  38 - 38
+           PATTCRC  39 - 39
+           PATTCRP  40 - 40
+           PATTCRR  41 - 41
+           PATTPAYD 42 - 42
+           PATTRSP  43 - 43
+           PATTRSA  44 - 44
+           PATTRSH  45 - 45
+           PATTRSL  46 - 46
+           PATTRSR  47 - 47
+           PATTBUD  48 - 48
+           PEFMTINC 49 - 56
+    str    REFMTINC 57 - 58
+           PEFATINC 59 - 66
+    str    REFATINC 67 - 68
+           PEFGTR   69 - 76
+    str    REFGTR   77 - 78
+           PFTENUR  79 - 79
+    double PWATOTPT 80 - 91
+    str    RWATOTPT 92 - 93
+    double PWATOTPG 94 - 105
+    str    RWATOTPG 106 - 107
+    double PWASTDEP 108 - 119
+    str    RWASTDEP 120 - 121
+    double PWASTMUI 122 - 133
+    str    RWASTMUI 134 - 135
+    double PWASTBND 136 - 147
+    str    RWASTBND 148 - 149
+    double PWASTSTK 150 - 161
+    str    RWASTSTK 162 - 163
+    double PWASTOIN 164 - 175
+    str    RWASTOIN 176 - 177
+    double PWARRSPL 178 - 189
+    str    RWARRSPL 190 - 191
+    double PWARRIF  192 - 203
+    str    RWARRIF  204 - 205
+    double PWAPRVAL 206 - 217
+    str    RWAPRVAL 218 - 219
+    double PWASTRST 220 - 231
+    str    RWASTRST 232 - 233
+    double PWASTVHE 234 - 245
+    str    RWASTVHE 246 - 247
+    double PWARPPT  248 - 259
+    str    RWARPPT  260 - 261
+    double PWASTONF 262 - 273
+    str    RWASTONF 274 - 275
+    double PWARPPG  276 - 287
+    str    RWARPPG  288 - 289
+    double PWAOTPEN 290 - 301
+    str    RWAOTPEN 302 - 303
+           PBUSIND  304 - 304
+    double PWBUSEQ  305 - 316
+    str    RWBUSEQ  317 - 318
+    double PWDTOTAL 319 - 330
+    str    RWDTOTAL 331 - 332
+    double PWDPRMOR 333 - 344
+    str    RWDPRMOR 345 - 346
+    double PWDSTCRD 347 - 358
+    str    RWDSTCRD 359 - 360
+    double PWDSLOAN 361 - 372
+    str    RWDSLOAN 373 - 374
+    double PWDSTVHN 375 - 386
+    str    RWDSTVHN 387 - 388
+    double PWDSTLOC 389 - 400
+    str    RWDSTLOC 401 - 402
+    double PWDSTODB 403 - 414
+    str    RWDSTODB 415 - 416
+    double PWDSTOMR 417 - 428
+    str    RWDSTOMR 429 - 430
+    double PWNETWPT 431 - 442
+    str    RWNETWPT 443 - 444
+    double PWNETWPG 445 - 456
+    str    RWNETWPG 457 - 458
+    double PWATFS   459 - 470
+    str    RWATFS   471 - 472
+    str    PEFMJSIF 473 - 474
+    str    PRETIRME 475 - 475
+           PNBEARG  476 - 476
+}

@@ -1,0 +1,2 @@
+Ec1999efLoad.sas contains the SAS control card to load the public use microdata file into SAS.
+

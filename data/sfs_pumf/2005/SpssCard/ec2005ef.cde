@@ -1,0 +1,328 @@
+VALUE LABELS
+ATTBUD
+    1     "Yes"
+    2     "No"
+    6     "Not Stated"
+    7     "Don't know"
+    8     "Refusal"
+    9     "Not applicable"
+/
+ATTCRC
+    1     "Yes"
+    2     "No"
+    6     "Not Stated"
+    7     "Don't know"
+    8     "Refusal"
+    9     "Not applicable"
+/
+ATTCRP
+    1     "Yes"
+    2     "No"
+    6     "Not Stated"
+    7     "Don't know"
+    8     "Refusal"
+    9     "Not applicable"
+/
+ATTCRR
+    1     "Yes"
+    2     "No"
+    6     "Not stated"
+    7     "Don't know"
+    8     "Refusal"
+    9     "Not applicable"
+/
+ATTFAS
+    1     "Yes"
+    2     "No"
+    3     "Would not be necessary"
+    6     "Not Stated"
+    7     "Don't know"
+    8     "Refusal"
+    9     "Not applicable"
+/
+ATTPAW
+    1     "Yes"
+    2     "No"
+    6     "Not Stated"
+    7     "Don't know"
+    8     "Refusal"
+    9     "Not applicable"
+/
+ATTPAYDAY
+    1     "Yes"
+    2     "No"
+    6     "Not stated"
+    7     "Don't know"
+    8     "Refusal"
+    9     "Not applicable"
+/
+ATTRSA
+    1     "Yes"
+    2     "No"
+    6     "Not Stated"
+    7     "Don't know"
+    8     "Refusal"
+    9     "Not applicable"
+/
+ATTRSH
+    1     "Yes"
+    2     "No"
+    6     "Not Stated"
+    7     "Don't know"
+    8     "Refusal"
+    9     "Not applicable"
+/
+ATTRSL
+    1     "Yes"
+    2     "No"
+    6     "Not stated"
+    7     "Don't know"
+    8     "Refusal"
+    9     "Not applicable"
+/
+ATTRSP
+    1     "Yes"
+    2     "No"
+    6     "Not Stated"
+    7     "Don't know"
+    8     "Refusal"
+    9     "Not applicable"
+/
+ATTRSR
+    1     "Yes"
+    2     "No"
+    6     "Not Stated"
+    7     "Don't know"
+    8     "Refusal"
+    9     "Not applicable"
+/
+ATTSEL
+    1     "Yes"
+    2     "No"
+    6     "Not Stated"
+    7     "Don't know"
+    8     "Refusal"
+    9     "Not applicable"
+/
+ATTSIT
+    1     "Better"
+    2     "Worse"
+    3     "Same"
+    6     "not stated"
+    7     "Don't know"
+/
+ATTSPD
+    1     "Exceeded income"
+    2     "Equalled income"
+    3     "Was less than income"
+    6     "Not Stated"
+    7     "Don't know"
+    8     "Refusal"
+    9     "Not applicable"
+/
+BUSIND
+    1     "Yes"
+    2     "No"
+    6     "Not Stated"
+    7     "Don't know"
+    8     "Refusal"
+    9     "Not applicable"
+/
+DVFATT5H
+    1     "Use savings"
+    2     "Borrow from friend or relative"
+    3     "Use credit cards"
+    4     "Use line of credit"
+    5     "Arrange for a loan"
+    6     "Sell an asset"
+    7     "Could not handle it"
+    8     "Other"
+/
+DVFATT5K
+    1     "Use savings"
+    2     "Borrow from friend or relative"
+    3     "Use credit cards"
+    4     "Use line of credit"
+    5     "Arrange for a loan"
+    6     "Sell an asset"
+    7     "Could not handle it"
+    8     "Other"
+/
+DVFMCOMP
+    1     "Unattached individuals"
+    2     "Couples, no children"
+    3     "Couples with children"
+    4     "Loneparent families"
+    5     "Other family types"
+/
+DVFRSPST
+    1     "Have RRSP, have never withdrawn money (If O2 is yes, K12 is yes and all parts of K13 are no.)"
+    2     "Had RRSP and have withdrawn it  (If O2 is no, K12 is yes and at least one part of K13 is yes.)"
+    3     "Never had money in RRSP (If O2 is no, K12 is no.)"
+    4     "Not known (all other cases)"
+/
+DVFTENUR
+    1     "Own without mortgage"
+    2     "Own with mortgage"
+    3     "Do not own"
+/
+DVPHLV2G
+    1     "Less than high school"
+    2     "Graduated high school"
+    3     "Non-university post-secondary certificate"
+    4     "University degree or certificate"
+    7     "Not stated"
+/
+ECFDWELLTP
+    1     "Single detached"
+    2     "Double/semi-detached,row or terrace,duplex"
+    3     "Apartment"
+    4     "Mobile home, condominium - type of building unspecified, other-specify"
+    7     "Not stated"
+/
+ECFSZ0004
+    0     "No"
+    1     "Yes"
+    7     "Not stated"
+/
+ECFSZ0517
+    0     "No"
+    1     "Yes"
+    7     "Not stated"
+/
+ECFSZ1824
+    0     "No"
+    1     "Yes"
+    7     "Not stated"
+/
+ECFSZ2544
+    0     "No"
+    1     "Yes"
+    7     "Not stated"
+/
+ECFSZ4564
+    0     "No"
+    1     "Yes"
+    7     "Not stated"
+/
+ECFSZ65PL
+    0     "No"
+    1     "Yes"
+    7     "Not stated"
+/
+HCSEX_R
+    1     "Male"
+    2     "Female"
+/
+MJSIF27
+    01     "No income"
+    02     "Wages and salaries"
+    03     "Self-employment income"
+    04     "Government transfers"
+    05     "Investment income"
+    06     "Retirement pensions"
+    07     "Other income"
+    96     "Not Stated"
+    97     "Don't know"
+    98     "Refusal"
+    99     "Not applicable"
+/
+NBEAR27
+    00:06     ""
+    96     "Not Stated"
+    97     "Don't know"
+    98     "Refusal"
+    99     "Not applicable"
+/
+REGION
+    1     "Atlantic"
+    2     "Québec"
+    3     "Ontario"
+    4     "Prairies"
+    5     "British Columbia"
+/
+RTPLNAGE
+    045:095     "Valid age range"
+    997     "Not stated"
+    999     "Not applicable"
+/
+RTPLNNOT
+    1     "Do not plan to retire"
+    2     "Plan to retire"
+    7     "Not stated"
+    9     "Not applicable"
+/
+RTREINC
+    1     "Yes"
+    2     "No"
+    7     "Not stated"
+    9     "No applicable"
+/
+RTRELOFF
+    1     "Yes"
+    2     "No"
+    7     "Not stated"
+    9     "No applicable"
+/
+RTREMAN
+    1     "Yes"
+    2     "No"
+    7     "Not stated"
+    9     "No applicable"
+/
+RTREOTH
+    1     "Yes"
+    2     "No"
+    7     "Not stated"
+    9     "No applicable"
+/
+RTREPFR
+    1     "Yes"
+    2     "No"
+    7     "Not stated"
+    9     "No applicable"
+/
+RTREPH
+    1     "Yes"
+    2     "No"
+    7     "Not stated"
+    9     "No applicable"
+/
+RTRESFS
+    1     "Yes"
+    2     "No"
+    7     "Not stated"
+    9     "No applicable"
+/
+RTRETIRE
+    1     "Yes"
+    2     "No"
+    7     "Not stated"
+    9     "No applicable"
+/
+RTRETWK
+    1     "Yes"
+    2     "No"
+    7     "Not stated"
+    9     "No applicable"
+/
+RTRETWKT
+    1     "Yes"
+    2     "No"
+    7     "Not stated"
+    9     "No applicable"
+/
+RTREYRS
+    1     "Yes"
+    2     "No"
+    7     "Not stated"
+    9     "No applicable"
+/
+WATOTPG
+    999999999     "Not applicable"
+/
+WATOTPT
+    999999999     "Not applicable"
+/
+
+.

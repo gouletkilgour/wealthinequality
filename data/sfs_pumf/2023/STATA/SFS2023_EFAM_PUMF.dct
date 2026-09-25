@@ -1,0 +1,104 @@
+infix dictionary using ??? {
+    str    PEFAMID  1 - 5
+    double PWEIGHT  6 - 17
+    str    PAGEMIEG 18 - 19
+           PAS1MRAG 20 - 20
+           PAS1MRG1 21 - 21
+           PAS1MRG2 22 - 22
+    double PASR1MFA 23 - 30
+           PASR1MR  31 - 31
+           PASRBUYG 32 - 33
+           PASRCNMG 34 - 34
+           PASRCON  35 - 35
+    double PASRCST  36 - 43
+           PASRCURG 44 - 45
+           PASRDPO1 46 - 46
+           PASRDPO2 47 - 47
+           PASRDPO3 48 - 48
+           PASRDPO4 49 - 49
+           PASRDPO5 50 - 50
+           PASRDWNG 51 - 52
+           PASRFNMG 53 - 53
+           PASRINT  54 - 54
+    str    PASRINTG 55 - 56
+           PASRMOAG 57 - 57
+           PASRMPFG 58 - 59
+           PASRMRYG 60 - 63
+           PASRRNTG 64 - 64
+           PASRSKP  65 - 65
+           PATTCRC  66 - 66
+           PATTCRLM 67 - 72
+           PATTCRR  73 - 73
+           PATTCRU  74 - 74
+           PATTDIF  75 - 75
+           PATTLCP  76 - 76
+           PATTLCR  77 - 77
+    double PATTLMLC 78 - 85
+           PATTPAYD 86 - 86
+           PATTRSA  87 - 87
+           PATTRSH  88 - 88
+           PATTRSL  89 - 89
+           PATTRSP  90 - 90
+           PATTRSR  91 - 91
+           PATTSITC 92 - 92
+           PATTSKP  93 - 93
+           PATTSTIN 94 - 94
+           PBUSIND  95 - 95
+    str    PDWTYP   96 - 96
+    str    PEDUCMIE 97 - 97
+    double PEFATINC 98 - 105
+    double PEFGTR   106 - 113
+    str    PEFMJSIF 114 - 115
+    double PEFMTINC 116 - 123
+           PEXMG1A  124 - 128
+           PEXMG1F  129 - 129
+    str    PFCRN    130 - 130
+    str    PFMTYPG  131 - 131
+    str    PFRSPST  132 - 132
+           PFSZ     133 - 133
+    str    PFSZ0017 134 - 134
+    str    PFSZ1824 135 - 135
+    str    PFSZ2544 136 - 136
+    str    PFSZ4564 137 - 137
+    str    PFSZ65UP 138 - 138
+           PFTENUR  139 - 139
+           PGDRMIE  140 - 140
+    double PINHERT  141 - 149
+    str    PLFCHRME 150 - 150
+    str    PLFFPTME 151 - 151
+    str    PLFPDMEG 152 - 152
+           PNBEARG  153 - 153
+    str    PPVRES   154 - 155
+    str    PREGION  156 - 156
+    str    PRETIRME 157 - 157
+           PVMFMIE  158 - 158
+    double PWAOTPEN 159 - 170
+    double PWAPRVAL 171 - 182
+    double PWARPPG  183 - 194
+    double PWARPPT  195 - 206
+    double PWARRIF  207 - 218
+    double PWARRSPL 219 - 230
+    double PWASTBND 231 - 242
+    double PWASTDEP 243 - 254
+    double PWASTMUI 255 - 266
+    double PWASTOIN 267 - 278
+    double PWASTONF 279 - 290
+    double PWASTRST 291 - 302
+    double PWASTSTK 303 - 314
+    double PWASTVHE 315 - 326
+    double PWATFS   327 - 338
+    double PWATOTPG 339 - 350
+    double PWATOTPT 351 - 362
+    double PWBUSEQ  363 - 374
+    double PWDPRMOR 375 - 386
+    double PWDSLOAN 387 - 398
+    double PWDSTCRD 399 - 410
+    double PWDSTLOC 411 - 422
+    double PWDSTODB 423 - 434
+    double PWDSTOMR 435 - 446
+    double PWDSTVHN 447 - 458
+    double PWDTOTAL 459 - 470
+    double PWNETWPG 471 - 482
+    double PWNETWPT 483 - 494
+    str    VERDATE  495 - 504
+}
