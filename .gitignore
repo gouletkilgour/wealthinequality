@@ -3,3 +3,6 @@
 
 # macOS Finder metadata
 .DS_Store
+
+# NBSA table exceeds GitHub's 100 MB limit; unzip data/nbsa/36100580-eng.zip to recreate it
+data/nbsa/36100580.csv

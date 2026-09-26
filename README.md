@@ -16,7 +16,9 @@ These data are located in `data/sfs_pumf`. The boostrap weights for 2016, 2019, 
 
 ## National Balance Sheet Accounts
 
-The National Balance Sheet Accounts (NBSA)
+The National Balance Sheet Accounts (NBSA) are Statistics Canada's quarterly estimates of the assets, liabilities and net worth of each sector of the Canadian economy, including households. Unlike the SFS, they are aggregate totals built from administrative and financial data rather than a survey of families, and they are available every quarter. The data come from Statistics Canada [Table 36-10-0580-01](https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=3610058001), which covers 1990 Q1 to 2026 Q1 in the downloaded version, in millions of dollars at market and book value.
+
+These data are located in `data/nbsa`. The CSV is too large for this repository, so unzip `data/nbsa/36100580-eng.zip` to recreate `data/nbsa/36100580.csv`. 
 
 # Wealth Inequality: SFS PUMF
 
@@ -26,4 +28,11 @@ For 2012, 2016, 2019 and 2023, it computes the top 0.01%, 0.1%, 1%, 5%, 10%, 20%
 
 # Wealth Inequality: SFS PUMF + NBSA
 
+`sfs_nbsa.jl` takes the raw SFS PUMF data and aligns it with the NBSA, following Appendix A.1 of PBO (2020), *Estimating the Top Tail of the Family Wealth Distribution in Canada*. It produces `output/sfs_nbsa_aligned.csv` (the aligned family-level data), `output/sfs_nbsa_alignment.csv` (SFS and NBSA totals and adjustment factors), `output/sfs_nbsa_wealth_inequality.csv` and `output/sfs_nbsa_wealth_summary.csv`.
+
+Each family's assets and debts are grouped into financial assets (including employer pensions on a termination basis and business equity), non-financial assets and debts. Each category is then scaled by an adjustment factor, NBSA total ÷ SFS weighted total, so that the SFS totals match the NBSA household sector (market value). The survey years are matched to the NBSA at Q4 for 2012, 2016 and 2019, and at Q2 for 2023, following each survey's collection period. Wealth shares, Gini and standard errors are computed as in `sfs.jl`, with the adjustment factors recomputed for each bootstrap replicate.
+
+The 2016 SFS totals match PBO's Table A1-1, but the adjustment factors differ from PBO's because the NBSA has since been revised. See `notes/other_nonfinancial_assets_2023.md` for a break in other non-financial assets in 2023.
+
 # Wealth Inequality: SFS PUMF + NBSA + Rich Lists
+
