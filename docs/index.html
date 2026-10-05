@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wealth Inequality in Canada</title>
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text: #1a1a1a;
+      --muted: #666666;
+      --border: #e0e0e0;
+      --accent: #2a5db0;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #15161a;
+        --text: #ececec;
+        --muted: #9a9a9a;
+        --border: #33343a;
+        --accent: #7aa2f7;
+      }
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .page { max-width: 960px; margin: 0 auto; padding: 2.5rem 1rem 3rem; }
+
+    h1 { font-size: 1.6rem; margin-bottom: 0.35rem; }
+
+    .subtitle { color: var(--muted); font-size: 0.95rem; margin-bottom: 1.5rem; }
+
+    section {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 0.75rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .chart-controls {
+      padding: 0.6rem 1rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .chart-ctrl-label { font-size: 0.75rem; font-weight: 500; color: var(--muted); }
+
+    .measure-tabs { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+
+    .measure-tab {
+      font-family: inherit;
+      font-size: 0.78rem;
+      font-weight: 500;
+      line-height: 1.5;
+      padding: 0.2rem 0.55rem;
+      border: 1.5px solid var(--accent);
+      border-radius: 3px;
+      background: transparent;
+      color: var(--accent);
+      cursor: pointer;
+      transition: background 0.12s, color 0.12s;
+    }
+
+    .measure-tab[aria-pressed="true"] { background: var(--accent); color: var(--bg); }
+
+    .measure-tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    #chart { height: 520px; }
+
+
+    details { padding: 0.75rem 1.25rem; border-top: 1px solid var(--border); }
+
+    summary { cursor: pointer; font-size: 0.85rem; color: var(--accent); }
+
+    table {
+      width: 100%;
+      max-width: 32rem;
+      border-collapse: collapse;
+      margin-top: 0.75rem;
+      font-size: 0.85rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    caption { text-align: left; font-size: 0.8rem; color: var(--muted); padding-bottom: 0.4rem; }
+
+    th, td { padding: 0.3rem 0 0.3rem 1.5rem; text-align: right; border-bottom: 1px solid var(--border); }
+
+    th:first-child { padding-left: 0; text-align: left; }
+
+    tbody th { font-weight: 400; }
+
+    .prose { padding: 1.5rem 1.75rem; line-height: 1.7; font-size: 0.93rem; }
+
+    .prose h2 { font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; }
+
+    .prose p { margin-bottom: 1rem; }
+
+    .source { font-size: 0.75rem; color: var(--muted); }
+
+    @media (max-width: 600px) {
+      .page { padding-top: 1.5rem; }
+      #chart { height: 440px; }
+      .prose { padding: 1.25rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page">
+  <h1>Wealth Inequality in Canada</h1>
+  <p class="subtitle">Survey of Financial Security, alone, aligned with the National Balance Sheet Accounts, and with the Forbes and Canadian Business rich lists added, 2012&ndash;2023</p>
+
+  <section>
+    <div class="section-label">Chart</div>
+    <div class="chart-controls">
+      <span class="chart-ctrl-label" id="measure-label">Measure:</span>
+      <div class="measure-tabs" id="measure-tabs" role="group" aria-labelledby="measure-label"></div>
+    </div>
+    <div id="chart"></div>
+    <details>
+      <summary>Data table</summary>
+      <table id="data-table"></table>
+    </details>
+  </section>
+
+  <section>
+    <div class="section-label">About this data</div>
+    <div class="prose">
+      A description of the data and methodology will go here.
+    </div>
+  </section>
+</div>
+
+<script>
+  const DATA = [{"name":"SFS","measures":{"top_0_1pct":{"x":[2012,2016,2019,2023],"y":[2.5486,3.0504,2.829,2.0874]},"top_5pct":{"x":[2012,2016,2019,2023],"y":[32.4226,32.9943,33.0679,29.0566]},"top_20pct":{"x":[2012,2016,2019,2023],"y":[67.4195,67.1589,66.9327,63.3637]},"top_10pct":{"x":[2012,2016,2019,2023],"y":[47.7309,47.6487,47.792,43.7346]},"top_50pct":{"x":[2012,2016,2019,2023],"y":[94.555,94.225,93.7042,91.9098]},"top_0_01pct":{"x":[2012,2016,2019,2023],"y":[0.3656,0.4069,0.3921,0.3424]},"gini":{"x":[2012,2016,2019,2023],"y":[0.671,0.6681,0.6637,0.6266]},"top_1pct":{"x":[2012,2016,2019,2023],"y":[12.4614,13.7244,13.7467,10.6309]}}},{"name":"SFS + NBSA","measures":{"top_0_1pct":{"x":[2012,2016,2019,2023],"y":[2.71,3.2675,2.9386,2.1712]},"top_5pct":{"x":[2012,2016,2019,2023],"y":[34.1089,34.3115,34.9016,30.1718]},"top_20pct":{"x":[2012,2016,2019,2023],"y":[70.1916,69.1106,69.4837,65.1115]},"top_10pct":{"x":[2012,2016,2019,2023],"y":[50.053,49.3247,50.1129,45.237]},"top_50pct":{"x":[2012,2016,2019,2023],"y":[96.4822,95.3828,95.2005,93.0288]},"top_0_01pct":{"x":[2012,2016,2019,2023],"y":[0.3863,0.4229,0.4005,0.354]},"gini":{"x":[2012,2016,2019,2023],"y":[0.7025,0.6886,0.6908,0.646]},"top_1pct":{"x":[2012,2016,2019,2023],"y":[13.1343,14.4459,14.6247,11.1756]}}},{"name":"SFS + NBSA + Forbes","measures":{"top_0_1pct":{"x":[2012,2016,2019,2023],"y":[9.8919,11.4931,11.8656,11.9386]},"top_5pct":{"x":[2012,2016,2019,2023],"y":[41.7149,42.7891,44.1681,41.8439]},"top_20pct":{"x":[2012,2016,2019,2023],"y":[73.9074,73.3466,74.1403,71.1646]},"top_10pct":{"x":[2012,2016,2019,2023],"y":[55.9328,55.9712,57.36,54.495]},"top_50pct":{"x":[2012,2016,2019,2023],"y":[97.2819,96.2683,96.2756,94.5279]},"top_0_01pct":{"x":[2012,2016,2019,2023],"y":[4.2941,5.3334,5.4288,5.6832]},"gini":{"x":[2012,2016,2019,2023],"y":[0.7415,0.732,0.7395,0.7086]},"top_1pct":{"x":[2012,2016,2019,2023],"y":[22.6671,24.6884,25.6516,24.8724]}}},{"name":"SFS + NBSA + Forbes + Canadian Business","measures":{"top_0_1pct":{"x":[2012,2016,2019,2023],"y":[13.7378,14.667,11.8656,11.9386]},"top_5pct":{"x":[2012,2016,2019,2023],"y":[45.3961,46.0416,44.1681,41.8439]},"top_20pct":{"x":[2012,2016,2019,2023],"y":[75.714,74.9781,74.1403,71.1646]},"top_10pct":{"x":[2012,2016,2019,2023],"y":[58.7843,58.5246,57.36,54.495]},"top_50pct":{"x":[2012,2016,2019,2023],"y":[97.6743,96.6122,96.2756,94.5279]},"top_0_01pct":{"x":[2012,2016,2019,2023],"y":[6.4432,7.0994,5.4288,5.6832]},"gini":{"x":[2012,2016,2019,2023],"y":[0.7605,0.7488,0.7395,0.7086]},"top_1pct":{"x":[2012,2016,2019,2023],"y":[27.411,28.7229,25.6516,24.8724]}}}];
+
+  const MEASURES = [
+    { key: "top_0_01pct", label: "Top 0.01%", digits: 1 },
+    { key: "top_0_1pct",  label: "Top 0.1%",  digits: 1 },
+    { key: "top_1pct",    label: "Top 1%",    digits: 1 },
+    { key: "top_5pct",    label: "Top 5%",    digits: 1 },
+    { key: "top_10pct",   label: "Top 10%",   digits: 1 },
+    { key: "top_20pct",   label: "Top 20%",   digits: 1 },
+    { key: "top_50pct",   label: "Top 50%",   digits: 1 },
+    { key: "gini",        label: "Gini",      digits: 3 },
+  ];
+
+  // One colour and marker per source, in order. The first three colours are the Inequality
+  // Dashboard's, and the magenta was chosen to stay distinguishable from them with
+  // colour-vision deficiency on both themes. The fourth line is dashed, since it
+  // coincides with the third in 2019 and 2023.
+  const COLORS  = ["#636efa", "#ef553b", "#00aa7a", "#a840a0"];
+  const SYMBOLS = ["circle", "diamond", "square", "triangle-up"];
+  const DASHES  = ["solid", "solid", "solid", "dash"];
+
+  const THEMES = {
+    light: { paper: "#ffffff", plot: "#E5ECF6", grid: "#ffffff", text: "#444444" },
+    dark:  { paper: "#15161a", plot: "#1e1f24", grid: "#33343a", text: "#c8c8c8" },
+  };
+
+  const MARGIN_T = 50, MARGIN_B = 70, MARGIN_L = 60;
+  const darkMode = window.matchMedia("(prefers-color-scheme: dark)");
+  let current = MEASURES[2];
+
+  const isShare = m => m.key !== "gini";
+  const series  = src => src.measures[current.key];
+  const fmt     = v => v.toFixed(current.digits);
+
+  function yRange() {
+    const ys = DATA.flatMap(src => series(src).y);
+    const lo = Math.min(...ys), hi = Math.max(...ys);
+    const pad = 0.1 * (hi - lo || Math.abs(hi) || 1);
+    return [lo - pad, hi + pad];
+  }
+
+  function buildTraces(t) {
+    return DATA.map((src, i) => {
+      const s = series(src);
+      return {
+        x: s.x,
+        y: s.y,
+        name: src.name,
+        type: "scatter",
+        mode: "lines+markers",
+        line: { color: COLORS[i], width: 2, dash: DASHES[i] },
+        marker: { color: COLORS[i], symbol: SYMBOLS[i], size: 10, line: { color: t.plot, width: 2 } },
+        text: s.y.map(y => "<b>" + fmt(y) + (isShare(current) ? "%" : "") + "</b>  " + src.name),
+        hovertemplate: "%{text}<extra></extra>",
+      };
+    });
+  }
+
+  // On narrow screens the title wraps onto two lines
+  function buildLayout(t) {
+    const el      = document.getElementById("chart");
+    const narrow  = el.offsetWidth < 560;
+    const marginT = narrow ? 75 : MARGIN_T;
+    const plotH   = Math.max((el.offsetHeight || 480) - marginT - MARGIN_B, 80);
+    const years   = series(DATA[0]).x;
+    const range   = yRange();
+    const sep     = narrow ? "<br>" : " – ";
+    return {
+      title: { text: isShare(current) ? "Share of Total Net Worth" + sep + current.label + " – Canada"
+                                      : "Gini Coefficient of Net Worth" + sep + "Canada" },
+      font: { color: t.text },
+      xaxis: {
+        title: { text: "Year" },
+        tickmode: "array",
+        tickvals: years,
+        range: [years[0] - 1, years[years.length - 1] + 1],
+        gridcolor: t.grid,
+        spikedash: "solid",
+        spikethickness: 1,
+        spikecolor: t.text,
+      },
+      yaxis: {
+        title: { text: isShare(current) ? "Share of Total Net Worth (%)" : "Gini Coefficient" },
+        range: range,
+        gridcolor: t.grid,
+        zeroline: false,
+      },
+      legend: { x: 0.5, xanchor: "center", y: -(55 / plotH), orientation: "h" },
+      margin: { l: MARGIN_L, b: MARGIN_B, r: 20, t: marginT },
+      hovermode: "x unified",
+      hoverlabel: { bgcolor: t.paper, font: { color: t.text } },
+      paper_bgcolor: t.paper,
+      plot_bgcolor: t.plot,
+    };
+  }
+
+  function drawChart() {
+    const t = darkMode.matches ? THEMES.dark : THEMES.light;
+    Plotly.react("chart", buildTraces(t), buildLayout(t), { responsive: true });
+  }
+
+  // The chart's values as a table, for reading exact figures without hovering
+  function renderTable() {
+    const table = document.getElementById("data-table");
+    table.textContent = "";
+    table.createCaption().textContent =
+      isShare(current) ? current.label + " share of total net worth (%)" : "Gini coefficient of net worth";
+    const head = table.createTHead().insertRow();
+    ["Year", ...DATA.map(src => src.name)].forEach(name => {
+      const th = document.createElement("th");
+      th.scope = "col";
+      th.textContent = name;
+      head.appendChild(th);
+    });
+    const body = table.createTBody();
+    series(DATA[0]).x.forEach(year => {
+      const row = body.insertRow();
+      const th = document.createElement("th");
+      th.scope = "row";
+      th.textContent = year;
+      row.appendChild(th);
+      DATA.forEach(src => {
+        const s = series(src), k = s.x.indexOf(year);
+        row.insertCell().textContent = k < 0 ? "" : fmt(s.y[k]);
+      });
+    });
+  }
+
+  function update() {
+    drawChart();
+    renderTable();
+  }
+
+  const tabs = document.getElementById("measure-tabs");
+  MEASURES.forEach(m => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "measure-tab";
+    btn.textContent = m.label;
+    btn.setAttribute("aria-pressed", String(m === current));
+    btn.addEventListener("click", () => {
+      current = m;
+      tabs.querySelectorAll(".measure-tab").forEach(b => b.setAttribute("aria-pressed", String(b === btn)));
+      update();
+    });
+    tabs.appendChild(btn);
+  });
+
+  update();
+  darkMode.addEventListener("change", drawChart);
+
+  // Recompute the legend position when the chart is resized.
+  // Debounced to avoid a relayout -> resize -> relayout loop.
+  let resizeTimer;
+  new ResizeObserver(() => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(drawChart, 50);
+  }).observe(document.getElementById("chart"));
+</script>
+
+</body>
+</html>
