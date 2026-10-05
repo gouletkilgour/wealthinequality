@@ -30,6 +30,13 @@ The lists were built outside this repository from the Forbes lists:
 - **Relatives combined.** Relatives that Forbes lists separately are combined into one row: the Irving family (James and Arthur; James only in 2012), and in 2023 also the Saputo, Zekelman and Azrieli families. Amounts are summed in USD before conversion.
 - **All citizens kept.** Every Forbes entry with Canadian citizenship is kept, including Canadians living abroad and Nathaniel Rothschild (2012), who appears to be miscoded as Canadian.
 
+## Canadian Business Rich 100
+
+Canadian Business magazine published an annual list of the 100 richest Canadians, individuals and families, from 1999 until November 2017, with each edition titled with the following year. Maclean's revived the list in November 2024. There is therefore no list for 2019 or 2023.
+
+- `data/cb_macleans/cb_canada_<year>_cad.csv` holds the editions published in 2012 and 2016, from the Internet Archive copies of canadianbusiness.com, with net worth (`net_worth`) in billions of Canadian dollars. 2012 is the 14th annual list, published 22 November 2012 (full ranking posted online in December 2013, with exact dollar figures, rounded here to $1 million). 2016 is the 18th annual list, titled "2017", published 7 December 2016. Names are as published, including family entries.
+- `data/cb_macleans_forbes/cb_macleans_forbes_canada_<year>_cad.csv` merges each Canadian Business list with the Forbes list of the same year: `net_worth_cb`, `net_worth_forbes` and their average `net_worth_avg`, which equals the one available value for families on only one list. Exact name matches were combined, and every similar-name pair was reviewed by hand and combined (2012: Thomson, Irving, Pattison, Desmarais, Sherman, Saputo, Riddell, Wilson, Edwards, Schwartz; 2016: Thomson, Irving, Sherman, Pattison, Saputo, Wilson, Schwartz, Laliberté), under the Forbes name. In several pairs Canadian Business counts a family or couple and Forbes one person (Thomson, Saputo, Schwartz and Reisman, Irving). The merged lists have 101 entries (2012) and 102 (2016).
+
 # Wealth Inequality: SFS PUMF
 
 `sfs.jl` takes the raw SFS PUMF data and produces `output/sfs_wealth_inequality.csv` and `output/sfs_wealth_summary.csv`.
@@ -86,3 +93,20 @@ The results are not directly comparable with PBO's other figures, for three reas
 Keeping non-residents and combining relatives both thicken the tail. For comparison, PBO (2025) reports top 1% shares from SFS + Forbes of 21.9% (2016), 23.4% (2019) and 22.0% (2023), and 24.3% for 2019 when using the PUMF.
 
 The Forbes lists are valued in February or March of each survey year, a few months before the NBSA quarter.
+
+## Forbes + Canadian Business
+
+`sfs_nbsa_forbes_cb.jl` runs the same procedure, with the same code, using the merged Canadian Business and Forbes lists (`net_worth_avg`) for 2012 and 2016, and the Forbes list for 2019 and 2023. It produces the same five files with the prefix `sfs_nbsa_forbes_cb_`; in `sfs_nbsa_forbes_cb_tail.csv` the list columns are named `rich_list_*`, and in the integrated data the list rows have source `Rich list`.
+
+The merged lists reach below the Forbes billionaires, to the 100th Canadian Business entry, $654M in 2012 and $875M in 2016, so the synthetic families stop there, as in PBO (2020), which also used the lowest Canadian Business entry. 2019 and 2023 are identical to `sfs_nbsa_forbes.jl`.
+
+| | 2012 | 2016 |
+|---|---|---|
+| α | 1.369 | 1.361 |
+| List entries | 101 | 102 |
+| List total ($B) | 194.8 | 307.3 |
+| Top 0.1% share | 13.7 | 14.7 |
+| Top 1% share | 27.4 | 28.7 |
+| Top 10% share | 58.8 | 58.5 |
+
+The iterative factors for 2016 are 0.814, 0.882 and 0.949. Both α and the top 1% share are further from PBO's 2016 figures (α = 1.45, 25.6%) than with Forbes alone. PBO's cleaned Canadian Business list had 80 resident economic families holding $197B, against 102 entries holding $307B here, since non-residents are kept and families are not split.

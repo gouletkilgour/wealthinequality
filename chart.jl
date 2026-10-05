@@ -1,9 +1,10 @@
 using CSV, DataFrames
 
 # Writes output/wealth_inequality.html, an interactive chart comparing the wealth
-# shares and Gini coefficient from sfs.jl (SFS), sfs_nbsa.jl (SFS + NBSA) and
-# sfs_nbsa_forbes.jl (SFS + NBSA + Forbes), with a button for each measure. Run those
-# three scripts first. Apart from Plotly, which
+# shares and Gini coefficient from sfs.jl (SFS), sfs_nbsa.jl (SFS + NBSA),
+# sfs_nbsa_forbes.jl (SFS + NBSA + Forbes) and sfs_nbsa_forbes_cb.jl (SFS + NBSA + Forbes
+# + Canadian Business), with a button for each measure. Run those four scripts first.
+# Apart from Plotly, which
 # loads from its CDN, the page is self-contained, so it can be published as is.
 
 const OUTDIR = joinpath(@__DIR__, "output")
@@ -11,7 +12,8 @@ const OUTDIR = joinpath(@__DIR__, "output")
 # One line per source, drawn in this order
 const SOURCES = ["SFS" => "sfs_wealth_inequality.csv",
                  "SFS + NBSA" => "sfs_nbsa_wealth_inequality.csv",
-                 "SFS + NBSA + Forbes" => "sfs_nbsa_forbes_wealth_inequality.csv"]
+                 "SFS + NBSA + Forbes" => "sfs_nbsa_forbes_wealth_inequality.csv",
+                 "SFS + NBSA + Forbes + Canadian Business" => "sfs_nbsa_forbes_cb_wealth_inequality.csv"]
 
 json(x::Real) = string(x)
 json(::Missing) = "null"
@@ -166,7 +168,7 @@ page(data) = """<!DOCTYPE html>
 
 <div class="page">
   <h1>Wealth Inequality in Canada</h1>
-  <p class="subtitle">Survey of Financial Security, alone, aligned with the National Balance Sheet Accounts, and with the Forbes rich list added, 2012&ndash;2023</p>
+  <p class="subtitle">Survey of Financial Security, alone, aligned with the National Balance Sheet Accounts, and with the Forbes and Canadian Business rich lists added, 2012&ndash;2023</p>
 
   <section>
     <div class="section-label">Chart</div>
@@ -204,13 +206,18 @@ page(data) = """<!DOCTYPE html>
         Following Appendices A.2 to A.4 of PBO (2020), Canadians on the Forbes billionaires list are added to the NBSA-aligned SFS as one family each. A Pareto distribution is fitted to the SFS families with net worth above a threshold (\$3 million in 2016 dollars) together with the Forbes entries, using the modified regression of Vermeulen (2018). The SFS families above the threshold are replaced by synthetic families drawn from that distribution up to the lowest Forbes entry, with the Forbes entries themselves above it. The adjustment factors are then revised until financial assets, non-financial assets and debts again match the NBSA. Unlike PBO, Canadians living abroad are kept, and relatives listed separately by Forbes are combined into one family, which fattens the top of the distribution somewhat.
       </p>
 
+      <h2>SFS + NBSA + Forbes + Canadian Business</h2>
+      <p>
+        The same procedure as SFS + NBSA + Forbes, but for 2012 and 2016 the Forbes list is replaced by the Canadian Business Rich 100 merged with it: families on both lists are combined, at the average of their two net worths, and families on only one list are kept at that list's value. The Rich 100 reaches below the Forbes billionaires, to about \$650 million in 2012 and \$875 million in 2016, so the synthetic families stop at its lowest entry, as in PBO (2020). Canadian Business stopped publishing the list after 2017, so 2019 and 2023 use the Forbes list alone and match SFS + NBSA + Forbes. The Rich 100 lists used were published in November 2012 and December 2016.
+      </p>
+
       <h2>Caveats</h2>
       <p>
         In the SFS and SFS + NBSA series, shares for the top 0.1% and above rest on very few survey records and should be read with caution. In 2023, families reported much higher values for home contents and collectibles than in earlier cycles, most plausibly because the survey was self-completed rather than interviewer-administered. This probably raises measured 2023 inequality slightly, by an amount not yet quantified.
       </p>
 
       <p class="source">
-        Data source: Statistics Canada, Survey of Financial Security Public Use Microdata Files, and Table 36-10-0580-01 (National Balance Sheet Accounts); Forbes, The World's Billionaires
+        Data source: Statistics Canada, Survey of Financial Security Public Use Microdata Files, and Table 36-10-0580-01 (National Balance Sheet Accounts); Forbes, The World's Billionaires; Canadian Business, Rich 100
       </p>
     </div>
   </section>
@@ -230,10 +237,13 @@ page(data) = """<!DOCTYPE html>
     { key: "gini",        label: "Gini",      digits: 3 },
   ];
 
-  // One colour and marker per source, in order. The colours are the Inequality
-  // Dashboard's and stay distinguishable with colour-vision deficiency on both themes.
-  const COLORS  = ["#636efa", "#ef553b", "#00aa7a"];
-  const SYMBOLS = ["circle", "diamond", "square"];
+  // One colour and marker per source, in order. The first three colours are the Inequality
+  // Dashboard's, and the magenta was chosen to stay distinguishable from them with
+  // colour-vision deficiency on both themes. The fourth line is dashed, since it
+  // coincides with the third in 2019 and 2023.
+  const COLORS  = ["#636efa", "#ef553b", "#00aa7a", "#a840a0"];
+  const SYMBOLS = ["circle", "diamond", "square", "triangle-up"];
+  const DASHES  = ["solid", "solid", "solid", "dash"];
 
   const THEMES = {
     light: { paper: "#ffffff", plot: "#E5ECF6", grid: "#ffffff", text: "#444444" },
@@ -264,7 +274,7 @@ page(data) = """<!DOCTYPE html>
         name: src.name,
         type: "scatter",
         mode: "lines+markers",
-        line: { color: COLORS[i], width: 2 },
+        line: { color: COLORS[i], width: 2, dash: DASHES[i] },
         marker: { color: COLORS[i], symbol: SYMBOLS[i], size: 10, line: { color: t.plot, width: 2 } },
         text: s.y.map(y => "<b>" + fmt(y) + (isShare(current) ? "%" : "") + "</b>  " + src.name),
         hovertemplate: "%{text}<extra></extra>",
