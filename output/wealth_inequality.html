@@ -12,9 +12,6 @@
       --muted: #666666;
       --border: #e0e0e0;
       --accent: #2a5db0;
-      --caveat-text: #8a6d00;
-      --caveat-bg: #fff8e1;
-      --caveat-border: #f0e0a0;
     }
 
     @media (prefers-color-scheme: dark) {
@@ -24,9 +21,6 @@
         --muted: #9a9a9a;
         --border: #33343a;
         --accent: #7aa2f7;
-        --caveat-text: #e6c56b;
-        --caveat-bg: #2a2412;
-        --caveat-border: #5c4c1a;
       }
     }
 
@@ -96,15 +90,6 @@
 
     #chart { height: 520px; }
 
-    .caveat {
-      font-size: 0.85rem;
-      color: var(--caveat-text);
-      background: var(--caveat-bg);
-      border: 1px solid var(--caveat-border);
-      border-radius: 4px;
-      padding: 0.6rem 0.9rem;
-      margin: 0 1rem 1rem;
-    }
 
     details { padding: 0.75rem 1.25rem; border-top: 1px solid var(--border); }
 
@@ -146,7 +131,7 @@
 
 <div class="page">
   <h1>Wealth Inequality in Canada</h1>
-  <p class="subtitle">Survey of Financial Security, alone and aligned with the National Balance Sheet Accounts, 2012&ndash;2023</p>
+  <p class="subtitle"></p>
 
   <section>
     <div class="section-label">Chart</div>
@@ -155,7 +140,6 @@
       <div class="measure-tabs" id="measure-tabs" role="group" aria-labelledby="measure-label"></div>
     </div>
     <div id="chart"></div>
-    <p class="caveat" id="caveat" hidden></p>
     <details>
       <summary>Data table</summary>
       <table id="data-table"></table>
@@ -165,39 +149,19 @@
   <section>
     <div class="section-label">About this data</div>
     <div class="prose">
-      <h2>Measures</h2>
-      <p>
-        A wealth share is the percentage of all family net worth held by the wealthiest families. For example, if the top 1% share is 14%, the richest 1% of families together hold 14% of total net worth. The Gini coefficient summarizes inequality across the whole distribution: 0 means every family has the same net worth, and higher values mean wealth is more concentrated.
-      </p>
+      
+      A description of the data and methodology will go here.
 
-      <h2>SFS</h2>
-      <p>
-        The Survey of Financial Security (SFS) is Statistics Canada's household survey of wealth and income. These estimates use its Public Use Microdata Files for 2012, 2016, 2019 and 2023, weighted by the survey weights. Net worth includes employer pension plans valued on a termination basis.
-      </p>
-
-      <h2>SFS + NBSA</h2>
-      <p>
-        Following Appendix A.1 of PBO (2020), <em>Estimating the Top Tail of the Family Wealth Distribution in Canada</em>, each family's financial assets, non-financial assets and debts are scaled so that the SFS totals match the household sector of the National Balance Sheet Accounts (NBSA), at market value. Each category is scaled by one adjustment factor per year: the NBSA total divided by the SFS weighted total.
-      </p>
-
-      <h2>Caveats</h2>
-      <p>
-        Standard errors, shown in the tooltip and the data table, come from the SFS bootstrap weights, which are available from 2016 onward only. Shares for the top 0.1% and above rest on very few survey records and should be read with caution. In 2023, families reported much higher values for home contents and collectibles than in earlier cycles, most plausibly because the survey was self-completed rather than interviewer-administered. This probably raises measured 2023 inequality slightly, by an amount not yet quantified.
-      </p>
-
-      <p class="source">
-        Data source: Statistics Canada, Survey of Financial Security Public Use Microdata Files, and Table 36-10-0580-01 (National Balance Sheet Accounts)
-      </p>
     </div>
   </section>
 </div>
 
 <script>
-  const DATA = [{"name":"SFS","measures":{"top_0_1pct":{"n":[33,25,23,38],"x":[2012,2016,2019,2023],"se":[null,0.1625,0.2293,0.1414],"y":[2.5486,3.0504,2.829,2.0874]},"top_5pct":{"n":[941,1004,922,1643],"x":[2012,2016,2019,2023],"se":[null,0.6397,0.6365,0.4141],"y":[32.4226,32.9943,33.0679,29.0566]},"top_20pct":{"n":[3218,3361,2970,5293],"x":[2012,2016,2019,2023],"se":[null,0.4283,0.4643,0.3753],"y":[67.4195,67.1589,66.9327,63.3637]},"top_10pct":{"n":[1771,1842,1675,2929],"x":[2012,2016,2019,2023],"se":[null,0.5618,0.5771,0.4176],"y":[47.7309,47.6487,47.792,43.7346]},"top_50pct":{"n":[7044,7133,6083,10461],"x":[2012,2016,2019,2023],"se":[null,0.1602,0.1895,0.1899],"y":[94.555,94.225,93.7042,91.9098]},"top_0_01pct":{"n":[5,3,2,3],"x":[2012,2016,2019,2023],"se":[null,0.0161,0.0173,0.0328],"y":[0.3656,0.4069,0.3921,0.3424]},"gini":{"n":[12003,12429,10422,16241],"x":[2012,2016,2019,2023],"se":[null,0.0039,0.0042,0.0035],"y":[0.671,0.6681,0.6637,0.6266]},"top_1pct":{"n":[239,231,194,384],"x":[2012,2016,2019,2023],"se":[null,0.6043,0.5634,0.3038],"y":[12.4614,13.7244,13.7467,10.6309]}}},{"name":"SFS + NBSA","measures":{"top_0_1pct":{"n":[31,26,23,40],"x":[2012,2016,2019,2023],"se":[null,0.1731,0.2208,0.1425],"y":[2.71,3.2675,2.9386,2.1712]},"top_5pct":{"n":[948,1011,923,1670],"x":[2012,2016,2019,2023],"se":[null,0.6688,0.6722,0.4367],"y":[34.1089,34.3115,34.9016,30.1718]},"top_20pct":{"n":[3230,3369,2992,5329],"x":[2012,2016,2019,2023],"se":[null,0.4484,0.5006,0.3933],"y":[70.1916,69.1106,69.4837,65.1115]},"top_10pct":{"n":[1780,1863,1713,2948],"x":[2012,2016,2019,2023],"se":[null,0.585,0.6148,0.4387],"y":[50.053,49.3247,50.1129,45.237]},"top_50pct":{"n":[7117,7136,6073,10486],"x":[2012,2016,2019,2023],"se":[null,0.1743,0.2096,0.1987],"y":[96.4822,95.3828,95.2005,93.0288]},"top_0_01pct":{"n":[5,3,2,3],"x":[2012,2016,2019,2023],"se":[null,0.0112,0.0164,0.0416],"y":[0.3863,0.4229,0.4005,0.354]},"gini":{"n":[12003,12429,10422,16241],"x":[2012,2016,2019,2023],"se":[null,0.0041,0.0047,0.0037],"y":[0.7025,0.6886,0.6908,0.646]},"top_1pct":{"n":[245,234,194,388],"x":[2012,2016,2019,2023],"se":[null,0.6386,0.581,0.3163],"y":[13.1343,14.4459,14.6247,11.1756]}}}];
+  const DATA = [{"name":"SFS","measures":{"top_0_1pct":{"x":[2012,2016,2019,2023],"y":[2.5486,3.0504,2.829,2.0874]},"top_5pct":{"x":[2012,2016,2019,2023],"y":[32.4226,32.9943,33.0679,29.0566]},"top_20pct":{"x":[2012,2016,2019,2023],"y":[67.4195,67.1589,66.9327,63.3637]},"top_10pct":{"x":[2012,2016,2019,2023],"y":[47.7309,47.6487,47.792,43.7346]},"top_50pct":{"x":[2012,2016,2019,2023],"y":[94.555,94.225,93.7042,91.9098]},"top_0_01pct":{"x":[2012,2016,2019,2023],"y":[0.3656,0.4069,0.3921,0.3424]},"gini":{"x":[2012,2016,2019,2023],"y":[0.671,0.6681,0.6637,0.6266]},"top_1pct":{"x":[2012,2016,2019,2023],"y":[12.4614,13.7244,13.7467,10.6309]}}},{"name":"SFS + NBSA","measures":{"top_0_1pct":{"x":[2012,2016,2019,2023],"y":[2.71,3.2675,2.9386,2.1712]},"top_5pct":{"x":[2012,2016,2019,2023],"y":[34.1089,34.3115,34.9016,30.1718]},"top_20pct":{"x":[2012,2016,2019,2023],"y":[70.1916,69.1106,69.4837,65.1115]},"top_10pct":{"x":[2012,2016,2019,2023],"y":[50.053,49.3247,50.1129,45.237]},"top_50pct":{"x":[2012,2016,2019,2023],"y":[96.4822,95.3828,95.2005,93.0288]},"top_0_01pct":{"x":[2012,2016,2019,2023],"y":[0.3863,0.4229,0.4005,0.354]},"gini":{"x":[2012,2016,2019,2023],"y":[0.7025,0.6886,0.6908,0.646]},"top_1pct":{"x":[2012,2016,2019,2023],"y":[13.1343,14.4459,14.6247,11.1756]}}},{"name":"SFS + NBSA + Forbes","measures":{"top_0_1pct":{"x":[2012,2016,2019,2023],"y":[9.8919,11.4931,11.8656,11.9386]},"top_5pct":{"x":[2012,2016,2019,2023],"y":[41.7149,42.7891,44.1681,41.8439]},"top_20pct":{"x":[2012,2016,2019,2023],"y":[73.9074,73.3466,74.1403,71.1646]},"top_10pct":{"x":[2012,2016,2019,2023],"y":[55.9328,55.9712,57.36,54.495]},"top_50pct":{"x":[2012,2016,2019,2023],"y":[97.2819,96.2683,96.2756,94.5279]},"top_0_01pct":{"x":[2012,2016,2019,2023],"y":[4.2941,5.3334,5.4288,5.6832]},"gini":{"x":[2012,2016,2019,2023],"y":[0.7415,0.732,0.7395,0.7086]},"top_1pct":{"x":[2012,2016,2019,2023],"y":[22.6671,24.6884,25.6516,24.8724]}}}];
 
   const MEASURES = [
-    { key: "top_0_01pct", label: "Top 0.01%", digits: 2, caution: true },
-    { key: "top_0_1pct",  label: "Top 0.1%",  digits: 2, caution: true },
+    { key: "top_0_01pct", label: "Top 0.01%", digits: 1 },
+    { key: "top_0_1pct",  label: "Top 0.1%",  digits: 1 },
     { key: "top_1pct",    label: "Top 1%",    digits: 1 },
     { key: "top_5pct",    label: "Top 5%",    digits: 1 },
     { key: "top_10pct",   label: "Top 10%",   digits: 1 },
@@ -242,26 +206,13 @@
         mode: "lines+markers",
         line: { color: COLORS[i], width: 2 },
         marker: { color: COLORS[i], symbol: SYMBOLS[i], size: 10, line: { color: t.plot, width: 2 } },
-        text: s.y.map((y, j) => "<b>" + fmt(y) + (isShare(current) ? "%" : "") + "</b>  " + src.name
-                                + (s.se[j] === null ? "" : " (SE " + fmt(s.se[j]) + ")")),
+        text: s.y.map(y => "<b>" + fmt(y) + (isShare(current) ? "%" : "") + "</b>  " + src.name),
         hovertemplate: "%{text}<extra></extra>",
       };
     });
   }
 
-  // Name each line at its last point, unless the names would overlap
-  function endLabels(range, plotH, t) {
-    const ends = DATA.map(src => {
-      const s = series(src), k = s.x.length - 1;
-      return { name: src.name, x: s.x[k], y: s.y[k], px: plotH * (range[1] - s.y[k]) / (range[1] - range[0]) };
-    });
-    const clash = ends.some((a, i) => ends.some((b, j) => j > i && Math.abs(a.px - b.px) < 16));
-    if (clash) return [];
-    return ends.map(e => ({ x: e.x, y: e.y, text: e.name, showarrow: false, xanchor: "left", xshift: 10,
-                            font: { color: t.text } }));
-  }
-
-  // On narrow screens the title wraps onto two lines and the legend alone names the lines
+  // On narrow screens the title wraps onto two lines
   function buildLayout(t) {
     const el      = document.getElementById("chart");
     const narrow  = el.offsetWidth < 560;
@@ -269,7 +220,6 @@
     const plotH   = Math.max((el.offsetHeight || 480) - marginT - MARGIN_B, 80);
     const years   = series(DATA[0]).x;
     const range   = yRange();
-    const labels  = narrow ? [] : endLabels(range, plotH, t);
     const sep     = narrow ? "<br>" : " – ";
     return {
       title: { text: isShare(current) ? "Share of Total Net Worth" + sep + current.label + " – Canada"
@@ -292,12 +242,11 @@
         zeroline: false,
       },
       legend: { x: 0.5, xanchor: "center", y: -(55 / plotH), orientation: "h" },
-      margin: { l: MARGIN_L, b: MARGIN_B, r: labels.length ? 100 : 20, t: marginT },
+      margin: { l: MARGIN_L, b: MARGIN_B, r: 20, t: marginT },
       hovermode: "x unified",
       hoverlabel: { bgcolor: t.paper, font: { color: t.text } },
       paper_bgcolor: t.paper,
       plot_bgcolor: t.plot,
-      annotations: labels,
     };
   }
 
@@ -306,22 +255,12 @@
     Plotly.react("chart", buildTraces(t), buildLayout(t), { responsive: true });
   }
 
-  function renderCaveat() {
-    const el = document.getElementById("caveat");
-    el.hidden = !current.caution;
-    if (!current.caution) return;
-    const n = DATA.flatMap(src => series(src).n);
-    el.textContent = "Estimates for the " + current.label.toLowerCase() + " rest on only " + Math.min(...n)
-                   + " to " + Math.max(...n) + " survey records per year and should be read with caution.";
-  }
-
   // The chart's values as a table, for reading exact figures without hovering
   function renderTable() {
     const table = document.getElementById("data-table");
     table.textContent = "";
     table.createCaption().textContent =
-      (isShare(current) ? current.label + " share of total net worth (%)" : "Gini coefficient of net worth")
-      + ", with bootstrap standard errors in parentheses";
+      isShare(current) ? current.label + " share of total net worth (%)" : "Gini coefficient of net worth";
     const head = table.createTHead().insertRow();
     ["Year", ...DATA.map(src => src.name)].forEach(name => {
       const th = document.createElement("th");
@@ -338,14 +277,13 @@
       row.appendChild(th);
       DATA.forEach(src => {
         const s = series(src), k = s.x.indexOf(year);
-        row.insertCell().textContent = k < 0 ? "" : fmt(s.y[k]) + (s.se[k] === null ? "" : " (" + fmt(s.se[k]) + ")");
+        row.insertCell().textContent = k < 0 ? "" : fmt(s.y[k]);
       });
     });
   }
 
   function update() {
     drawChart();
-    renderCaveat();
     renderTable();
   }
 
@@ -367,7 +305,7 @@
   update();
   darkMode.addEventListener("change", drawChart);
 
-  // Recompute the legend position and end labels when the chart is resized.
+  // Recompute the legend position when the chart is resized.
   // Debounced to avoid a relayout -> resize -> relayout loop.
   let resizeTimer;
   new ResizeObserver(() => {

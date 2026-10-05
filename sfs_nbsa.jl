@@ -1,49 +1,5 @@
 include("functions.jl")
 
-const NBSA_FILE = joinpath(@__DIR__, "data", "nbsa", "36100580.csv")
-
-const NBSA_QUARTER = Dict(2012 => "2012-10", 2016 => "2016-10", 2019 => "2019-10", 2023 => "2023-04")
-
-const CATEGORIES = ["financial", "nonfinancial", "debts"]
-const NBSA_CATEGORIES = ["Total financial assets", "Non-financial assets", "Total financial liabilities"]
-
-function load_nbsa()
-    nbsa = CSV.read(NBSA_FILE, DataFrame; select = [:REF_DATE, :Sectors, :Valuation, :Categories, :VALUE],
-                    types = Dict(:VALUE => String))   # some rows have no value
-    totals = Dict{Int,Vector{Float64}}()
-    for (year, quarter) in NBSA_QUARTER
-        totals[year] = map(NBSA_CATEGORIES) do c
-            rows = nbsa[(nbsa.REF_DATE .== quarter) .& (nbsa.Sectors .== "Households") .&
-                        (nbsa.Valuation .== "Market value") .& (nbsa.Categories .== c), :VALUE]
-            length(rows) == 1 || error("$quarter $c: $(length(rows)) NBSA rows")
-            parse(Float64, rows[1]) * 1e6   # millions -> dollars
-        end
-    end
-    return totals
-end
-
-const FINANCIAL = ["PWASTDEP", "PWASTMUI", "PWASTBND", "PWASTSTK", "PWASTOIN", "PWATFS",
-                   "PWARRSPL", "PWARRIF", "PWAOTPEN", "PWARPPT", "PWBUSEQ"]
-const NONFINANCIAL = ["PWAPRVAL", "PWASTRST", "PWASTVHE", "PWASTONF"]
-
-function load_year(s::SurveyYear)
-    df = read_fixed_width(joinpath(DATA, s.datafile), joinpath(DATA, s.layout),
-                          vcat("PEFAMID", "PWEIGHT", FINANCIAL, NONFINANCIAL, "PWDTOTAL", "PWNETWPT"))
-    fam = DataFrame(id = df.PEFAMID, weight = df.PWEIGHT,
-                    financial = sum(df[!, v] for v in FINANCIAL),
-                    nonfinancial = sum(df[!, v] for v in NONFINANCIAL),
-                    debts = df.PWDTOTAL)
-    maximum(abs.(fam.financial .+ fam.nonfinancial .- fam.debts .- df.PWNETWPT)) < 0.5 ||
-        error("$(s.year): categories do not add up to PWNETWPT")
-    return fam
-end
-
-sfs_totals(fam, w) = [sum(w .* fam[!, c]) for c in CATEGORIES]
-
-adjustment_factors(fam, w, nbsa) = nbsa ./ sfs_totals(fam, w)
-
-aligned_networth(fam, f) = f[1] .* fam.financial .+ f[2] .* fam.nonfinancial .- f[3] .* fam.debts
-
 function main()
     mkpath(OUTDIR)
     nbsa = load_nbsa()
@@ -55,7 +11,7 @@ function main()
 
     for s in SURVEYS
         println("Computing $(s.year)...")
-        fam = load_year(s)
+        fam = load_categories(s)
         w = fam.weight
         f = adjustment_factors(fam, w, nbsa[s.year])
         nw = aligned_networth(fam, f)

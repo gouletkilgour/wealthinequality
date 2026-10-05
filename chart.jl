@@ -1,15 +1,17 @@
 using CSV, DataFrames
 
 # Writes output/wealth_inequality.html, an interactive chart comparing the wealth
-# shares and Gini coefficient from sfs.jl (SFS) and sfs_nbsa.jl (SFS + NBSA), with
-# a button for each measure. Run those two scripts first. Apart from Plotly, which
+# shares and Gini coefficient from sfs.jl (SFS), sfs_nbsa.jl (SFS + NBSA) and
+# sfs_nbsa_forbes.jl (SFS + NBSA + Forbes), with a button for each measure. Run those
+# three scripts first. Apart from Plotly, which
 # loads from its CDN, the page is self-contained, so it can be published as is.
 
 const OUTDIR = joinpath(@__DIR__, "output")
 
 # One line per source, drawn in this order
 const SOURCES = ["SFS" => "sfs_wealth_inequality.csv",
-                 "SFS + NBSA" => "sfs_nbsa_wealth_inequality.csv"]
+                 "SFS + NBSA" => "sfs_nbsa_wealth_inequality.csv",
+                 "SFS + NBSA + Forbes" => "sfs_nbsa_forbes_wealth_inequality.csv"]
 
 json(x::Real) = string(x)
 json(::Missing) = "null"
@@ -17,11 +19,10 @@ json(s::AbstractString) = "\"" * s * "\""
 json(v::AbstractVector) = "[" * join(json.(v), ",") * "]"
 json(d::AbstractDict) = "{" * join((json(k) * ":" * json(v) for (k, v) in d), ",") * "}"
 
-# measure => (x = years, y = estimates, se = bootstrap SEs, n = survey records in the group)
+# measure => (x = years, y = estimates)
 function load_source(name, file)
     df = sort(CSV.read(joinpath(OUTDIR, file), DataFrame), :year)
-    measures = Dict(k.measure => Dict("x" => g.year, "y" => round.(g.estimate, digits = 4),
-                                      "se" => round.(g.se, digits = 4), "n" => g.records_in_group)
+    measures = Dict(k.measure => Dict("x" => g.year, "y" => round.(g.estimate, digits = 4))
                     for (k, g) in pairs(groupby(df, :measure)))
     return Dict("name" => name, "measures" => measures)
 end
@@ -46,9 +47,6 @@ page(data) = """<!DOCTYPE html>
       --muted: #666666;
       --border: #e0e0e0;
       --accent: #2a5db0;
-      --caveat-text: #8a6d00;
-      --caveat-bg: #fff8e1;
-      --caveat-border: #f0e0a0;
     }
 
     @media (prefers-color-scheme: dark) {
@@ -58,9 +56,6 @@ page(data) = """<!DOCTYPE html>
         --muted: #9a9a9a;
         --border: #33343a;
         --accent: #7aa2f7;
-        --caveat-text: #e6c56b;
-        --caveat-bg: #2a2412;
-        --caveat-border: #5c4c1a;
       }
     }
 
@@ -130,15 +125,6 @@ page(data) = """<!DOCTYPE html>
 
     #chart { height: 520px; }
 
-    .caveat {
-      font-size: 0.85rem;
-      color: var(--caveat-text);
-      background: var(--caveat-bg);
-      border: 1px solid var(--caveat-border);
-      border-radius: 4px;
-      padding: 0.6rem 0.9rem;
-      margin: 0 1rem 1rem;
-    }
 
     details { padding: 0.75rem 1.25rem; border-top: 1px solid var(--border); }
 
@@ -180,7 +166,7 @@ page(data) = """<!DOCTYPE html>
 
 <div class="page">
   <h1>Wealth Inequality in Canada</h1>
-  <p class="subtitle">Survey of Financial Security, alone and aligned with the National Balance Sheet Accounts, 2012&ndash;2023</p>
+  <p class="subtitle">Survey of Financial Security, alone, aligned with the National Balance Sheet Accounts, and with the Forbes rich list added, 2012&ndash;2023</p>
 
   <section>
     <div class="section-label">Chart</div>
@@ -189,7 +175,6 @@ page(data) = """<!DOCTYPE html>
       <div class="measure-tabs" id="measure-tabs" role="group" aria-labelledby="measure-label"></div>
     </div>
     <div id="chart"></div>
-    <p class="caveat" id="caveat" hidden></p>
     <details>
       <summary>Data table</summary>
       <table id="data-table"></table>
@@ -214,13 +199,18 @@ page(data) = """<!DOCTYPE html>
         Following Appendix A.1 of PBO (2020), <em>Estimating the Top Tail of the Family Wealth Distribution in Canada</em>, each family's financial assets, non-financial assets and debts are scaled so that the SFS totals match the household sector of the National Balance Sheet Accounts (NBSA), at market value. Each category is scaled by one adjustment factor per year: the NBSA total divided by the SFS weighted total.
       </p>
 
+      <h2>SFS + NBSA + Forbes</h2>
+      <p>
+        Following Appendices A.2 to A.4 of PBO (2020), Canadians on the Forbes billionaires list are added to the NBSA-aligned SFS as one family each. A Pareto distribution is fitted to the SFS families with net worth above a threshold (\$3 million in 2016 dollars) together with the Forbes entries, using the modified regression of Vermeulen (2018). The SFS families above the threshold are replaced by synthetic families drawn from that distribution up to the lowest Forbes entry, with the Forbes entries themselves above it. The adjustment factors are then revised until financial assets, non-financial assets and debts again match the NBSA. Unlike PBO, Canadians living abroad are kept, and relatives listed separately by Forbes are combined into one family, which fattens the top of the distribution somewhat.
+      </p>
+
       <h2>Caveats</h2>
       <p>
-        Standard errors, shown in the tooltip and the data table, come from the SFS bootstrap weights, which are available from 2016 onward only. Shares for the top 0.1% and above rest on very few survey records and should be read with caution. In 2023, families reported much higher values for home contents and collectibles than in earlier cycles, most plausibly because the survey was self-completed rather than interviewer-administered. This probably raises measured 2023 inequality slightly, by an amount not yet quantified.
+        In the SFS and SFS + NBSA series, shares for the top 0.1% and above rest on very few survey records and should be read with caution. In 2023, families reported much higher values for home contents and collectibles than in earlier cycles, most plausibly because the survey was self-completed rather than interviewer-administered. This probably raises measured 2023 inequality slightly, by an amount not yet quantified.
       </p>
 
       <p class="source">
-        Data source: Statistics Canada, Survey of Financial Security Public Use Microdata Files, and Table 36-10-0580-01 (National Balance Sheet Accounts)
+        Data source: Statistics Canada, Survey of Financial Security Public Use Microdata Files, and Table 36-10-0580-01 (National Balance Sheet Accounts); Forbes, The World's Billionaires
       </p>
     </div>
   </section>
@@ -230,8 +220,8 @@ page(data) = """<!DOCTYPE html>
   const DATA = $(data);
 
   const MEASURES = [
-    { key: "top_0_01pct", label: "Top 0.01%", digits: 2, caution: true },
-    { key: "top_0_1pct",  label: "Top 0.1%",  digits: 2, caution: true },
+    { key: "top_0_01pct", label: "Top 0.01%", digits: 1 },
+    { key: "top_0_1pct",  label: "Top 0.1%",  digits: 1 },
     { key: "top_1pct",    label: "Top 1%",    digits: 1 },
     { key: "top_5pct",    label: "Top 5%",    digits: 1 },
     { key: "top_10pct",   label: "Top 10%",   digits: 1 },
@@ -276,26 +266,13 @@ page(data) = """<!DOCTYPE html>
         mode: "lines+markers",
         line: { color: COLORS[i], width: 2 },
         marker: { color: COLORS[i], symbol: SYMBOLS[i], size: 10, line: { color: t.plot, width: 2 } },
-        text: s.y.map((y, j) => "<b>" + fmt(y) + (isShare(current) ? "%" : "") + "</b>  " + src.name
-                                + (s.se[j] === null ? "" : " (SE " + fmt(s.se[j]) + ")")),
+        text: s.y.map(y => "<b>" + fmt(y) + (isShare(current) ? "%" : "") + "</b>  " + src.name),
         hovertemplate: "%{text}<extra></extra>",
       };
     });
   }
 
-  // Name each line at its last point, unless the names would overlap
-  function endLabels(range, plotH, t) {
-    const ends = DATA.map(src => {
-      const s = series(src), k = s.x.length - 1;
-      return { name: src.name, x: s.x[k], y: s.y[k], px: plotH * (range[1] - s.y[k]) / (range[1] - range[0]) };
-    });
-    const clash = ends.some((a, i) => ends.some((b, j) => j > i && Math.abs(a.px - b.px) < 16));
-    if (clash) return [];
-    return ends.map(e => ({ x: e.x, y: e.y, text: e.name, showarrow: false, xanchor: "left", xshift: 10,
-                            font: { color: t.text } }));
-  }
-
-  // On narrow screens the title wraps onto two lines and the legend alone names the lines
+  // On narrow screens the title wraps onto two lines
   function buildLayout(t) {
     const el      = document.getElementById("chart");
     const narrow  = el.offsetWidth < 560;
@@ -303,7 +280,6 @@ page(data) = """<!DOCTYPE html>
     const plotH   = Math.max((el.offsetHeight || 480) - marginT - MARGIN_B, 80);
     const years   = series(DATA[0]).x;
     const range   = yRange();
-    const labels  = narrow ? [] : endLabels(range, plotH, t);
     const sep     = narrow ? "<br>" : " – ";
     return {
       title: { text: isShare(current) ? "Share of Total Net Worth" + sep + current.label + " – Canada"
@@ -326,12 +302,11 @@ page(data) = """<!DOCTYPE html>
         zeroline: false,
       },
       legend: { x: 0.5, xanchor: "center", y: -(55 / plotH), orientation: "h" },
-      margin: { l: MARGIN_L, b: MARGIN_B, r: labels.length ? 100 : 20, t: marginT },
+      margin: { l: MARGIN_L, b: MARGIN_B, r: 20, t: marginT },
       hovermode: "x unified",
       hoverlabel: { bgcolor: t.paper, font: { color: t.text } },
       paper_bgcolor: t.paper,
       plot_bgcolor: t.plot,
-      annotations: labels,
     };
   }
 
@@ -340,22 +315,12 @@ page(data) = """<!DOCTYPE html>
     Plotly.react("chart", buildTraces(t), buildLayout(t), { responsive: true });
   }
 
-  function renderCaveat() {
-    const el = document.getElementById("caveat");
-    el.hidden = !current.caution;
-    if (!current.caution) return;
-    const n = DATA.flatMap(src => series(src).n);
-    el.textContent = "Estimates for the " + current.label.toLowerCase() + " rest on only " + Math.min(...n)
-                   + " to " + Math.max(...n) + " survey records per year and should be read with caution.";
-  }
-
   // The chart's values as a table, for reading exact figures without hovering
   function renderTable() {
     const table = document.getElementById("data-table");
     table.textContent = "";
     table.createCaption().textContent =
-      (isShare(current) ? current.label + " share of total net worth (%)" : "Gini coefficient of net worth")
-      + ", with bootstrap standard errors in parentheses";
+      isShare(current) ? current.label + " share of total net worth (%)" : "Gini coefficient of net worth";
     const head = table.createTHead().insertRow();
     ["Year", ...DATA.map(src => src.name)].forEach(name => {
       const th = document.createElement("th");
@@ -372,14 +337,13 @@ page(data) = """<!DOCTYPE html>
       row.appendChild(th);
       DATA.forEach(src => {
         const s = series(src), k = s.x.indexOf(year);
-        row.insertCell().textContent = k < 0 ? "" : fmt(s.y[k]) + (s.se[k] === null ? "" : " (" + fmt(s.se[k]) + ")");
+        row.insertCell().textContent = k < 0 ? "" : fmt(s.y[k]);
       });
     });
   }
 
   function update() {
     drawChart();
-    renderCaveat();
     renderTable();
   }
 
@@ -401,7 +365,7 @@ page(data) = """<!DOCTYPE html>
   update();
   darkMode.addEventListener("change", drawChart);
 
-  // Recompute the legend position and end labels when the chart is resized.
+  // Recompute the legend position when the chart is resized.
   // Debounced to avoid a relayout -> resize -> relayout loop.
   let resizeTimer;
   new ResizeObserver(() => {

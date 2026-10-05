@@ -55,6 +55,50 @@ function read_fixed_width(datafile, layoutfile, vars)
     return df
 end
 
+const NBSA_FILE = joinpath(@__DIR__, "data", "nbsa", "36100580.csv")
+
+const NBSA_QUARTER = Dict(2012 => "2012-10", 2016 => "2016-10", 2019 => "2019-10", 2023 => "2023-04")
+
+const CATEGORIES = ["financial", "nonfinancial", "debts"]
+const NBSA_CATEGORIES = ["Total financial assets", "Non-financial assets", "Total financial liabilities"]
+
+function load_nbsa()
+    nbsa = CSV.read(NBSA_FILE, DataFrame; select = [:REF_DATE, :Sectors, :Valuation, :Categories, :VALUE],
+                    types = Dict(:VALUE => String))   # some rows have no value
+    totals = Dict{Int,Vector{Float64}}()
+    for (year, quarter) in NBSA_QUARTER
+        totals[year] = map(NBSA_CATEGORIES) do c
+            rows = nbsa[(nbsa.REF_DATE .== quarter) .& (nbsa.Sectors .== "Households") .&
+                        (nbsa.Valuation .== "Market value") .& (nbsa.Categories .== c), :VALUE]
+            length(rows) == 1 || error("$quarter $c: $(length(rows)) NBSA rows")
+            parse(Float64, rows[1]) * 1e6   # millions -> dollars
+        end
+    end
+    return totals
+end
+
+const FINANCIAL = ["PWASTDEP", "PWASTMUI", "PWASTBND", "PWASTSTK", "PWASTOIN", "PWATFS",
+                   "PWARRSPL", "PWARRIF", "PWAOTPEN", "PWARPPT", "PWBUSEQ"]
+const NONFINANCIAL = ["PWAPRVAL", "PWASTRST", "PWASTVHE", "PWASTONF"]
+
+function load_categories(s::SurveyYear)
+    df = read_fixed_width(joinpath(DATA, s.datafile), joinpath(DATA, s.layout),
+                          vcat("PEFAMID", "PWEIGHT", FINANCIAL, NONFINANCIAL, "PWDTOTAL", "PWNETWPT"))
+    fam = DataFrame(id = df.PEFAMID, weight = df.PWEIGHT,
+                    financial = sum(df[!, v] for v in FINANCIAL),
+                    nonfinancial = sum(df[!, v] for v in NONFINANCIAL),
+                    debts = df.PWDTOTAL)
+    maximum(abs.(fam.financial .+ fam.nonfinancial .- fam.debts .- df.PWNETWPT)) < 0.5 ||
+        error("$(s.year): categories do not add up to PWNETWPT")
+    return fam
+end
+
+sfs_totals(fam, w) = [sum(w .* fam[!, c]) for c in CATEGORIES]
+
+adjustment_factors(fam, w, nbsa) = nbsa ./ sfs_totals(fam, w)
+
+aligned_networth(fam, f) = f[1] .* fam.financial .+ f[2] .* fam.nonfinancial .- f[3] .* fam.debts
+
 function measures(x, w)
     W = sum(w)
     cw = cumsum(w)
@@ -88,7 +132,7 @@ end
 
 group_name(p) = "top_" * replace(@sprintf("%g", 100p), "." => "_") * "pct"
 
-records_in_top(w, p) = count(>(sum(w) * (1 - p) * (1 + 1e-12)), cumsum(w))
+records_in_top(w, p, survey) = count(survey .& (cumsum(w) .> sum(w) * (1 - p) * (1 + 1e-12)))
 
 function weighted_median(x, w)
     cw = cumsum(w)
@@ -129,14 +173,15 @@ function results_tables()
     return results, summary
 end
 
-function add_results!(results, summary, year, x, w, est, se)
-    push!(summary, (year, length(x), sum(w), est["total_networth"] / 1e6, est["total_networth"] / sum(w),
+# survey marks the rows that are survey records, as opposed to synthetic or rich-list families
+function add_results!(results, summary, year, x, w, est, se; survey = trues(length(x)))
+    push!(summary, (year, count(survey), sum(w), est["total_networth"] / 1e6, est["total_networth"] / sum(w),
                     weighted_median(x, w), sum(w[x .< 0]) / sum(w), se !== nothing))
     for p in TOP_GROUPS
         k = group_name(p)
-        push!(results, (year, k, est[k], se === nothing ? missing : se[k], records_in_top(w, p)))
+        push!(results, (year, k, est[k], se === nothing ? missing : se[k], records_in_top(w, p, survey)))
     end
-    push!(results, (year, "gini", est["gini"], se === nothing ? missing : se["gini"], length(x)))
+    push!(results, (year, "gini", est["gini"], se === nothing ? missing : se["gini"], count(survey)))
 end
 
 function print_results(results)

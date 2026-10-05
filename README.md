@@ -20,6 +20,16 @@ The National Balance Sheet Accounts (NBSA) are Statistics Canada's quarterly est
 
 These data are located in `data/nbsa`. The CSV is too large for this repository, so unzip `data/nbsa/36100580-eng.zip` to recreate `data/nbsa/36100580.csv`. 
 
+## Forbes World's Billionaires
+
+Forbes' annual World's Billionaires list estimates the net worth of every person it finds with at least US$1 billion. `data/forbes/forbes_canada_<year>_cad.csv` holds the entries with Canadian citizenship for 2012, 2016, 2019 and 2023, with net worth (`net_worth`) in billions of Canadian dollars.
+
+The lists were built outside this repository from the Forbes lists:
+
+- **Conversion to CAD.** Net worth is converted at the Bank of Canada USD/CAD rate on the date Forbes valued each list: 0.9991 (2012-02-14), 1.3835 (2016-02-12), 1.3270 (2019-02-08) and 1.3807 (2023-03-10). For 2012 and 2016, this is the legacy noon rate, since the single daily rate starts in 2017. The 2012 to 2019 files were produced by a script, and the 2023 file by hand, with the same rules.
+- **Relatives combined.** Relatives that Forbes lists separately are combined into one row: the Irving family (James and Arthur; James only in 2012), and in 2023 also the Saputo, Zekelman and Azrieli families. Amounts are summed in USD before conversion.
+- **All citizens kept.** Every Forbes entry with Canadian citizenship is kept, including Canadians living abroad and Nathaniel Rothschild (2012), who appears to be miscoded as Canadian.
+
 # Wealth Inequality: SFS PUMF
 
 `sfs.jl` takes the raw SFS PUMF data and produces `output/sfs_wealth_inequality.csv` and `output/sfs_wealth_summary.csv`.
@@ -36,3 +46,43 @@ The 2016 SFS totals match PBO's Table A1-1, but the adjustment factors differ fr
 
 # Wealth Inequality: SFS PUMF + NBSA + Rich Lists
 
+
+`sfs_nbsa_forbes.jl` adds the Forbes list and a Pareto top tail to the NBSA-aligned SFS, following Appendices A.2 to A.4 of PBO (2020). It produces:
+
+- `output/sfs_nbsa_forbes_integrated.csv`: the integrated family-level data (SFS, synthetic and Forbes families).
+- `output/sfs_nbsa_forbes_tail.csv`: the Pareto threshold, α and convergence for each year.
+- `output/sfs_nbsa_forbes_calibration.csv`: the adjustment factors, in the format of PBO's Table A4-1.
+- `output/sfs_nbsa_forbes_wealth_inequality.csv` and `output/sfs_nbsa_forbes_wealth_summary.csv`.
+
+The procedure for each year:
+
+1. **Align.** Align the SFS with the NBSA as in `sfs_nbsa.jl`.
+2. **Add Forbes.** Add each Forbes entry as one family with a weight of 1.
+3. **Fit the Pareto tail.** Fit a Pareto distribution to the families at or above a threshold, w_min, using the modified OLS regression of Vermeulen (2018): ln((i − 0.5) N̄ᵢ / N̄) = c + α (ln w_min − ln wᵢ). w_min is PBO's $3 million for 2016, held constant in 2016 dollars with the CPI (Table 18-10-0005-01). This gives $2.84M (2012), $3.00M (2016), $3.18M (2019) and $3.67M (2023), which reproduces PBO's 2023 threshold.
+4. **Replace the top of the SFS.** Replace the SFS families at or above w_min with synthetic families, from w_min up to the lowest Forbes entry. The synthetic families sit in 2,000 log-spaced brackets, each holding its Pareto share of the families above w_min at the bracket's Pareto mean wealth. The Forbes entries are kept above the lowest entry. The results do not change with the number of brackets.
+5. **Calibrate to the NBSA.** Split the wealth of the synthetic and Forbes families into financial assets, non-financial assets and debts, using the ratios of the aligned SFS families at or above w_min. Revise the three adjustment factors in proportion to the gap between the integrated totals and the NBSA, and repeat steps 1 to 5 until they match.
+   - The step is halved whenever the gap stops shrinking, since a full revision can overshoot.
+   - A single SFS record crossing w_min can keep the gap from closing completely. The iterate closest to the NBSA is then kept, and a final proportional adjustment of every family, as in PBO, aligns the totals exactly.
+   - The point estimates end within 0.02% of the NBSA before that adjustment, and 97.5% of bootstrap replicates within 0.1%.
+
+Standard errors re-run the whole procedure, alignment included, on each of the 1,000 bootstrap replicates, as PBO (2025, Appendix B) does. They do not reflect uncertainty in the Forbes list or the Pareto assumption. In the output, `records_in_group` counts SFS survey records only. The top 1% and above consist entirely of synthetic and Forbes families.
+
+| | 2012 | 2016 | 2019 | 2023 |
+|---|---|---|---|---|
+| α | 1.558 | 1.494 | 1.492 | 1.457 |
+| Forbes entries | 26 | 33 | 44 | 58 |
+| Top 0.1% share | 9.9 | 11.5 | 11.9 | 11.9 |
+| Top 1% share | 22.7 | 24.7 | 25.7 | 24.9 |
+| Top 10% share | 55.9 | 56.0 | 57.4 | 54.5 |
+
+For 2016, PBO (2020) reports α = 1.45, a top 1% share of 25.6% and iterative factors of 0.852, 0.907 and 0.959, against 0.865, 0.916 and 0.964 here. PBO used the Canadian Business list rather than Forbes.
+
+The results are not directly comparable with PBO's other figures, for three reasons:
+
+- **Residency.** PBO drops Canadians living abroad from the rich list, while all Forbes citizens are kept here.
+- **Families.** PBO splits family entries into economic families, while relatives are combined here.
+- **SFS file.** PBO (2025) uses the full SFS rather than the PUMF.
+
+Keeping non-residents and combining relatives both thicken the tail. For comparison, PBO (2025) reports top 1% shares from SFS + Forbes of 21.9% (2016), 23.4% (2019) and 22.0% (2023), and 24.3% for 2019 when using the PUMF.
+
+The Forbes lists are valued in February or March of each survey year, a few months before the NBSA quarter.
