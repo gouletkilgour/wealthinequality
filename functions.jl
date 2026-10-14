@@ -99,23 +99,25 @@ adjustment_factors(fam, w, nbsa) = nbsa ./ sfs_totals(fam, w)
 
 aligned_networth(fam, f) = f[1] .* fam.financial .+ f[2] .* fam.nonfinancial .- f[3] .* fam.debts
 
+# Wealth held by the poorest fraction q of families, for x sorted ascending, with total weight W,
+# cumulative weights cw and cumulative wealth cx
+function wealth_below(x, W, cw, cx, q)
+    t = q * W
+    i = min(searchsortedfirst(cw, t), length(cw))
+    prev_w = i == 1 ? 0.0 : cw[i-1]
+    prev_x = i == 1 ? 0.0 : cx[i-1]
+    return prev_x + (t - prev_w) * x[i]
+end
+
 function measures(x, w)
     W = sum(w)
     cw = cumsum(w)
     cx = cumsum(w .* x)
     X = cx[end]
 
-    function wealth_below(q)
-        t = q * W
-        i = min(searchsortedfirst(cw, t), length(cw))
-        prev_w = i == 1 ? 0.0 : cw[i-1]
-        prev_x = i == 1 ? 0.0 : cx[i-1]
-        return prev_x + (t - prev_w) * x[i]
-    end
-
     out = Dict{String,Float64}()
     for p in TOP_GROUPS
-        out[group_name(p)] = 100 * (X - wealth_below(1 - p)) / X
+        out[group_name(p)] = 100 * (X - wealth_below(x, W, cw, cx, 1 - p)) / X
     end
 
     lorenz_area = 0.0

@@ -20,6 +20,18 @@ The National Balance Sheet Accounts (NBSA) are Statistics Canada's quarterly est
 
 These data are located in `data/nbsa`. The CSV is too large for this repository, so unzip `data/nbsa/36100580-eng.zip` to recreate `data/nbsa/36100580.csv`. 
 
+## Population Estimates
+
+Statistics Canada's population estimates are used to carry the SFS weights from one quarter to another. They come from [Table 17-10-0009-01](https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=1710000901), the population of each province on the first day of each quarter (to July 1, 2026), and [Table 17-10-0005-01](https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=1710000501), the population on July 1 of each year by province and age group (to 2026).
+
+These data are located in `data/population`. The second table is too large for this repository, so unzip `data/population/17100005-eng.zip` to recreate `data/population/17100005.csv`.
+
+## Distributions of Household Economic Accounts
+
+Statistics Canada's Distributions of Household Economic Accounts (DHEA) distribute the NBSA household sector across households, using the SFS. [Table 36-10-0660-01](https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=3610066001) gives, among other things, the share of net worth held by each wealth quintile of households, in the fourth quarter of each year from 2010 to 2019 and in every quarter from 2020 Q1 to 2025 Q4. The methodology is described in Statistics Canada (2026), *Distributions of Household Economic Accounts, estimates of asset, liability and net worth distributions, 2010 to 2025, technical methodology and quality report*, catalogue no. 13-604-M2026001.
+
+These data are located in `data/dhea`. The CSV is too large for this repository, so unzip `data/dhea/36100660-eng.zip` to recreate `data/dhea/36100660.csv`.
+
 ## Forbes World's Billionaires
 
 Forbes' annual World's Billionaires list estimates the net worth of every person it finds with at least US$1 billion. `data/forbes/forbes_canada_<year>_cad.csv` holds the entries with Canadian citizenship for 2012, 2016, 2019 and 2023, with net worth (`net_worth`) in billions of Canadian dollars.
@@ -110,3 +122,44 @@ The merged lists reach below the Forbes billionaires, to the 100th Canadian Busi
 | Top 10% share | 58.8 | 58.5 |
 
 The iterative factors for 2016 are 0.814, 0.882 and 0.949. Both α and the top 1% share are further from PBO's 2016 figures (α = 1.45, 25.6%) than with Forbes alone. PBO's cleaned Canadian Business list had 80 resident economic families holding $197B, against 102 entries holding $307B here, since non-residents are kept and families are not split.
+
+# Quarterly Wealth Inequality: SFS PUMF + NBSA
+
+`sfs_nbsa_quarterly.jl` builds a quarterly series from 2012 Q1 to 2026 Q1, harmonizing the SFS PUMF with the quarterly NBSA in the manner of Statistics Canada's DHEA (sections 7 and 8 of the technical report). For each quarter:
+
+1. **Reweight.** Each SFS is carried from its survey quarter to the quarter. The weight of every family grows with the population, in its region, of the age group of its major income earner. The age groups are DHEA's (under 35, 35 to 44, 45 to 54, 55 to 64, and 65 and over), and the regions are the five of the PUMF, making 25 groups. This assumes that the share of people heading a family at each age stays constant. DHEA recalibrates its weights to population totals instead. The PUMF cannot count people by age, since its age variables only flag whether a family has a member in each age group, and family size is top-coded.
+2. **Scale.** The reweighted SFS is scaled to the NBSA household sector (market value) of the quarter, in DHEA's six categories:
+
+   | Category | SFS | NBSA |
+   |---|---|---|
+   | Pensions | employer pension plans, termination basis | life insurance and pensions |
+   | Other financial assets | deposits, mutual funds, bonds, stocks, other investments, TFSA, RRSP, RRIF, other pensions, business equity | total financial assets less life insurance and pensions |
+   | Real estate | principal residence, other real estate | dwellings, other buildings and structures, land |
+   | Other non-financial assets | vehicles, home contents and collectibles | non-financial assets less real estate |
+   | Mortgages | mortgages on the principal residence and other property | mortgages |
+   | Other debts | credit cards, student loans, vehicle loans, lines of credit, other debt | total financial liabilities less mortgages |
+
+3. **Combine.** A quarter between two surveys pools the two scaled files into one, with the weights of the earlier survey multiplied by 1 − λ and of the later one by λ, where λ is the share of the time between the two survey quarters that has elapsed. For example, 2018 Q2 is half-way between 2016 Q4 and 2019 Q4, so each survey's families count for half. DHEA instead averages the two surveys' estimates; pooling gives one family-level file per quarter, from which every measure is computed. Quarters up to 2012 Q4 use the 2012 SFS alone, and quarters from 2023 Q2 the 2023 SFS alone. The survey quarters are those of `sfs_nbsa.jl`.
+
+Unlike DHEA, the series makes no adjustment for influential records, the institutionalized elderly or the territories, applies no smoothing at the survey quarters, and uses no Equifax or housing market data from 2020 on. Its unit is the economic family, as in the other scripts, rather than the household, since the PUMF has no household identifier. There are no standard errors yet.
+
+It produces:
+
+- `output/sfs_nbsa_quarterly_wealth_inequality.csv`: the top shares and Gini of each quarter.
+- `output/sfs_nbsa_quarterly_summary.csv`: the surveys and their weights, number of families, and total, mean and median net worth of each quarter.
+- `output/sfs_nbsa_quarterly_alignment.csv`: the reweighted SFS totals, NBSA totals and adjustment factor of each category, for each quarter and survey.
+- `output/sfs_nbsa_quarterly_reweighting.csv`: the weighted count of families in each region and age group in the survey and in each quarter.
+- `output/sfs_nbsa_quarterly_dhea_quintiles.csv`: the net worth share of each wealth quintile, with DHEA's where published.
+
+`quarter_file` returns the pooled family-level file for a quarter, which the rich-list adjustment will start from.
+
+| | 2012 Q4 | 2016 Q4 | 2019 Q4 | 2020 Q4 | 2021 Q4 | 2023 Q2 | 2026 Q1 |
+|---|---|---|---|---|---|---|---|
+| Top 1% share | 13.5 | 15.1 | 15.0 | 13.7 | 12.5 | 11.2 | 11.8 |
+| Top 10% share | 50.3 | 49.9 | 50.5 | 48.5 | 46.5 | 45.5 | 46.7 |
+| Top 20% share | 70.2 | 69.5 | 69.7 | 67.9 | 66.0 | 65.4 | 66.6 |
+| Gini | 0.704 | 0.695 | 0.695 | 0.676 | 0.657 | 0.652 | 0.663 |
+
+At the survey quarters, the six categories give top 1% shares 0.1 to 0.6 points higher than the three categories of `sfs_nbsa.jl`, mainly because other debts, which the SFS covers least, get their own adjustment factor of about 2. The highest wealth quintile holds 0.7 to 2.9 points more than in DHEA, as expected with families rather than households, and moves similarly: down from 2020 to 2022 and up after 2023. DHEA's fall in 2020 is sharper, since it uses Equifax and housing data between surveys. Between surveys, most of the change in this series comes from the shift from one survey to the next rather than from the NBSA. Carried to 2023 Q2 on its own, the 2019 SFS gives a top 20% share of 68.7% (69.7% in 2019 Q4) and a top 1% share of 15.0% (unchanged), against 65.4% and 11.2% from the 2023 SFS. On its own, the NBSA moves the top 20% share down by about 2 points from 2019 Q4 to 2021 Q4 and back up by 1.3 points in 2022.
+
+`chart_quarterly.jl` writes `output/wealth_inequality_quarterly.html`, an interactive chart of the quarterly series with the annual SFS + NBSA series and the DHEA quintile shares, and copies it to `docs/quarterly.html`. Run `sfs_nbsa.jl` and `sfs_nbsa_quarterly.jl` first.

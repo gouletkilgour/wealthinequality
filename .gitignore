@@ -6,3 +6,7 @@
 
 # NBSA table exceeds GitHub's 100 MB limit; unzip data/nbsa/36100580-eng.zip to recreate it
 data/nbsa/36100580.csv
+
+# Large StatCan tables; unzip the -eng.zip next to each to recreate them
+data/population/17100005.csv
+data/dhea/36100660.csv

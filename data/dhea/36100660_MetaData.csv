@@ -1,0 +1,123 @@
+﻿"Cube Title","Product Id","CANSIM Id",URL,"Cube Notes","Archive Status",Frequency,"Start Reference Period","End Reference Period","Total number of dimensions"
+"Distributions of household economic accounts, wealth, by characteristic, Canada, quarterly","36100660",,"https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=3610066001",,"CURRENT - a cube available to the public and that is current","Quarterly","2010-01-01","2025-10-01","4",
+
+"Dimension ID","Dimension name","Dimension Notes","Dimension Definitions"
+"1","Geography",,""
+"2","Statistics",,""
+"3","Characteristics",,""
+"4","Wealth",,""
+
+"Dimension ID","Member Name","Classification Code","Member ID","Parent Member ID",Terminated,"Member Notes","Member Definitions"
+"1","Canada","[11124]","1","","",,
+"2","Value","","1","","",,
+"2","Distribution of value","","2","","",14,
+"2","Value per household","","3","","",,
+"3","All households","","1","","",,
+"3","Lowest income quintile","","2","1","",1;12,
+"3","Second income quintile","","3","1","",1;12,
+"3","Third income quintile","","4","1","",1;12,
+"3","Fourth income quintile","","5","1","",1;12,
+"3","Highest income quintile","","6","1","",1;12,
+"3","Lowest wealth quintile","","53","1","",12;15,
+"3","Second wealth quintile","","54","1","",12;15,
+"3","Third wealth quintile","","55","1","",12;15,
+"3","Fourth wealth quintile","","56","1","",12;15,
+"3","Highest wealth quintile","","57","1","",12;15,
+"3","One-person households","","7","1","",12,
+"3","Multiple-person households","","8","1","",12,
+"3","Less than 35 years","","9","1","",2;12,
+"3","35 to 44 years","","10","1","",2;12,
+"3","45 to 54 years","","11","1","",2;12,
+"3","55 to 64 years","","12","1","",2;12,
+"3","65 years and over","","13","1","",2;12,
+"3","Lowest income quintile, less than 35 years","","14","1","",1;2;12,
+"3","Lowest income quintile, 35 to 44 years","","15","1","",1;2;12,
+"3","Lowest income quintile, 45 to 54 years","","16","1","",1;2;12,
+"3","Lowest income quintile, 55 to 64 years","","17","1","",1;2;12,
+"3","Lowest income quintile, 65 years and over","","18","1","",1;2;12,
+"3","Second income quintile, less than 35 years","","19","1","",1;2;12,
+"3","Second income quintile, 35 to 44 years","","20","1","",1;2;12,
+"3","Second income quintile, 45 to 54 years","","21","1","",1;2;12,
+"3","Second income quintile, 55 to 64 years","","22","1","",1;2;12,
+"3","Second income quintile, 65 years and over","","23","1","",1;2;12,
+"3","Third income quintile, less than 35 years","","24","1","",1;2;12,
+"3","Third income quintile, 35 to 44 years","","25","1","",1;2;12,
+"3","Third income quintile, 45 to 54 years","","26","1","",1;2;12,
+"3","Third income quintile, 55 to 64 years","","27","1","",1;2;12,
+"3","Third income quintile, 65 years and over","","28","1","",1;2;12,
+"3","Fourth income quintile, less than 35 years","","29","1","",1;2;12,
+"3","Fourth income quintile, 35 to 44 years","","30","1","",1;2;12,
+"3","Fourth income quintile, 45 to 54 years","","31","1","",1;2;12,
+"3","Fourth income quintile, 55 to 64 years","","32","1","",1;2;12,
+"3","Fourth income quintile, 65 years and over","","33","1","",1;2;12,
+"3","Highest income quintile, less than 35 years","","34","1","",1;2;12,
+"3","Highest income quintile, 35 to 44 years","","35","1","",1;2;12,
+"3","Highest income quintile, 45 to 54 years","","36","1","",1;2;12,
+"3","Highest income quintile, 55 to 64 years","","37","1","",1;2;12,
+"3","Highest income quintile, 65 years and over","","38","1","",1;2;12,
+"3","Main source of household income: wages and salaries","","39","1","",3;12,
+"3","Main source of household income: self-employment income","","40","1","",3;4;12,
+"3","Main source of household income: net property income","","41","1","",3;12,
+"3","Main source of household income: current transfers received - pension benefits","","42","1","",3;5;12,
+"3","Main source of household income: current transfers received - others","","44","1","",3;6;12,
+"3","Owner","","45","1","",7;12,
+"3","Owner with mortgage","","46","45","",7;12,
+"3","Owner without mortgage","","47","45","",7;12,
+"3","Renter","","48","1","",7;12,
+"3","Pre-1946","","49","1","",13,
+"3","Baby boom","","50","1","",12;13,
+"3","Generation X","","51","1","",12;13,
+"3","Millennials","","52","1","",12;13,
+"4","Total assets","","1","","",,
+"4","Financial assets","","2","1","",,
+"4","Life insurance and pensions","","3","2","",8,
+"4","Other financial assets","","4","2","",9,
+"4","Non-financial assets","","5","1","",,
+"4","Real estate","","6","5","",,
+"4","Other non-financial assets","","7","5","",10,
+"4","Total liabilities","","8","","",,
+"4","Mortgage liabilities","","9","8","",,
+"4","Other liabilities","","10","8","",11,
+"4","Net worth (wealth)","","11","","",,
+
+Symbol Legend
+Description,Symbol
+"not available for a specific reference period","..",
+"less than the limit of detection","<LOD",
+"value rounded to 0 (zero) where there is a meaningful distinction between true zero and the value that was rounded","0s",
+"data quality: excellent","A",
+"data quality: very good","B",
+"data quality: good","C",
+"data quality: acceptable","D",
+"use with caution","E",
+"too unreliable to be published","F",
+"not applicable","...",
+"preliminary","p",
+"revised","r",
+"suppressed to meet the confidentiality requirements of the Statistics Act","x",
+"terminated","t",
+
+"Survey Code","Survey Name"
+"1806","National Balance Sheet Accounts"
+
+"Subject Code","Subject Name"
+"36","Economic accounts"
+
+"Note ID",Note
+1,"Income quintiles are assigned based on equivalized household disposable income, which takes into account differences in household size and composition using a method proposed by the Organization for Economic Co-operation and Development (OECD). The "OECD-modified" equivalence scale assigns a value of 1 to the first adult, 0.5 to each additional person aged 14 and over, and 0.3 for all children under 14."
+2,"Age groups refer to the age group of the major income earner."
+3,"This refers to the main source of income for the household, that is, wages and salaries, self-employment income, net property income, current transfers received related to pension benefits, or other current transfers received from non-pension related sources."
+4,"Self-employment income refers to mixed income related to non-farm and farm businesses. Household rental income is not included."
+5,"Revenues from Current transfers received - pension benefits relate to current transfers received from corporations for employer's pension plans and current transfers received from government for the Canada and Québec pension plans (CPP/QPP) and the Old Age Security program including the Guaranteed Income Supplement (OAS/GIS)."
+6,"Revenues from Current transfers received - others, relate to all other current transfers received not included in Current transfers received - pensions benefits, that is, it includes current transfers from the government sector except for the Canada and Québec pension plans (CPP/QPP) and from the Old Age Security Program (OAS) and the Guaranteed Income Supplement (GIS).  It also includes current transfers from Non-profit institutions serving households (NPISH) and from the non-residents sector."
+7,"Owner/Renter refers to the housing tenure of a household. Households that have subsidized rents (partially or fully) are included under Renter."
+8,"Life insurance and pensions include the value of all life insurance and employer pension plans, termination basis. Excludes public plans administered or sponsored by governments: Old Age Security (OAS) including the Guaranteed Income Supplement (GIS) and the Spouse's Allowance (SPA), as well as the Canada and Quebec Pension Plans (CPP/QPP)."
+9,"Other financial assets include total currency and deposits, Canadian short-term paper, Canadian bonds and debentures, foreign investments in paper and bonds, mortgages, equity and investment funds, and other receivables."
+10,"Other non-financial assets include consumer durables, machinery and equipment, and intellectual property products. Excludes accumulation of value of collectibles including coins, stamps and art work."
+11,"Other liabilities include major credit cards and retail store cards, gasoline station cards, etc., vehicle loans, lines of credit, student loans, other loans from financial institutions and other money owed."
+12,"The coefficients of variation from Statistics Canada's Survey of Financial Security for 2012, 2016 and 2019, which serve as indicators of the accuracy of these estimates for net worth and its components, are available in the appendix to Distributions of Household Economic Accounts, estimates of asset, liability and net worth distributions, 2010 to 2020, technical methodology and quality report for the August 2021 release."
+13,"Distributions by generation are defined as follows and are based on the birth year of the major income earner : pre-1946 for those born before 1946, baby boom for those born between 1946 and 1964, generation X for those born between 1965 and 1980 and millennials for those born after 1980.  Note that generation Z has been combined with the millennial generation as their sample size is relatively small."
+14,""Distribution of value" is the share of a wealth component (such as total assets) attributable to the various household characteristics (such as lowest income quintile)."
+15,"Wealth quintiles are assigned based on the household net worth."
+
+"Correction ID","Correction Date","Correction Note"
