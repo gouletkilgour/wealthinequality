@@ -108,14 +108,16 @@ page(data) = """<!DOCTYPE html>
       padding: 0.6rem 1rem;
       border-bottom: 1px solid var(--border);
       display: flex;
-      align-items: center;
+      flex-direction: column;
+      align-items: flex-start;
       gap: 0.5rem;
-      flex-wrap: wrap;
     }
 
     .chart-ctrl-label { font-size: 0.75rem; font-weight: 500; color: var(--muted); }
 
-    .measure-tabs { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+    .measure-tabs { display: flex; flex-direction: column; gap: 0.3rem; }
+
+    .measure-row { display: flex; flex-wrap: wrap; gap: 0.3rem; }
 
     .measure-tab {
       font-family: inherit;
@@ -137,40 +139,11 @@ page(data) = """<!DOCTYPE html>
 
     #chart { height: 520px; }
 
-
-    details { padding: 0.75rem 1.25rem; border-top: 1px solid var(--border); }
-
-    summary { cursor: pointer; font-size: 0.85rem; color: var(--accent); }
-
-    table {
-      width: 100%;
-      max-width: 32rem;
-      border-collapse: collapse;
-      margin-top: 0.75rem;
-      font-size: 0.85rem;
-      font-variant-numeric: tabular-nums;
-    }
-
-    caption { text-align: left; font-size: 0.8rem; color: var(--muted); padding-bottom: 0.4rem; }
-
-    th, td { padding: 0.3rem 0 0.3rem 1.5rem; text-align: right; border-bottom: 1px solid var(--border); }
-
-    th:first-child { padding-left: 0; text-align: left; }
-
-    tbody th { font-weight: 400; }
-
-    .prose { padding: 1.5rem 1.75rem; line-height: 1.7; font-size: 0.93rem; }
-
-    .prose h2 { font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; }
-
-    .prose p { margin-bottom: 1rem; }
-
     .source { font-size: 0.75rem; color: var(--muted); }
 
     @media (max-width: 600px) {
       .page { padding-top: 1.5rem; }
       #chart { height: 440px; }
-      .prose { padding: 1.25rem 1rem; }
     }
   </style>
 </head>
@@ -187,34 +160,24 @@ page(data) = """<!DOCTYPE html>
       <div class="measure-tabs" id="measure-tabs" role="group" aria-labelledby="measure-label"></div>
     </div>
     <div id="chart"></div>
-    <details>
-      <summary>Data table</summary>
-      <table id="data-table"></table>
-    </details>
-  </section>
-
-  <section>
-    <div class="section-label">About this data</div>
-    <div class="prose">
-      A description of the data and methodology will go here.
-    </div>
   </section>
 </div>
 
 <script>
   const DATA = $(data);
 
+  // row is the row of buttons the measure sits in
   const MEASURES = [
-    { key: "top_0_01pct", label: "Top 0.01%", digits: 1 },
-    { key: "top_0_1pct",  label: "Top 0.1%",  digits: 1 },
-    { key: "top_1pct",    label: "Top 1%",    digits: 1 },
-    { key: "top_5pct",    label: "Top 5%",    digits: 1 },
-    { key: "top_10pct",   label: "Top 10%",   digits: 1 },
-    { key: "top_20pct",   label: "Top 20%",   digits: 1 },
-    { key: "top_50pct",   label: "Top 50%",   digits: 1 },
-    { key: "p80_p90",     label: "Upper middle class (P80–P90)", digits: 1 },
-    { key: "p50_p80",     label: "Middle class (P50–P80)",       digits: 1 },
-    { key: "gini",        label: "Gini",      digits: 3 },
+    { key: "top_0_01pct", label: "Top 0.01%", digits: 1, row: 0 },
+    { key: "top_0_1pct",  label: "Top 0.1%",  digits: 1, row: 0 },
+    { key: "top_1pct",    label: "Top 1%",    digits: 1, row: 0 },
+    { key: "top_5pct",    label: "Top 5%",    digits: 1, row: 0 },
+    { key: "top_10pct",   label: "Top 10%",   digits: 1, row: 0 },
+    { key: "top_20pct",   label: "Top 20%",   digits: 1, row: 0 },
+    { key: "top_50pct",   label: "Top 50%",   digits: 1, row: 0 },
+    { key: "p80_p90",     label: "Upper middle class (P80–P90)", digits: 1, row: 1 },
+    { key: "p50_p80",     label: "Middle class (P50–P80)",       digits: 1, row: 1 },
+    { key: "gini",        label: "Gini",      digits: 3, row: 2 },
   ];
 
   // One colour and marker per source, in order. The first three colours are the Inequality
@@ -305,40 +268,14 @@ page(data) = """<!DOCTYPE html>
     Plotly.react("chart", buildTraces(t), buildLayout(t), { responsive: true });
   }
 
-  // The chart's values as a table, for reading exact figures without hovering
-  function renderTable() {
-    const table = document.getElementById("data-table");
-    table.textContent = "";
-    table.createCaption().textContent =
-      isShare(current) ? current.label + " share of total net worth (%)" : "Gini coefficient of net worth";
-    const head = table.createTHead().insertRow();
-    ["Year", ...DATA.map(src => src.name)].forEach(name => {
-      const th = document.createElement("th");
-      th.scope = "col";
-      th.textContent = name;
-      head.appendChild(th);
-    });
-    const body = table.createTBody();
-    series(DATA[0]).x.forEach(year => {
-      const row = body.insertRow();
-      const th = document.createElement("th");
-      th.scope = "row";
-      th.textContent = year;
-      row.appendChild(th);
-      DATA.forEach(src => {
-        const s = series(src), k = s.x.indexOf(year);
-        row.insertCell().textContent = k < 0 ? "" : fmt(s.y[k]);
-      });
-    });
-  }
-
-  function update() {
-    drawChart();
-    renderTable();
-  }
-
   const tabs = document.getElementById("measure-tabs");
+  const rows = [];
   MEASURES.forEach(m => {
+    if (!rows[m.row]) {
+      rows[m.row] = document.createElement("div");
+      rows[m.row].className = "measure-row";
+      tabs.appendChild(rows[m.row]);
+    }
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "measure-tab";
@@ -347,12 +284,12 @@ page(data) = """<!DOCTYPE html>
     btn.addEventListener("click", () => {
       current = m;
       tabs.querySelectorAll(".measure-tab").forEach(b => b.setAttribute("aria-pressed", String(b === btn)));
-      update();
+      drawChart();
     });
-    tabs.appendChild(btn);
+    rows[m.row].appendChild(btn);
   });
 
-  update();
+  drawChart();
   darkMode.addEventListener("change", drawChart);
 
   // Recompute the legend position when the chart is resized.
