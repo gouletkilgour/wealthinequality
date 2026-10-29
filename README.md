@@ -34,12 +34,10 @@ These data are located in `data/dhea`. The CSV is too large for this repository,
 
 ## Forbes World's Billionaires
 
-Forbes' annual World's Billionaires list estimates the net worth of every person it finds with at least US$1 billion. `data/forbes/forbes_canada_<year>_cad.csv` holds the entries with Canadian citizenship for 2012, 2016, 2019 and 2023, with net worth (`net_worth`) in billions of Canadian dollars.
+Forbes' annual World's Billionaires list estimates the net worth of every person it finds with at least US$1 billion. `data/forbes/canada/<year>.csv` holds the entries with Canadian citizenship on each list from 2012 to 2025, in US dollars, as Forbes publishes them. `data/forbes/forbes_canada_<year>_cad.csv` holds the same entries for each year, with net worth (`net_worth`) in billions of Canadian dollars. `forbes_lists.jl` builds them from the first, except 2023, which was built by hand with the same rules and rounds two families $0.01 billion higher.
 
-The lists were built outside this repository from the Forbes lists:
-
-- **Conversion to CAD.** Net worth is converted at the Bank of Canada USD/CAD rate on the date Forbes valued each list: 0.9991 (2012-02-14), 1.3835 (2016-02-12), 1.3270 (2019-02-08) and 1.3807 (2023-03-10). For 2012 and 2016, this is the legacy noon rate, since the single daily rate starts in 2017. The 2012 to 2019 files were produced by a script, and the 2023 file by hand, with the same rules.
-- **Relatives combined.** Relatives that Forbes lists separately are combined into one row: the Irving family (James and Arthur; James only in 2012), and in 2023 also the Saputo, Zekelman and Azrieli families. Amounts are summed in USD before conversion.
+- **Conversion to CAD.** Net worth is converted at the Bank of Canada USD/CAD rate on the date Forbes valued each list, from 0.9991 (2012-02-14) to 1.4371 (2025-03-07); `forbes_lists.jl` lists them all. To 2016, this is the legacy noon rate, since the single daily rate starts in 2017. The valuation dates for 2013 to 2015, 2017 and 2020 to 2025 are the Friday in February or March on which Forbes usually values its list (Wednesday 18 March in 2020), and have not all been checked against Forbes' own methodology notes.
+- **Relatives combined.** Relatives that Forbes lists separately are combined into one row: the Irving family (James and Arthur; James only in 2012 and 2013), the Saputo family (2023 and 2024), the Zekelman family (from 2020), the Azrieli family (Sharon and Naomi, from 2021), the Phillips family (John and Catherine, 2021, 2022, 2024 and 2025) and, in 2025, the Thomson family, which Forbes split that year among David, Peter and Taylor Thomson and their cousins Sherry Brydson, Gaye Farncombe and Linda Campbell. Amounts are summed in USD before conversion.
 - **All citizens kept.** Every Forbes entry with Canadian citizenship is kept, including Canadians living abroad and Nathaniel Rothschild (2012), who appears to be miscoded as Canadian.
 
 ## Canadian Business Rich 100
@@ -151,7 +149,7 @@ It produces:
 - `output/sfs_nbsa_quarterly_reweighting.csv`: the weighted count of families in each region and age group in the survey and in each quarter.
 - `output/sfs_nbsa_quarterly_dhea_quintiles.csv`: the net worth share of each wealth quintile, with DHEA's where published.
 
-`quarter_file` returns the pooled family-level file for a quarter, which the rich-list adjustment will start from.
+`quarter_file` returns the pooled family-level file for a quarter, which `sfs_nbsa_forbes_quarterly.jl` starts from.
 
 | | 2012 Q4 | 2016 Q4 | 2019 Q4 | 2020 Q4 | 2021 Q4 | 2023 Q2 | 2026 Q1 |
 |---|---|---|---|---|---|---|---|
@@ -162,4 +160,28 @@ It produces:
 
 At the survey quarters, the six categories give top 1% shares 0.1 to 0.6 points higher than the three categories of `sfs_nbsa.jl`, mainly because other debts, which the SFS covers least, get their own adjustment factor of about 2. The highest wealth quintile holds 0.7 to 2.9 points more than in DHEA, as expected with families rather than households, and moves similarly: down from 2020 to 2022 and up after 2023. DHEA's fall in 2020 is sharper, since it uses Equifax and housing data between surveys. Between surveys, most of the change in this series comes from the shift from one survey to the next rather than from the NBSA. Carried to 2023 Q2 on its own, the 2019 SFS gives a top 20% share of 68.7% (69.7% in 2019 Q4) and a top 1% share of 15.0% (unchanged), against 65.4% and 11.2% from the 2023 SFS. On its own, the NBSA moves the top 20% share down by about 2 points from 2019 Q4 to 2021 Q4 and back up by 1.3 points in 2022.
 
-`chart_quarterly.jl` writes `output/wealth_inequality_quarterly.html`, an interactive chart of the quarterly series, with the same measures as the annual chart, and copies it to `docs/quarterly.html`. Run `sfs_nbsa_quarterly.jl` first.
+# Quarterly Wealth Inequality: SFS PUMF + NBSA + Forbes
+
+`sfs_nbsa_forbes_quarterly.jl` adds the Forbes list and a Pareto top tail to the quarterly series, from 2012 Q1 to 2026 Q1, with the procedure of `sfs_nbsa_forbes.jl` in the six categories of `sfs_nbsa_quarterly.jl`. For each quarter:
+
+1. **Start from the quarterly series.** Each survey of the quarter is carried to the quarter and scaled to the NBSA, as in `sfs_nbsa_quarterly.jl`.
+2. **Add the top tail to each survey.** Each survey gets its own Pareto tail and calibration, steps 2 to 5 of `sfs_nbsa_forbes.jl`, with the Forbes list and the threshold w_min of the quarter's calendar year. The wealth of the families on the list is thus held constant across each year, and changes each Q1. The 2025 list and threshold also serve 2026 Q1.
+3. **Combine.** The integrated files of the two surveys are pooled with the surveys' weights 1 − λ and λ, so each Forbes family appears once for each survey, with weights adding up to 1.
+
+Fitting a single tail to the pooled file instead makes the series jump at the survey quarters, by up to 1 point in the top 1% share, since the regression counts every record once, whatever its weight, so a survey with a small share still moves the fit. At the survey quarters, the series is within 0.2 points of the annual SFS + NBSA + Forbes series for the top 1% share; the difference comes from the six categories. Before the final proportional adjustment, every calibration ends within 0.16% of the NBSA, and all but two within 0.1%. There are no standard errors.
+
+It produces:
+
+- `output/sfs_nbsa_forbes_quarterly_wealth_inequality.csv`: the top shares and Gini of each quarter.
+- `output/sfs_nbsa_forbes_quarterly_summary.csv`: the surveys and their weights, the Forbes year, the number of SFS records, and total, mean and median net worth of each quarter.
+- `output/sfs_nbsa_forbes_quarterly_tail.csv`: w_min, the Forbes list, α and convergence for each quarter and survey.
+- `output/sfs_nbsa_forbes_quarterly_calibration.csv`: the iterative factor of each category, relative to the scaling of `sfs_nbsa_quarterly.jl`, and the tail's composition, for each quarter and survey.
+
+| | 2012 Q4 | 2016 Q4 | 2019 Q4 | 2021 Q4 | 2023 Q2 | 2025 Q4 | 2026 Q1 |
+|---|---|---|---|---|---|---|---|
+| Top 0.1% share | 9.9 | 11.5 | 11.8 | 11.2 | 11.9 | 13.5 | 13.4 |
+| Top 1% share | 22.5 | 24.7 | 25.6 | 24.5 | 24.8 | 27.1 | 26.9 |
+| Top 10% share | 55.6 | 55.9 | 57.2 | 54.8 | 54.3 | 56.5 | 56.4 |
+| Gini | 0.741 | 0.734 | 0.741 | 0.713 | 0.712 | 0.729 | 0.728 |
+
+`chart_quarterly.jl` writes `output/wealth_inequality_quarterly.html`, an interactive chart of the two quarterly series, SFS + NBSA and SFS + NBSA + Forbes, with the same measures as the annual chart, and copies it to `docs/quarterly.html`. Run `sfs_nbsa_quarterly.jl` and `sfs_nbsa_forbes_quarterly.jl` first.

@@ -9,8 +9,10 @@ const FORBES_DIR = joinpath(@__DIR__, "data", "forbes")
 
 # Pareto threshold: PBO's $3 million for 2016, held constant in 2016 dollars with the annual
 # CPI (Table 18-10-0005-01, all-items, 2002 = 100). This reproduces PBO's 2023 threshold of
-# $3.67 million.
-const CPI = Dict(2012 => 121.7, 2016 => 128.4, 2019 => 136.0, 2023 => 157.1)
+# $3.67 million. The years between surveys are for sfs_nbsa_forbes_quarterly.jl.
+const CPI = Dict(2012 => 121.7, 2013 => 122.8, 2014 => 125.2, 2015 => 126.6, 2016 => 128.4, 2017 => 130.4,
+                 2018 => 133.4, 2019 => 136.0, 2020 => 137.0, 2021 => 141.6, 2022 => 151.2, 2023 => 157.1,
+                 2024 => 160.9, 2025 => 164.2)
 w_min(year) = 3e6 * CPI[year] / CPI[2016]
 
 const SYNTHETIC_BRACKETS = 2000   # log-spaced wealth brackets from w_min to the lowest rich-list entry
@@ -50,18 +52,19 @@ end
 # One pass of Appendices A.1 to A.4 for adjustment factors f: align the SFS, fit the tail to the
 # SFS families at or above w_min plus the rich list (weight 1), replace those SFS families with synthetic
 # families up to the lowest rich-list entry and the rich-list entries above it, and split the tail's
-# wealth into categories using the composition of the SFS families it replaces.
-function integrate(fam, w, richlist, f, wmin)
-    nw = aligned_networth(fam, f)
+# wealth into categories using the composition of the SFS families it replaces. cats are the
+# columns of fam that are scaled to the NBSA, and signs say whether each is an asset or a debt.
+function integrate(fam, w, richlist, f, wmin; cats = CATEGORIES, signs = CATEGORY_SIGNS)
+    nw = networth(fam, f, cats, signs)
     top = nw .>= wmin
     below = .!top
     α, total_weight = pareto_fit(vcat(nw[top], richlist), vcat(w[top], ones(length(richlist))), wmin)
     tail_x, tail_w = synthetic_tail(α, total_weight, wmin, minimum(richlist))
 
     top_nw = sum(w[top] .* nw[top])
-    ratios = [f[k] * sum(w[top] .* fam[top, c]) / top_nw for (k, c) in enumerate(CATEGORIES)]
+    ratios = [f[k] * sum(w[top] .* fam[top, c]) / top_nw for (k, c) in enumerate(cats)]
     tail_nw = sum(tail_x .* tail_w) + sum(richlist)
-    agg = [f[k] * sum(w[below] .* fam[below, c]) for (k, c) in enumerate(CATEGORIES)] .+ ratios .* tail_nw
+    agg = [f[k] * sum(w[below] .* fam[below, c]) for (k, c) in enumerate(cats)] .+ ratios .* tail_nw
     return (; f, below, α, n_top = count(top), tail_x, tail_w, ratios, agg)
 end
 
@@ -71,12 +74,12 @@ end
 # crossing w_min moves the aggregates by a few hundredths of a per cent, which can stop the gap
 # shrinking to TOL. The iterate closest to the NBSA is then kept, and the final proportional
 # adjustment removes what is left.
-function calibrate(fam, w, richlist, nbsa, wmin)
-    f = adjustment_factors(fam, w, nbsa)
+function calibrate(fam, w, richlist, nbsa, wmin; cats = CATEGORIES, signs = CATEGORY_SIGNS)
+    f = nbsa ./ [sum(w .* fam[!, c]) for c in cats]
     best, best_err, iterations = nothing, Inf, 0
     step, prev_err = 1.0, Inf
     for iter in 1:MAX_ITER
-        r = integrate(fam, w, richlist, f, wmin)
+        r = integrate(fam, w, richlist, f, wmin; cats, signs)
         err = maximum(abs.(r.agg ./ nbsa .- 1))
         err < best_err && ((best, best_err, iterations) = (r, err, iter))
         (err < TOL || iter - iterations >= STALL) && break
@@ -89,25 +92,27 @@ end
 
 # The calibrated integrated dataset, after PBO's final proportional adjustment of every family.
 # source labels the rich-list rows.
-function integrated_dataset(fam, w, richlist, c, nbsa, source)
+function integrated_dataset(fam, w, richlist, c, nbsa, source; cats = CATEGORIES, signs = CATEGORY_SIGNS)
     scale = nbsa ./ c.agg
     fs = c.f .* scale
     tail = c.ratios .* scale
     b = c.below
-    parts = [DataFrame(source = "SFS", id = fam.id[b], weight = w[b], financial = fs[1] .* fam.financial[b],
-                       nonfinancial = fs[2] .* fam.nonfinancial[b], debts = fs[3] .* fam.debts[b]),
-             DataFrame(source = "Pareto", id = "", weight = c.tail_w, financial = tail[1] .* c.tail_x,
-                       nonfinancial = tail[2] .* c.tail_x, debts = tail[3] .* c.tail_x),
-             DataFrame(source = source, id = richlist.name, weight = 1.0, financial = tail[1] .* richlist.networth,
-                       nonfinancial = tail[2] .* richlist.networth, debts = tail[3] .* richlist.networth)]
-    df = vcat(parts...)
-    df.networth = df.financial .+ df.nonfinancial .- df.debts
+    sfs = DataFrame(source = "SFS", id = fam.id[b], weight = w[b])
+    pareto = DataFrame(source = "Pareto", id = "", weight = c.tail_w)
+    list = DataFrame(source = source, id = richlist.name, weight = 1.0)
+    for (k, cat) in enumerate(cats)
+        sfs[!, cat] = fs[k] .* fam[b, cat]
+        pareto[!, cat] = tail[k] .* c.tail_x
+        list[!, cat] = tail[k] .* richlist.networth
+    end
+    df = vcat(sfs, pareto, list)
+    df.networth = networth(df, ones(length(cats)), cats, signs)
     return sort!(df, :networth)
 end
 
-function estimate(fam, w, richlist, nbsa, wmin, source)
-    c = calibrate(fam, w, richlist.networth, nbsa, wmin)
-    hfd = integrated_dataset(fam, w, richlist, c, nbsa, source)
+function estimate(fam, w, richlist, nbsa, wmin, source; cats = CATEGORIES, signs = CATEGORY_SIGNS)
+    c = calibrate(fam, w, richlist.networth, nbsa, wmin; cats, signs)
+    hfd = integrated_dataset(fam, w, richlist, c, nbsa, source; cats, signs)
     return c, hfd, measures(hfd.networth, hfd.weight)
 end
 

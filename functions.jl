@@ -60,6 +60,7 @@ const NBSA_FILE = joinpath(@__DIR__, "data", "nbsa", "36100580.csv")
 const NBSA_QUARTER = Dict(2012 => "2012-10", 2016 => "2016-10", 2019 => "2019-10", 2023 => "2023-04")
 
 const CATEGORIES = ["financial", "nonfinancial", "debts"]
+const CATEGORY_SIGNS = [1, 1, -1]   # assets add to net worth and debts subtract
 const NBSA_CATEGORIES = ["Total financial assets", "Non-financial assets", "Total financial liabilities"]
 
 function load_nbsa()
@@ -98,6 +99,9 @@ sfs_totals(fam, w) = [sum(w .* fam[!, c]) for c in CATEGORIES]
 adjustment_factors(fam, w, nbsa) = nbsa ./ sfs_totals(fam, w)
 
 aligned_networth(fam, f) = f[1] .* fam.financial .+ f[2] .* fam.nonfinancial .- f[3] .* fam.debts
+
+# Net worth from any set of categories, each scaled by its factor in f and added or subtracted
+networth(fam, f, cats, signs) = sum(signs[k] * f[k] .* fam[!, c] for (k, c) in enumerate(cats))
 
 # Wealth held by the poorest fraction q of families, for x sorted ascending, with total weight W,
 # cumulative weights cw and cumulative wealth cx

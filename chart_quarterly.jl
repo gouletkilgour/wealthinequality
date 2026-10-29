@@ -1,9 +1,10 @@
 using CSV, DataFrames
 
 # Writes output/wealth_inequality_quarterly.html and its published copy docs/quarterly.html: the
-# quarterly series from sfs_nbsa_quarterly.jl, drawn like the SFS + NBSA line of the annual chart
-# (chart.jl), with a button for each of its measures. Run sfs_nbsa_quarterly.jl first. Apart from
-# Plotly, which loads from its CDN, the page is self-contained.
+# quarterly series from sfs_nbsa_quarterly.jl (SFS + NBSA) and sfs_nbsa_forbes_quarterly.jl (SFS +
+# NBSA + Forbes), drawn in the colours of the same series on the annual chart (chart.jl), with a
+# button for each of its measures. Run those two scripts first. Apart from Plotly, which loads
+# from its CDN, the page is self-contained.
 
 const OUTDIR = joinpath(@__DIR__, "output")
 const DOCSDIR = joinpath(@__DIR__, "docs")
@@ -14,19 +15,29 @@ json(s::AbstractString) = "\"" * s * "\""
 json(v::AbstractVector) = "[" * join(json.(v), ",") * "]"
 json(d::AbstractDict) = "{" * join((json(k) * ":" * json(v) for (k, v) in d), ",") * "}"
 
+# One line per source, drawn in this order
+const SOURCES = ["SFS + NBSA" => "sfs_nbsa_quarterly_wealth_inequality.csv",
+                 "SFS + NBSA + Forbes" => "sfs_nbsa_forbes_quarterly_wealth_inequality.csv"]
+
 # The share held between two percentiles, as the difference of two top shares, as in chart.jl
 const BANDS = ["p50_p80" => ("top_50pct", "top_20pct"), "p80_p90" => ("top_20pct", "top_10pct")]
 
-function main()
-    q = CSV.read(joinpath(OUTDIR, "sfs_nbsa_quarterly_wealth_inequality.csv"), DataFrame)
-    quarters = unique(q.quarter)
-    quarterly = Dict(k.measure => collect(g.estimate) for (k, g) in pairs(groupby(q, :measure)))
+# The quarters a file covers, and measure => estimates in that order
+function load_source(file)
+    q = CSV.read(joinpath(OUTDIR, file), DataFrame)
+    series = Dict(k.measure => collect(g.estimate) for (k, g) in pairs(groupby(q, :measure)))
     for (band, (upper, lower)) in BANDS
-        quarterly[band] = quarterly[upper] .- quarterly[lower]
+        series[band] = series[upper] .- series[lower]
     end
+    return unique(q.quarter), Dict(k => round.(y, digits = 4) for (k, y) in series)
+end
 
+function main()
+    loaded = [name => load_source(file) for (name, file) in SOURCES]
+    quarters = first(last(loaded[1]))
+    all(first(last(l)) == quarters for l in loaded) || error("the quarterly files cover different quarters")
     data = json(Dict("quarters" => quarters,
-                     "quarterly" => Dict(k => round.(y, digits = 4) for (k, y) in quarterly)))
+                     "series" => [Dict("name" => name, "measures" => m) for (name, (_, m)) in loaded]))
     html = page(data)
     write(joinpath(OUTDIR, "wealth_inequality_quarterly.html"), html)
     write(joinpath(DOCSDIR, "quarterly.html"), html)
@@ -163,8 +174,9 @@ page(data) = """<!DOCTYPE html>
     { key: "gini",        label: "Gini",      digits: 3, row: 2 },
   ];
 
-  // The colour and name of the SFS + NBSA line of the annual page
-  const RED = "#ef553b", NAME = "SFS + NBSA";
+  // The colours of the same series on the annual page: red for SFS + NBSA, green for SFS + NBSA
+  // + Forbes
+  const COLORS = ["#ef553b", "#00aa7a"];
 
   const THEMES = {
     light: { paper: "#ffffff", plot: "#E5ECF6", grid: "#ffffff", text: "#444444" },
@@ -179,15 +191,17 @@ page(data) = """<!DOCTYPE html>
   const isShare = m => m.key !== "gini";
   const theme = () => darkMode.matches ? THEMES.dark : THEMES.light;
 
-  // The quarterly line, without markers. showlegend keeps the legend, which Plotly hides for a
-  // single trace.
-  function quarterlyTrace(y, fmt) {
-    return {
-      x: Q, y: y, name: NAME, type: "scatter", mode: "lines", showlegend: true,
-      line: { color: RED, width: 2, dash: "solid" },
-      text: y.map(v => "<b>" + fmt(v) + "</b>  " + NAME),
-      hovertemplate: "%{text}<extra></extra>",
-    };
+  // One line per series, without markers
+  function buildTraces(fmt) {
+    return DATA.series.map((src, i) => {
+      const y = src.measures[measure.key];
+      return {
+        x: Q, y: y, name: src.name, type: "scatter", mode: "lines",
+        line: { color: COLORS[i], width: 2, dash: "solid" },
+        text: y.map(v => "<b>" + fmt(v) + "</b>  " + src.name),
+        hovertemplate: "%{text}<extra></extra>",
+      };
+    });
   }
 
   function range(ys) {
@@ -228,10 +242,10 @@ page(data) = """<!DOCTYPE html>
   function drawTop() {
     const t = theme(), el = document.getElementById("chart-top");
     const fmt = v => v.toFixed(measure.digits) + (isShare(measure) ? "%" : "");
-    const y = DATA.quarterly[measure.key];
+    const ys = DATA.series.flatMap(src => src.measures[measure.key]);
     const title = isShare(measure) ? "Share of Total Net Worth – " + measure.label : "Gini Coefficient of Net Worth";
-    Plotly.react(el, [quarterlyTrace(y, fmt)],
-                 layout(el, t, title, isShare(measure) ? "Share of Total Net Worth (%)" : "Gini Coefficient", range(y)),
+    Plotly.react(el, buildTraces(fmt),
+                 layout(el, t, title, isShare(measure) ? "Share of Total Net Worth (%)" : "Gini Coefficient", range(ys)),
                  { responsive: true });
   }
 
