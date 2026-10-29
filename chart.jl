@@ -3,7 +3,8 @@ using CSV, DataFrames
 # Writes output/wealth_inequality.html, an interactive chart comparing the wealth
 # shares and Gini coefficient from sfs.jl (SFS), sfs_nbsa.jl (SFS + NBSA),
 # sfs_nbsa_forbes.jl (SFS + NBSA + Forbes) and sfs_nbsa_forbes_cb.jl (SFS + NBSA + Forbes
-# + Canadian Business), with a button for each measure. Run those four scripts first.
+# + Canadian Business), with a button for each measure, including the shares between the 50th
+# and 80th and the 80th and 90th percentiles. Run those four scripts first.
 # Apart from Plotly, which
 # loads from its CDN, the page is self-contained, so it can be published as is.
 
@@ -21,11 +22,20 @@ json(s::AbstractString) = "\"" * s * "\""
 json(v::AbstractVector) = "[" * join(json.(v), ",") * "]"
 json(d::AbstractDict) = "{" * join((json(k) * ":" * json(v) for (k, v) in d), ",") * "}"
 
+# The share held between two percentiles, as the difference of two top shares: the top 50% less
+# the top 20% is the share of the families between the 50th and 80th percentiles
+const BANDS = ["p50_p80" => ("top_50pct", "top_20pct"), "p80_p90" => ("top_20pct", "top_10pct")]
+
 # measure => (x = years, y = estimates)
 function load_source(name, file)
     df = sort(CSV.read(joinpath(OUTDIR, file), DataFrame), :year)
-    measures = Dict(k.measure => Dict("x" => g.year, "y" => round.(g.estimate, digits = 4))
-                    for (k, g) in pairs(groupby(df, :measure)))
+    series = Dict(k.measure => (collect(g.year), collect(g.estimate)) for (k, g) in pairs(groupby(df, :measure)))
+    for (band, (upper, lower)) in BANDS
+        (years, a), (years_lower, b) = series[upper], series[lower]
+        years == years_lower || error("$file: $upper and $lower cover different years")
+        series[band] = (years, a .- b)
+    end
+    measures = Dict(k => Dict("x" => x, "y" => round.(y, digits = 4)) for (k, (x, y)) in series)
     return Dict("name" => name, "measures" => measures)
 end
 
@@ -168,7 +178,7 @@ page(data) = """<!DOCTYPE html>
 
 <div class="page">
   <h1>Wealth Inequality in Canada</h1>
-  <p class="subtitle">Survey of Financial Security, alone, aligned with the National Balance Sheet Accounts, and with the Forbes and Canadian Business rich lists added, 2012&ndash;2023</p>
+  <p class="subtitle"></p>
 
   <section>
     <div class="section-label">Chart</div>
@@ -202,6 +212,8 @@ page(data) = """<!DOCTYPE html>
     { key: "top_10pct",   label: "Top 10%",   digits: 1 },
     { key: "top_20pct",   label: "Top 20%",   digits: 1 },
     { key: "top_50pct",   label: "Top 50%",   digits: 1 },
+    { key: "p80_p90",     label: "Upper middle class (P80–P90)", digits: 1 },
+    { key: "p50_p80",     label: "Middle class (P50–P80)",       digits: 1 },
     { key: "gini",        label: "Gini",      digits: 3 },
   ];
 
