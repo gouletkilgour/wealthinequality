@@ -2,7 +2,7 @@ using CSV, DataFrames
 
 # Writes output/wealth_inequality_quarterly.html and its published copy docs/quarterly.html: the
 # quarterly series from sfs_nbsa_quarterly.jl, with the annual series from sfs_nbsa.jl at the
-# survey quarters, and the wealth quintile shares against Statistics Canada's DHEA. Run those two
+# survey quarters, and a button for each measure of the annual chart (chart.jl). Run those two
 # scripts first. Apart from Plotly, which loads from its CDN, the page is self-contained.
 
 const OUTDIR = joinpath(@__DIR__, "output")
@@ -15,20 +15,26 @@ json(s::AbstractString) = "\"" * s * "\""
 json(v::AbstractVector) = "[" * join(json.(v), ",") * "]"
 json(d::AbstractDict) = "{" * join((json(k) * ":" * json(v) for (k, v) in d), ",") * "}"
 
+# The share held between two percentiles, as the difference of two top shares, as in chart.jl
+const BANDS = ["p50_p80" => ("top_50pct", "top_20pct"), "p80_p90" => ("top_20pct", "top_10pct")]
+
 function main()
     q = CSV.read(joinpath(OUTDIR, "sfs_nbsa_quarterly_wealth_inequality.csv"), DataFrame)
     quarters = unique(q.quarter)
-    quarterly = Dict(k.measure => round.(g.estimate, digits = 4) for (k, g) in pairs(groupby(q, :measure)))
-    a = CSV.read(joinpath(OUTDIR, "sfs_nbsa_wealth_inequality.csv"), DataFrame)
-    annual = Dict(k.measure => Dict("x" => [SURVEY_QUARTERS[y] for y in g.year], "y" => round.(g.estimate, digits = 4))
-                  for (k, g) in pairs(groupby(a, :measure)))
-    qs = CSV.read(joinpath(OUTDIR, "sfs_nbsa_quarterly_dhea_quintiles.csv"), DataFrame)
-    ours = Dict(string(k.quintile) => round.(g.sfs_nbsa, digits = 2) for (k, g) in pairs(groupby(qs, :quintile)))
-    dhea = Dict(string(k.quintile) => Dict("x" => g.quarter[.!ismissing.(g.dhea)], "y" => collect(skipmissing(g.dhea)))
-                for (k, g) in pairs(groupby(qs, :quintile)))
+    quarterly = Dict(k.measure => collect(g.estimate) for (k, g) in pairs(groupby(q, :measure)))
+    a = sort(CSV.read(joinpath(OUTDIR, "sfs_nbsa_wealth_inequality.csv"), DataFrame), :year)
+    annual = Dict(k.measure => (collect(g.year), collect(g.estimate)) for (k, g) in pairs(groupby(a, :measure)))
+    for (band, (upper, lower)) in BANDS
+        quarterly[band] = quarterly[upper] .- quarterly[lower]
+        (years, u), (years_lower, l) = annual[upper], annual[lower]
+        years == years_lower || error("sfs_nbsa_wealth_inequality.csv: $upper and $lower cover different years")
+        annual[band] = (years, u .- l)
+    end
 
     data = json(Dict("quarters" => quarters, "surveys" => [SURVEY_QUARTERS[y] for y in sort(collect(keys(SURVEY_QUARTERS)))],
-                     "quarterly" => quarterly, "annual" => annual, "quintiles" => ours, "dhea" => dhea))
+                     "quarterly" => Dict(k => round.(y, digits = 4) for (k, y) in quarterly),
+                     "annual" => Dict(k => Dict("x" => [SURVEY_QUARTERS[y] for y in x], "y" => round.(y, digits = 4))
+                                      for (k, (x, y)) in annual)))
     html = page(data)
     write(joinpath(OUTDIR, "wealth_inequality_quarterly.html"), html)
     write(joinpath(DOCSDIR, "quarterly.html"), html)
@@ -72,11 +78,7 @@ page(data) = """<!DOCTYPE html>
 
     .page { max-width: 960px; margin: 0 auto; padding: 2.5rem 1rem 3rem; }
 
-    h1 { font-size: 1.6rem; margin-bottom: 0.35rem; }
-
-    .subtitle { color: var(--muted); font-size: 0.95rem; margin-bottom: 1.5rem; }
-
-    .subtitle a, .prose a { color: var(--accent); }
+    h1 { font-size: 1.6rem; margin-bottom: 1.5rem; }
 
     section {
       background: var(--bg);
@@ -100,14 +102,16 @@ page(data) = """<!DOCTYPE html>
       padding: 0.6rem 1rem;
       border-bottom: 1px solid var(--border);
       display: flex;
-      align-items: center;
+      flex-direction: column;
+      align-items: flex-start;
       gap: 0.5rem;
-      flex-wrap: wrap;
     }
 
     .chart-ctrl-label { font-size: 0.75rem; font-weight: 500; color: var(--muted); }
 
-    .measure-tabs { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+    .measure-tabs { display: flex; flex-direction: column; gap: 0.3rem; }
+
+    .measure-row { display: flex; flex-wrap: wrap; gap: 0.3rem; }
 
     .measure-tab {
       font-family: inherit;
@@ -129,42 +133,9 @@ page(data) = """<!DOCTYPE html>
 
     .chart { height: 520px; }
 
-    details { padding: 0.75rem 1.25rem; border-top: 1px solid var(--border); }
-
-    summary { cursor: pointer; font-size: 0.85rem; color: var(--accent); }
-
-    .table-wrap { max-height: 24rem; overflow-y: auto; margin-top: 0.75rem; }
-
-    table {
-      width: 100%;
-      max-width: 32rem;
-      border-collapse: collapse;
-      font-size: 0.85rem;
-      font-variant-numeric: tabular-nums;
-    }
-
-    caption { text-align: left; font-size: 0.8rem; color: var(--muted); padding-bottom: 0.4rem; }
-
-    th, td { padding: 0.3rem 0 0.3rem 1.5rem; text-align: right; border-bottom: 1px solid var(--border); }
-
-    th:first-child { padding-left: 0; text-align: left; }
-
-    thead th { position: sticky; top: 0; background: var(--bg); }
-
-    tbody th { font-weight: 400; }
-
-    .prose { padding: 1.5rem 1.75rem; line-height: 1.7; font-size: 0.93rem; }
-
-    .prose h2 { font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; }
-
-    .prose p { margin-bottom: 1rem; }
-
-    .prose p:last-child { margin-bottom: 0; }
-
     @media (max-width: 600px) {
       .page { padding-top: 1.5rem; }
       .chart { height: 440px; }
-      .prose { padding: 1.25rem 1rem; }
     }
   </style>
 </head>
@@ -172,69 +143,39 @@ page(data) = """<!DOCTYPE html>
 
 <div class="page">
   <h1>Quarterly Wealth Inequality in Canada</h1>
-  <p class="subtitle">Survey of Financial Security aligned with the quarterly National Balance Sheet Accounts, 2012&ndash;2026, following Statistics Canada&rsquo;s Distributions of Household Economic Accounts. <a href="index.html">Annual series &rarr;</a></p>
 
   <section>
-    <div class="section-label">Top wealth shares</div>
+    <div class="section-label">Chart</div>
     <div class="chart-controls">
       <span class="chart-ctrl-label" id="measure-label">Measure:</span>
       <div class="measure-tabs" id="measure-tabs" role="group" aria-labelledby="measure-label"></div>
     </div>
     <div class="chart" id="chart-top"></div>
-    <details>
-      <summary>Data table</summary>
-      <div class="table-wrap"><table id="table-top"></table></div>
-    </details>
-  </section>
-
-  <section>
-    <div class="section-label">Comparison with Statistics Canada</div>
-    <div class="chart-controls">
-      <span class="chart-ctrl-label" id="quintile-label">Wealth quintile:</span>
-      <div class="measure-tabs" id="quintile-tabs" role="group" aria-labelledby="quintile-label"></div>
-    </div>
-    <div class="chart" id="chart-quintile"></div>
-    <details>
-      <summary>Data table</summary>
-      <div class="table-wrap"><table id="table-quintile"></table></div>
-    </details>
-  </section>
-
-  <section>
-    <div class="section-label">About this data</div>
-    <div class="prose">
-      <p>Each quarter starts from the Survey of Financial Security (SFS) public use microdata of 2012, 2016, 2019 or 2023. The survey is carried to the quarter in two steps. Each family&rsquo;s weight grows with the population of its region and the age group of its major income earner. Then six categories of assets and debts (pensions, other financial assets, real estate, other non-financial assets, mortgages and other debts) are scaled to the household sector of the National Balance Sheet Accounts for that quarter.</p>
-      <p>A quarter between two surveys pools both surveys, each weighted by how close the quarter is to it. Quarters before 2012&nbsp;Q4 use the 2012 survey alone, and quarters after 2023&nbsp;Q2 the 2023 survey alone (shaded). Large markers show the survey quarters.</p>
-      <p>The unit is the economic family, whereas Statistics Canada&rsquo;s Distributions of Household Economic Accounts use the household, so the shares are not directly comparable. The annual series uses three categories, following the Parliamentary Budget Officer (2020). No adjustment is made for the very wealthy, who are rarely sampled by the survey, so the top 0.1% and 0.01% shares rest on very few records.</p>
-    </div>
   </section>
 </div>
 
 <script>
   const DATA = $(data);
 
+  // The measures of the annual page; row is the row of buttons the measure sits in
   const MEASURES = [
-    { key: "top_0_01pct", label: "Top 0.01%", digits: 1 },
-    { key: "top_0_1pct",  label: "Top 0.1%",  digits: 1 },
-    { key: "top_1pct",    label: "Top 1%",    digits: 1 },
-    { key: "top_5pct",    label: "Top 5%",    digits: 1 },
-    { key: "top_10pct",   label: "Top 10%",   digits: 1 },
-    { key: "top_20pct",   label: "Top 20%",   digits: 1 },
-    { key: "top_50pct",   label: "Top 50%",   digits: 1 },
-    { key: "gini",        label: "Gini",      digits: 3 },
-  ];
-  const QUINTILES = [
-    { key: "1", label: "Lowest" }, { key: "2", label: "Second" }, { key: "3", label: "Third" },
-    { key: "4", label: "Fourth" }, { key: "5", label: "Highest" },
+    { key: "top_0_01pct", label: "Top 0.01%", digits: 1, row: 0 },
+    { key: "top_0_1pct",  label: "Top 0.1%",  digits: 1, row: 0 },
+    { key: "top_1pct",    label: "Top 1%",    digits: 1, row: 0 },
+    { key: "top_5pct",    label: "Top 5%",    digits: 1, row: 0 },
+    { key: "top_10pct",   label: "Top 10%",   digits: 1, row: 0 },
+    { key: "top_20pct",   label: "Top 20%",   digits: 1, row: 0 },
+    { key: "top_50pct",   label: "Top 50%",   digits: 1, row: 0 },
+    { key: "p80_p90",     label: "Upper middle class (P80–P90)", digits: 1, row: 1 },
+    { key: "p50_p80",     label: "Middle class (P50–P80)",       digits: 1, row: 1 },
+    { key: "gini",        label: "Gini",      digits: 3, row: 2 },
   ];
 
-  // The colours of the annual page: red for SFS + NBSA, blue for the annual series, green for
-  // Statistics Canada
-  const RED = "#ef553b", BLUE = "#636efa", GREEN = "#00aa7a";
+  // The colours of the annual page: red for SFS + NBSA, blue for the annual series
+  const RED = "#ef553b", BLUE = "#636efa";
   const NAMES = {
     quarterly: "SFS + NBSA, quarterly (families)",
     annual: "SFS + NBSA, annual (PBO method)",
-    dhea: "Statistics Canada DHEA (households)",
   };
 
   const THEMES = {
@@ -245,11 +186,10 @@ page(data) = """<!DOCTYPE html>
   const MARGIN_T = 50, MARGIN_B = 70, MARGIN_L = 60;
   const darkMode = window.matchMedia("(prefers-color-scheme: dark)");
   const Q = DATA.quarters;
-  let measure = MEASURES[2], quintile = QUINTILES[4];
+  let measure = MEASURES[2];
 
   const isShare = m => m.key !== "gini";
   const theme = () => darkMode.matches ? THEMES.dark : THEMES.light;
-  const quarterText = q => q.slice(0, 4) + " " + q.slice(4);
 
   // The quarterly line, with a large marker at each survey quarter
   function quarterlyTrace(t, y, fmt) {
@@ -318,32 +258,6 @@ page(data) = """<!DOCTYPE html>
     };
   }
 
-  // Quarters as rows, one column per series
-  function renderTable(id, caption, columns, fmt) {
-    const table = document.getElementById(id);
-    table.textContent = "";
-    table.createCaption().textContent = caption;
-    const head = table.createTHead().insertRow();
-    ["Quarter", ...columns.map(c => c.name)].forEach(name => {
-      const th = document.createElement("th");
-      th.scope = "col";
-      th.textContent = name;
-      head.appendChild(th);
-    });
-    const body = table.createTBody();
-    Q.forEach(q => {
-      const row = body.insertRow();
-      const th = document.createElement("th");
-      th.scope = "row";
-      th.textContent = quarterText(q);
-      row.appendChild(th);
-      columns.forEach(c => {
-        const k = c.x.indexOf(q);
-        row.insertCell().textContent = k < 0 ? "" : fmt(c.y[k]);
-      });
-    });
-  }
-
   function drawTop() {
     const t = theme(), el = document.getElementById("chart-top");
     const fmt = v => v.toFixed(measure.digits) + (isShare(measure) ? "%" : "");
@@ -355,63 +269,37 @@ page(data) = """<!DOCTYPE html>
                  { responsive: true });
   }
 
-  function drawQuintile() {
-    const t = theme(), el = document.getElementById("chart-quintile");
-    const fmt = v => v.toFixed(1) + "%";
-    const y = DATA.quintiles[quintile.key], dhea = DATA.dhea[quintile.key];
-    Plotly.react(el, [quarterlyTrace(t, y, fmt), pointsTrace(t, dhea, NAMES.dhea, GREEN, "square", "lines+markers", fmt)],
-                 layout(el, t, "Share of Total Net Worth – " + quintile.label + " Wealth Quintile",
-                        "Share of Total Net Worth (%)", range(y.concat(dhea.y))),
-                 { responsive: true });
-  }
-
-  function updateTop() {
-    drawTop();
-    const fmt = v => v.toFixed(measure.digits);
-    renderTable("table-top", isShare(measure) ? measure.label + " share of total net worth (%)" : "Gini coefficient of net worth",
-                [{ name: "Quarterly", x: Q, y: DATA.quarterly[measure.key] },
-                 { name: "Annual (PBO method)", x: DATA.annual[measure.key].x, y: DATA.annual[measure.key].y }], fmt);
-  }
-
-  function updateQuintile() {
-    drawQuintile();
-    renderTable("table-quintile", quintile.label + " wealth quintile, share of total net worth (%)",
-                [{ name: "This series (families)", x: Q, y: DATA.quintiles[quintile.key] },
-                 { name: "DHEA (households)", x: DATA.dhea[quintile.key].x, y: DATA.dhea[quintile.key].y }],
-                v => v.toFixed(1));
-  }
-
-  function makeTabs(id, items, isCurrent, select) {
-    const tabs = document.getElementById(id);
-    items.forEach(item => {
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "measure-tab";
-      btn.textContent = item.label;
-      btn.setAttribute("aria-pressed", String(isCurrent(item)));
-      btn.addEventListener("click", () => {
-        select(item);
-        tabs.querySelectorAll(".measure-tab").forEach(b => b.setAttribute("aria-pressed", String(b === btn)));
-      });
-      tabs.appendChild(btn);
+  const tabs = document.getElementById("measure-tabs");
+  const rows = [];
+  MEASURES.forEach(m => {
+    if (!rows[m.row]) {
+      rows[m.row] = document.createElement("div");
+      rows[m.row].className = "measure-row";
+      tabs.appendChild(rows[m.row]);
+    }
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "measure-tab";
+    btn.textContent = m.label;
+    btn.setAttribute("aria-pressed", String(m === measure));
+    btn.addEventListener("click", () => {
+      measure = m;
+      tabs.querySelectorAll(".measure-tab").forEach(b => b.setAttribute("aria-pressed", String(b === btn)));
+      drawTop();
     });
-  }
+    rows[m.row].appendChild(btn);
+  });
 
-  makeTabs("measure-tabs", MEASURES, m => m === measure, m => { measure = m; updateTop(); });
-  makeTabs("quintile-tabs", QUINTILES, k => k === quintile, k => { quintile = k; updateQuintile(); });
-  updateTop();
-  updateQuintile();
-  darkMode.addEventListener("change", () => { drawTop(); drawQuintile(); });
+  drawTop();
+  darkMode.addEventListener("change", drawTop);
 
-  // Recompute the legend position when a chart is resized.
+  // Recompute the legend position when the chart is resized.
   // Debounced to avoid a relayout -> resize -> relayout loop.
   let resizeTimer;
-  const observer = new ResizeObserver(() => {
+  new ResizeObserver(() => {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => { drawTop(); drawQuintile(); }, 50);
-  });
-  observer.observe(document.getElementById("chart-top"));
-  observer.observe(document.getElementById("chart-quintile"));
+    resizeTimer = setTimeout(drawTop, 50);
+  }).observe(document.getElementById("chart-top"));
 </script>
 
 </body>
