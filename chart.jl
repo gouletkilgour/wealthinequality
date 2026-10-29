@@ -50,7 +50,7 @@ page(data) = """<!DOCTYPE html>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Wealth Inequality in Canada</title>
+  <title>Annual Wealth Inequality</title>
   <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
   <style>
     :root {
@@ -150,7 +150,7 @@ page(data) = """<!DOCTYPE html>
 <body>
 
 <div class="page">
-  <h1>Wealth Inequality in Canada</h1>
+  <h1>Annual Wealth Inequality in Canada</h1>
   <p class="subtitle"></p>
 
   <section>
