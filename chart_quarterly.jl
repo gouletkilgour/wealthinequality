@@ -7,7 +7,6 @@ using CSV, DataFrames
 
 const OUTDIR = joinpath(@__DIR__, "output")
 const DOCSDIR = joinpath(@__DIR__, "docs")
-const SURVEY_QUARTERS = Dict(2012 => "2012Q4", 2016 => "2016Q4", 2019 => "2019Q4", 2023 => "2023Q2")
 
 json(x::Real) = string(x)
 json(::Missing) = "null"
@@ -26,7 +25,7 @@ function main()
         quarterly[band] = quarterly[upper] .- quarterly[lower]
     end
 
-    data = json(Dict("quarters" => quarters, "surveys" => [SURVEY_QUARTERS[y] for y in sort(collect(keys(SURVEY_QUARTERS)))],
+    data = json(Dict("quarters" => quarters,
                      "quarterly" => Dict(k => round.(y, digits = 4) for (k, y) in quarterly)))
     html = page(data)
     write(joinpath(OUTDIR, "wealth_inequality_quarterly.html"), html)
@@ -164,7 +163,7 @@ page(data) = """<!DOCTYPE html>
     { key: "gini",        label: "Gini",      digits: 3, row: 2 },
   ];
 
-  // The colour, marker and name of the SFS + NBSA line of the annual page
+  // The colour and name of the SFS + NBSA line of the annual page
   const RED = "#ef553b", NAME = "SFS + NBSA";
 
   const THEMES = {
@@ -172,7 +171,7 @@ page(data) = """<!DOCTYPE html>
     dark:  { paper: "#15161a", plot: "#1e1f24", grid: "#33343a", text: "#c8c8c8" },
   };
 
-  const MARGIN_T = 50, MARGIN_B = 70, MARGIN_L = 60;
+  const MARGIN_T = 50, MARGIN_B = 70, MARGIN_L = 60, MARGIN_R = 40;   // MARGIN_R fits half of the last "2026 Q1" label
   const darkMode = window.matchMedia("(prefers-color-scheme: dark)");
   const Q = DATA.quarters;
   let measure = MEASURES[2];
@@ -180,14 +179,12 @@ page(data) = """<!DOCTYPE html>
   const isShare = m => m.key !== "gini";
   const theme = () => darkMode.matches ? THEMES.dark : THEMES.light;
 
-  // The quarterly line, with a marker at each survey quarter. showlegend keeps the legend, which
-  // Plotly hides for a single trace.
-  function quarterlyTrace(t, y, fmt) {
+  // The quarterly line, without markers. showlegend keeps the legend, which Plotly hides for a
+  // single trace.
+  function quarterlyTrace(y, fmt) {
     return {
-      x: Q, y: y, name: NAME, type: "scatter", mode: "lines+markers", showlegend: true,
+      x: Q, y: y, name: NAME, type: "scatter", mode: "lines", showlegend: true,
       line: { color: RED, width: 2, dash: "solid" },
-      marker: { color: RED, symbol: "diamond", line: { color: t.plot, width: 2 },
-                size: Q.map(q => DATA.surveys.includes(q) ? 10 : 0) },
       text: y.map(v => "<b>" + fmt(v) + "</b>  " + NAME),
       hovertemplate: "%{text}<extra></extra>",
     };
@@ -211,7 +208,7 @@ page(data) = """<!DOCTYPE html>
         type: "category",
         tickmode: "array",
         tickvals: years,
-        ticktext: years.map(q => q.slice(0, 4)),
+        ticktext: years.map(q => q.slice(0, 4) + " " + q.slice(4)),
         range: [-0.5, Q.length - 0.5],
         gridcolor: t.grid,
         spikedash: "solid",
@@ -220,7 +217,7 @@ page(data) = """<!DOCTYPE html>
       },
       yaxis: { title: { text: ytitle }, range: yrange, gridcolor: t.grid, zeroline: false },
       legend: { x: 0.5, xanchor: "center", y: -(55 / plotH), orientation: "h" },
-      margin: { l: MARGIN_L, b: MARGIN_B, r: 20, t: marginT },
+      margin: { l: MARGIN_L, b: MARGIN_B, r: MARGIN_R, t: marginT },
       hovermode: "x unified",
       hoverlabel: { bgcolor: t.paper, font: { color: t.text } },
       paper_bgcolor: t.paper,
@@ -233,7 +230,7 @@ page(data) = """<!DOCTYPE html>
     const fmt = v => v.toFixed(measure.digits) + (isShare(measure) ? "%" : "");
     const y = DATA.quarterly[measure.key];
     const title = isShare(measure) ? "Share of Total Net Worth – " + measure.label : "Gini Coefficient of Net Worth";
-    Plotly.react(el, [quarterlyTrace(t, y, fmt)],
+    Plotly.react(el, [quarterlyTrace(y, fmt)],
                  layout(el, t, title, isShare(measure) ? "Share of Total Net Worth (%)" : "Gini Coefficient", range(y)),
                  { responsive: true });
   }
