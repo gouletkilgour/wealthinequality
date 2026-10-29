@@ -184,4 +184,4 @@ It produces:
 | Top 10% share | 55.6 | 55.9 | 57.2 | 54.8 | 54.3 | 56.5 | 56.4 |
 | Gini | 0.741 | 0.734 | 0.741 | 0.713 | 0.712 | 0.729 | 0.728 |
 
-`chart_quarterly.jl` writes `output/wealth_inequality_quarterly.html`, an interactive chart of the two quarterly series, SFS + NBSA and SFS + NBSA + Forbes, with the same measures as the annual chart, and copies it to `docs/quarterly.html`. Run `sfs_nbsa_quarterly.jl` and `sfs_nbsa_forbes_quarterly.jl` first.
+`chart_quarterly.jl` writes `output/wealth_inequality_quarterly.html`, an interactive chart of the two quarterly series, SFS + NBSA and SFS + NBSA + Forbes, with the same measures as the annual chart, and copies it to `docs/quarterly.html`. Both charts can show each group's share of total net worth or its average net worth in 2023 dollars, which is the share times the mean net worth divided by the group's size, deflated with the annual CPI (Table 18-10-0005-01) for the annual chart and the quarterly average of the monthly CPI (Table 18-10-0004-01) for the quarterly chart. Run `sfs_nbsa_quarterly.jl` and `sfs_nbsa_forbes_quarterly.jl` first.

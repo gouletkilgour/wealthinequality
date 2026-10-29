@@ -3,7 +3,8 @@ using CSV, DataFrames
 # Writes output/wealth_inequality_quarterly.html and its published copy docs/quarterly.html: the
 # quarterly series from sfs_nbsa_quarterly.jl (SFS + NBSA) and sfs_nbsa_forbes_quarterly.jl (SFS +
 # NBSA + Forbes), drawn in the colours of the same series on the annual chart (chart.jl), with a
-# button for each of its measures. Run those two scripts first. Apart from Plotly, which loads
+# button for each of its measures and the same toggle between share and average net worth in 2023
+# dollars. Run those two scripts first. Apart from Plotly, which loads
 # from its CDN, the page is self-contained.
 
 const OUTDIR = joinpath(@__DIR__, "output")
@@ -15,29 +16,60 @@ json(s::AbstractString) = "\"" * s * "\""
 json(v::AbstractVector) = "[" * join(json.(v), ",") * "]"
 json(d::AbstractDict) = "{" * join((json(k) * ":" * json(v) for (k, v) in d), ",") * "}"
 
-# One line per source, drawn in this order
-const SOURCES = ["SFS + NBSA" => "sfs_nbsa_quarterly_wealth_inequality.csv",
-                 "SFS + NBSA + Forbes" => "sfs_nbsa_forbes_quarterly_wealth_inequality.csv"]
+# One line per source, drawn in this order, with the prefix of its _wealth_inequality.csv and
+# _summary.csv
+const SOURCES = ["SFS + NBSA" => "sfs_nbsa_quarterly",
+                 "SFS + NBSA + Forbes" => "sfs_nbsa_forbes_quarterly"]
 
 # The share held between two percentiles, as the difference of two top shares, as in chart.jl
 const BANDS = ["p50_p80" => ("top_50pct", "top_20pct"), "p80_p90" => ("top_20pct", "top_10pct")]
 
-# The quarters a file covers, and measure => estimates in that order
-function load_source(file)
-    q = CSV.read(joinpath(OUTDIR, file), DataFrame)
+# The fraction of families in each group, to turn a share into an average net worth, as in chart.jl
+const GROUP_SIZES = Dict("top_0_01pct" => 0.0001, "top_0_1pct" => 0.001, "top_1pct" => 0.01,
+                         "top_5pct" => 0.05, "top_10pct" => 0.10, "top_20pct" => 0.20,
+                         "top_50pct" => 0.50, "p80_p90" => 0.10, "p50_p80" => 0.30)
+
+# The CPI of each quarter, the average of its three months (Table 18-10-0004-01, all-items,
+# 2002 = 100), to express average net worth in dollars of 2023, whose annual CPI is 157.1
+const CPI = Dict(
+    "2012Q1" => 121.2, "2012Q2" => 121.97, "2012Q3" => 121.77, "2012Q4" => 121.77,
+    "2013Q1" => 122.3, "2013Q2" => 122.9, "2013Q3" => 123.17, "2013Q4" => 122.9,
+    "2014Q1" => 124.0, "2014Q2" => 125.63, "2014Q3" => 125.73, "2014Q4" => 125.27,
+    "2015Q1" => 125.33, "2015Q2" => 126.77, "2015Q3" => 127.23, "2015Q4" => 126.93,
+    "2016Q1" => 127.27, "2016Q2" => 128.73, "2016Q3" => 128.8, "2016Q4" => 128.7,
+    "2017Q1" => 129.7, "2017Q2" => 130.43, "2017Q3" => 130.57, "2017Q4" => 131.0,
+    "2018Q1" => 132.37, "2018Q2" => 133.43, "2018Q3" => 134.07, "2018Q4" => 133.67,
+    "2019Q1" => 134.5, "2019Q2" => 136.3, "2019Q3" => 136.67, "2019Q4" => 136.47,
+    "2020Q1" => 136.93, "2020Q2" => 136.33, "2020Q3" => 137.03, "2020Q4" => 137.53,
+    "2021Q1" => 138.9, "2021Q2" => 140.9, "2021Q3" => 142.6, "2021Q4" => 144.03,
+    "2022Q1" => 147.0, "2022Q2" => 151.53, "2022Q3" => 152.8, "2022Q4" => 153.63,
+    "2023Q1" => 154.57, "2023Q2" => 156.87, "2023Q3" => 158.43, "2023Q4" => 158.57,
+    "2024Q1" => 158.97, "2024Q2" => 161.17, "2024Q3" => 161.67, "2024Q4" => 161.6,
+    "2025Q1" => 162.6, "2025Q2" => 164.03, "2025Q3" => 164.87, "2025Q4" => 165.23,
+    "2026Q1" => 166.1)
+const BASE_CPI = 157.1
+
+# The quarters a file covers, and measure => estimates and measure => average net worth in that order
+function load_source(prefix)
+    q = CSV.read(joinpath(OUTDIR, prefix * "_wealth_inequality.csv"), DataFrame)
+    quarters = unique(q.quarter)
     series = Dict(k.measure => collect(g.estimate) for (k, g) in pairs(groupby(q, :measure)))
     for (band, (upper, lower)) in BANDS
         series[band] = series[upper] .- series[lower]
     end
-    return unique(q.quarter), Dict(k => round.(y, digits = 4) for (k, y) in series)
+    summary = CSV.read(joinpath(OUTDIR, prefix * "_summary.csv"), DataFrame)
+    mean = getindex.(Ref(Dict(zip(summary.quarter, summary.mean_networth))), quarters) .* BASE_CPI ./ getindex.(Ref(CPI), quarters)
+    averages = Dict(k => round.(Int, y ./ 100 .* mean ./ GROUP_SIZES[k]) for (k, y) in series if haskey(GROUP_SIZES, k))
+    return quarters, Dict(k => round.(y, digits = 4) for (k, y) in series), averages
 end
 
 function main()
-    loaded = [name => load_source(file) for (name, file) in SOURCES]
+    loaded = [name => load_source(prefix) for (name, prefix) in SOURCES]
     quarters = first(last(loaded[1]))
     all(first(last(l)) == quarters for l in loaded) || error("the quarterly files cover different quarters")
     data = json(Dict("quarters" => quarters,
-                     "series" => [Dict("name" => name, "measures" => m) for (name, (_, m)) in loaded]))
+                     "series" => [Dict("name" => name, "measures" => m, "averages" => a)
+                                  for (name, (_, m, a)) in loaded]))
     html = page(data)
     write(joinpath(OUTDIR, "wealth_inequality_quarterly.html"), html)
     write(joinpath(DOCSDIR, "quarterly.html"), html)
@@ -134,6 +166,8 @@ page(data) = """<!DOCTYPE html>
 
     .measure-tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
+    .measure-tab:disabled { opacity: 0.35; cursor: not-allowed; }
+
     .chart { height: 520px; }
 
     @media (max-width: 600px) {
@@ -150,7 +184,9 @@ page(data) = """<!DOCTYPE html>
   <section>
     <div class="section-label">Chart</div>
     <div class="chart-controls">
-      <span class="chart-ctrl-label" id="measure-label">Measure:</span>
+      <span class="chart-ctrl-label" id="view-label">Measure:</span>
+      <div class="measure-row" id="view-tabs" role="group" aria-labelledby="view-label"></div>
+      <span class="chart-ctrl-label" id="measure-label">Group:</span>
       <div class="measure-tabs" id="measure-tabs" role="group" aria-labelledby="measure-label"></div>
     </div>
     <div class="chart" id="chart-top"></div>
@@ -178,6 +214,12 @@ page(data) = """<!DOCTYPE html>
   // + Forbes
   const COLORS = ["#ef553b", "#00aa7a"];
 
+  // As on the annual page
+  const VIEWS = [
+    { key: "share",   label: "Share of total net worth" },
+    { key: "average", label: "Average net worth" },
+  ];
+
   const THEMES = {
     light: { paper: "#ffffff", plot: "#E5ECF6", grid: "#ffffff", text: "#444444" },
     dark:  { paper: "#15161a", plot: "#1e1f24", grid: "#33343a", text: "#c8c8c8" },
@@ -187,14 +229,25 @@ page(data) = """<!DOCTYPE html>
   const darkMode = window.matchMedia("(prefers-color-scheme: dark)");
   const Q = DATA.quarters;
   let measure = MEASURES[2];
+  let view = VIEWS[0];
 
   const isShare = m => m.key !== "gini";
+  const isAverage = () => view.key === "average";
+  const values = src => (isAverage() ? src.averages : src.measures)[measure.key];
+
+  // Average net worth is drawn in millions of dollars once the largest value reaches a million,
+  // and in thousands below that, as on the annual page
+  function money() {
+    const hi = Math.max(...DATA.series.flatMap(values));
+    return hi >= 1e6 ? { scale: 1e6, unit: "M", name: "millions", digits: hi >= 1e7 ? 1 : 2 }
+                     : { scale: 1e3, unit: "K", name: "thousands", digits: 0 };
+  }
   const theme = () => darkMode.matches ? THEMES.dark : THEMES.light;
 
   // One line per series, without markers
-  function buildTraces(fmt) {
+  function buildTraces(fmt, scale) {
     return DATA.series.map((src, i) => {
-      const y = src.measures[measure.key];
+      const y = values(src).map(v => v / scale);
       return {
         x: Q, y: y, name: src.name, type: "scatter", mode: "lines",
         line: { color: COLORS[i], width: 2, dash: "solid" },
@@ -241,35 +294,56 @@ page(data) = """<!DOCTYPE html>
 
   function drawTop() {
     const t = theme(), el = document.getElementById("chart-top");
-    const fmt = v => v.toFixed(measure.digits) + (isShare(measure) ? "%" : "");
-    const ys = DATA.series.flatMap(src => src.measures[measure.key]);
-    const title = isShare(measure) ? "Share of Total Net Worth – " + measure.label : "Gini Coefficient of Net Worth";
-    Plotly.react(el, buildTraces(fmt),
-                 layout(el, t, title, isShare(measure) ? "Share of Total Net Worth (%)" : "Gini Coefficient", range(ys)),
-                 { responsive: true });
+    const m = isAverage() ? money() : null;
+    const fmt = m ? v => "\$" + v.toFixed(m.digits) + m.unit
+                  : v => v.toFixed(measure.digits) + (isShare(measure) ? "%" : "");
+    const traces = buildTraces(fmt, m ? m.scale : 1);
+    const title = !isShare(measure) ? "Gini Coefficient of Net Worth"
+                : (m ? "Average Net Worth – " : "Share of Total Net Worth – ") + measure.label;
+    const ytitle = !isShare(measure) ? "Gini Coefficient"
+                 : m ? "Average Net Worth (2023 \$, " + m.name + ")" : "Share of Total Net Worth (%)";
+    Plotly.react(el, traces, layout(el, t, title, ytitle, range(traces.flatMap(tr => tr.y))), { responsive: true });
   }
 
+  function button(label, onClick) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "measure-tab";
+    btn.textContent = label;
+    btn.addEventListener("click", () => { onClick(); syncButtons(); drawTop(); });
+    return btn;
+  }
+
+  const viewTabs = document.getElementById("view-tabs");
   const tabs = document.getElementById("measure-tabs");
+  const viewButtons = VIEWS.map(v => button(v.label, () => {
+    view = v;
+    if (isAverage() && !isShare(measure)) measure = MEASURES[2];
+  }));
+  viewButtons.forEach(btn => viewTabs.appendChild(btn));
+
   const rows = [];
-  MEASURES.forEach(m => {
+  const measureButtons = MEASURES.map(m => {
     if (!rows[m.row]) {
       rows[m.row] = document.createElement("div");
       rows[m.row].className = "measure-row";
       tabs.appendChild(rows[m.row]);
     }
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "measure-tab";
-    btn.textContent = m.label;
-    btn.setAttribute("aria-pressed", String(m === measure));
-    btn.addEventListener("click", () => {
-      measure = m;
-      tabs.querySelectorAll(".measure-tab").forEach(b => b.setAttribute("aria-pressed", String(b === btn)));
-      drawTop();
-    });
+    const btn = button(m.label, () => { measure = m; });
     rows[m.row].appendChild(btn);
+    return btn;
   });
 
+  // The Gini has no average, so its button is disabled in the average view
+  function syncButtons() {
+    viewButtons.forEach((b, i) => b.setAttribute("aria-pressed", String(VIEWS[i] === view)));
+    measureButtons.forEach((b, i) => {
+      b.setAttribute("aria-pressed", String(MEASURES[i] === measure));
+      b.disabled = isAverage() && !isShare(MEASURES[i]);
+    });
+  }
+
+  syncButtons();
   drawTop();
   darkMode.addEventListener("change", drawTop);
 

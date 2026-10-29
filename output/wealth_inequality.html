@@ -90,6 +90,8 @@
 
     .measure-tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
+    .measure-tab:disabled { opacity: 0.35; cursor: not-allowed; }
+
     #chart { height: 520px; }
 
     .source { font-size: 0.75rem; color: var(--muted); }
@@ -109,7 +111,9 @@
   <section>
     <div class="section-label">Chart</div>
     <div class="chart-controls">
-      <span class="chart-ctrl-label" id="measure-label">Measure:</span>
+      <span class="chart-ctrl-label" id="view-label">Measure:</span>
+      <div class="measure-row" id="view-tabs" role="group" aria-labelledby="view-label"></div>
+      <span class="chart-ctrl-label" id="measure-label">Group:</span>
       <div class="measure-tabs" id="measure-tabs" role="group" aria-labelledby="measure-label"></div>
     </div>
     <div id="chart"></div>
@@ -117,7 +121,7 @@
 </div>
 
 <script>
-  const DATA = [{"name":"SFS","measures":{"top_0_1pct":{"x":[2012,2016,2019,2023],"y":[2.5486,3.0504,2.829,2.0874]},"top_5pct":{"x":[2012,2016,2019,2023],"y":[32.4226,32.9943,33.0679,29.0566]},"top_20pct":{"x":[2012,2016,2019,2023],"y":[67.4195,67.1589,66.9327,63.3637]},"p80_p90":{"x":[2012,2016,2019,2023],"y":[19.6886,19.5102,19.1408,19.6292]},"top_10pct":{"x":[2012,2016,2019,2023],"y":[47.7309,47.6487,47.792,43.7346]},"top_50pct":{"x":[2012,2016,2019,2023],"y":[94.555,94.225,93.7042,91.9098]},"top_0_01pct":{"x":[2012,2016,2019,2023],"y":[0.3656,0.4069,0.3921,0.3424]},"gini":{"x":[2012,2016,2019,2023],"y":[0.671,0.6681,0.6637,0.6266]},"p50_p80":{"x":[2012,2016,2019,2023],"y":[27.1355,27.0661,26.7715,28.5461]},"top_1pct":{"x":[2012,2016,2019,2023],"y":[12.4614,13.7244,13.7467,10.6309]}}},{"name":"SFS + NBSA","measures":{"top_0_1pct":{"x":[2012,2016,2019,2023],"y":[2.71,3.2675,2.9386,2.1712]},"top_5pct":{"x":[2012,2016,2019,2023],"y":[34.1089,34.3115,34.9016,30.1718]},"top_20pct":{"x":[2012,2016,2019,2023],"y":[70.1916,69.1106,69.4837,65.1115]},"p80_p90":{"x":[2012,2016,2019,2023],"y":[20.1387,19.7859,19.3708,19.8745]},"top_10pct":{"x":[2012,2016,2019,2023],"y":[50.053,49.3247,50.1129,45.237]},"top_50pct":{"x":[2012,2016,2019,2023],"y":[96.4822,95.3828,95.2005,93.0288]},"top_0_01pct":{"x":[2012,2016,2019,2023],"y":[0.3863,0.4229,0.4005,0.354]},"gini":{"x":[2012,2016,2019,2023],"y":[0.7025,0.6886,0.6908,0.646]},"p50_p80":{"x":[2012,2016,2019,2023],"y":[26.2905,26.2722,25.7168,27.9173]},"top_1pct":{"x":[2012,2016,2019,2023],"y":[13.1343,14.4459,14.6247,11.1756]}}},{"name":"SFS + NBSA + Forbes","measures":{"top_0_1pct":{"x":[2012,2016,2019,2023],"y":[9.8919,11.4931,11.8656,11.9386]},"top_5pct":{"x":[2012,2016,2019,2023],"y":[41.7149,42.7891,44.1681,41.8439]},"top_20pct":{"x":[2012,2016,2019,2023],"y":[73.9074,73.3466,74.1403,71.1646]},"p80_p90":{"x":[2012,2016,2019,2023],"y":[17.9746,17.3754,16.7803,16.6696]},"top_10pct":{"x":[2012,2016,2019,2023],"y":[55.9328,55.9712,57.36,54.495]},"top_50pct":{"x":[2012,2016,2019,2023],"y":[97.2819,96.2683,96.2756,94.5279]},"top_0_01pct":{"x":[2012,2016,2019,2023],"y":[4.2941,5.3334,5.4288,5.6832]},"gini":{"x":[2012,2016,2019,2023],"y":[0.7415,0.732,0.7395,0.7086]},"p50_p80":{"x":[2012,2016,2019,2023],"y":[23.3745,22.9217,22.1353,23.3633]},"top_1pct":{"x":[2012,2016,2019,2023],"y":[22.6671,24.6884,25.6516,24.8724]}}},{"name":"SFS + NBSA + Forbes + Canadian Business","measures":{"top_0_1pct":{"x":[2012,2016,2019,2023],"y":[13.7378,14.667,11.8656,11.9386]},"top_5pct":{"x":[2012,2016,2019,2023],"y":[45.3961,46.0416,44.1681,41.8439]},"top_20pct":{"x":[2012,2016,2019,2023],"y":[75.714,74.9781,74.1403,71.1646]},"p80_p90":{"x":[2012,2016,2019,2023],"y":[16.9297,16.4535,16.7803,16.6696]},"top_10pct":{"x":[2012,2016,2019,2023],"y":[58.7843,58.5246,57.36,54.495]},"top_50pct":{"x":[2012,2016,2019,2023],"y":[97.6743,96.6122,96.2756,94.5279]},"top_0_01pct":{"x":[2012,2016,2019,2023],"y":[6.4432,7.0994,5.4288,5.6832]},"gini":{"x":[2012,2016,2019,2023],"y":[0.7605,0.7488,0.7395,0.7086]},"p50_p80":{"x":[2012,2016,2019,2023],"y":[21.9603,21.634,22.1353,23.3633]},"top_1pct":{"x":[2012,2016,2019,2023],"y":[27.411,28.7229,25.6516,24.8724]}}}];
+  const DATA = [{"name":"SFS","measures":{"top_0_1pct":{"x":[2012,2016,2019,2023],"y":[2.5486,3.0504,2.829,2.0874]},"top_5pct":{"x":[2012,2016,2019,2023],"y":[32.4226,32.9943,33.0679,29.0566]},"top_20pct":{"x":[2012,2016,2019,2023],"y":[67.4195,67.1589,66.9327,63.3637]},"p80_p90":{"x":[2012,2016,2019,2023],"y":[19.6886,19.5102,19.1408,19.6292]},"top_10pct":{"x":[2012,2016,2019,2023],"y":[47.7309,47.6487,47.792,43.7346]},"top_50pct":{"x":[2012,2016,2019,2023],"y":[94.555,94.225,93.7042,91.9098]},"top_0_01pct":{"x":[2012,2016,2019,2023],"y":[0.3656,0.4069,0.3921,0.3424]},"gini":{"x":[2012,2016,2019,2023],"y":[0.671,0.6681,0.6637,0.6266]},"p50_p80":{"x":[2012,2016,2019,2023],"y":[27.1355,27.0661,26.7715,28.5461]},"top_1pct":{"x":[2012,2016,2019,2023],"y":[12.4614,13.7244,13.7467,10.6309]}},"averages":{"top_0_1pct":{"x":[2012,2016,2019,2023],"y":[18217070,25012137,24302679,20801485]},"top_5pct":{"x":[2012,2016,2019,2023],"y":[4635001,5410787,5681438,5791007]},"top_20pct":{"x":[2012,2016,2019,2023],"y":[2409507,2753370,2874946,3157108]},"p80_p90":{"x":[2012,2016,2019,2023],"y":[1407303,1599755,1644297,1956051]},"top_10pct":{"x":[2012,2016,2019,2023],"y":[3411711,3906985,4105595,4358164]},"top_50pct":{"x":[2012,2016,2019,2023],"y":[1351721,1545208,1609942,1831768]},"top_0_01pct":{"x":[2012,2016,2019,2023],"y":[26134613,33364719,33685697,34122511]},"p50_p80":{"x":[2012,2016,2019,2023],"y":[646530,739767,766607,948208]},"top_1pct":{"x":[2012,2016,2019,2023],"y":[8907165,11253424,11809217,10593736]}}},{"name":"SFS + NBSA","measures":{"top_0_1pct":{"x":[2012,2016,2019,2023],"y":[2.71,3.2675,2.9386,2.1712]},"top_5pct":{"x":[2012,2016,2019,2023],"y":[34.1089,34.3115,34.9016,30.1718]},"top_20pct":{"x":[2012,2016,2019,2023],"y":[70.1916,69.1106,69.4837,65.1115]},"p80_p90":{"x":[2012,2016,2019,2023],"y":[20.1387,19.7859,19.3708,19.8745]},"top_10pct":{"x":[2012,2016,2019,2023],"y":[50.053,49.3247,50.1129,45.237]},"top_50pct":{"x":[2012,2016,2019,2023],"y":[96.4822,95.3828,95.2005,93.0288]},"top_0_01pct":{"x":[2012,2016,2019,2023],"y":[0.3863,0.4229,0.4005,0.354]},"gini":{"x":[2012,2016,2019,2023],"y":[0.7025,0.6886,0.6908,0.646]},"p50_p80":{"x":[2012,2016,2019,2023],"y":[26.2905,26.2722,25.7168,27.9173]},"top_1pct":{"x":[2012,2016,2019,2023],"y":[13.1343,14.4459,14.6247,11.1756]}},"averages":{"top_0_1pct":{"x":[2012,2016,2019,2023],"y":[19021332,27498987,26314401,21117640]},"top_5pct":{"x":[2012,2016,2019,2023],"y":[4788166,5775221,6250615,5869152]},"top_20pct":{"x":[2012,2016,2019,2023],"y":[2463356,2908129,3111003,3166445]},"p80_p90":{"x":[2012,2016,2019,2023],"y":[1413522,1665155,1734579,1933040]},"top_10pct":{"x":[2012,2016,2019,2023],"y":[3513190,4151103,4487427,4399850]},"top_50pct":{"x":[2012,2016,2019,2023],"y":[1354406,1605459,1704970,1809638]},"top_0_01pct":{"x":[2012,2016,2019,2023],"y":[27117683,35587478,35862504,34429965]},"p50_p80":{"x":[2012,2016,2019,2023],"y":[615106,737012,767615,905100]},"top_1pct":{"x":[2012,2016,2019,2023],"y":[9218875,12157450,13095881,10869622]}}},{"name":"SFS + NBSA + Forbes","measures":{"top_0_1pct":{"x":[2012,2016,2019,2023],"y":[9.8919,11.4931,11.8656,11.9386]},"top_5pct":{"x":[2012,2016,2019,2023],"y":[41.7149,42.7891,44.1681,41.8439]},"top_20pct":{"x":[2012,2016,2019,2023],"y":[73.9074,73.3466,74.1403,71.1646]},"p80_p90":{"x":[2012,2016,2019,2023],"y":[17.9746,17.3754,16.7803,16.6696]},"top_10pct":{"x":[2012,2016,2019,2023],"y":[55.9328,55.9712,57.36,54.495]},"top_50pct":{"x":[2012,2016,2019,2023],"y":[97.2819,96.2683,96.2756,94.5279]},"top_0_01pct":{"x":[2012,2016,2019,2023],"y":[4.2941,5.3334,5.4288,5.6832]},"gini":{"x":[2012,2016,2019,2023],"y":[0.7415,0.732,0.7395,0.7086]},"p50_p80":{"x":[2012,2016,2019,2023],"y":[23.3745,22.9217,22.1353,23.3633]},"top_1pct":{"x":[2012,2016,2019,2023],"y":[22.6671,24.6884,25.6516,24.8724]}},"averages":{"top_0_1pct":{"x":[2012,2016,2019,2023],"y":[69430860,96724470,106251390,116117612]},"top_5pct":{"x":[2012,2016,2019,2023],"y":[5855883,7202140,7910164,8139649]},"top_20pct":{"x":[2012,2016,2019,2023],"y":[2593756,3086372,3319487,3460809]},"p80_p90":{"x":[2012,2016,2019,2023],"y":[1261624,1462289,1502609,1621324]},"top_10pct":{"x":[2012,2016,2019,2023],"y":[3925888,4710454,5136366,5300294]},"top_50pct":{"x":[2012,2016,2019,2023],"y":[1365630,1620361,1724221,1838796]},"top_0_01pct":{"x":[2012,2016,2019,2023],"y":[301398251,448849611,486124242,552763579]},"p50_p80":{"x":[2012,2016,2019,2023],"y":[546880,643020,660710,757453]},"top_1pct":{"x":[2012,2016,2019,2023],"y":[15909921,20777436,22969966,24191438]}}},{"name":"SFS + NBSA + Forbes + Canadian Business","measures":{"top_0_1pct":{"x":[2012,2016,2019,2023],"y":[13.7378,14.667,11.8656,11.9386]},"top_5pct":{"x":[2012,2016,2019,2023],"y":[45.3961,46.0416,44.1681,41.8439]},"top_20pct":{"x":[2012,2016,2019,2023],"y":[75.714,74.9781,74.1403,71.1646]},"p80_p90":{"x":[2012,2016,2019,2023],"y":[16.9297,16.4535,16.7803,16.6696]},"top_10pct":{"x":[2012,2016,2019,2023],"y":[58.7843,58.5246,57.36,54.495]},"top_50pct":{"x":[2012,2016,2019,2023],"y":[97.6743,96.6122,96.2756,94.5279]},"top_0_01pct":{"x":[2012,2016,2019,2023],"y":[6.4432,7.0994,5.4288,5.6832]},"gini":{"x":[2012,2016,2019,2023],"y":[0.7605,0.7488,0.7395,0.7086]},"p50_p80":{"x":[2012,2016,2019,2023],"y":[21.9603,21.634,22.1353,23.3633]},"top_1pct":{"x":[2012,2016,2019,2023],"y":[27.411,28.7229,25.6516,24.8724]}},"averages":{"top_0_1pct":{"x":[2012,2016,2019,2023],"y":[96424391,123435281,106251390,116117612]},"top_5pct":{"x":[2012,2016,2019,2023],"y":[6372637,7749592,7910164,8139649]},"top_20pct":{"x":[2012,2016,2019,2023],"y":[2657153,3155023,3319487,3460809]},"p80_p90":{"x":[2012,2016,2019,2023],"y":[1188283,1384705,1502609,1621324]},"top_10pct":{"x":[2012,2016,2019,2023],"y":[4126023,4925341,5136366,5300294]},"top_50pct":{"x":[2012,2016,2019,2023],"y":[1371137,1626147,1724221,1838796]},"top_0_01pct":{"x":[2012,2016,2019,2023],"y":[452242670,597472488,486124242,552763579]},"p50_p80":{"x":[2012,2016,2019,2023],"y":[513793,606896,660710,757453]},"top_1pct":{"x":[2012,2016,2019,2023],"y":[19239542,24172787,22969966,24191438]}}}];
 
   // row is the row of buttons the measure sits in
   const MEASURES = [
@@ -146,50 +150,68 @@
     dark:  { paper: "#15161a", plot: "#1e1f24", grid: "#33343a", text: "#c8c8c8" },
   };
 
+  const VIEWS = [
+    { key: "share",   label: "Share of total net worth" },
+    { key: "average", label: "Average net worth" },
+  ];
+
   const MARGIN_T = 50, MARGIN_B = 70, MARGIN_L = 60;
   const darkMode = window.matchMedia("(prefers-color-scheme: dark)");
   let current = MEASURES[2];
+  let view = VIEWS[0];
 
-  const isShare = m => m.key !== "gini";
-  const series  = src => src.measures[current.key];
-  const fmt     = v => v.toFixed(current.digits);
+  const isShare   = m => m.key !== "gini";
+  const isAverage = () => view.key === "average";
+  const series    = src => (isAverage() ? src.averages : src.measures)[current.key];
 
-  function yRange() {
-    const ys = DATA.flatMap(src => series(src).y);
+  // Average net worth is drawn in millions of dollars once the largest value reaches a million,
+  // and in thousands below that
+  function money() {
+    const hi = Math.max(...DATA.flatMap(src => series(src).y));
+    return hi >= 1e6 ? { scale: 1e6, unit: "M", name: "millions", digits: hi >= 1e7 ? 1 : 2 }
+                     : { scale: 1e3, unit: "K", name: "thousands", digits: 0 };
+  }
+
+  function yRange(ys) {
     const lo = Math.min(...ys), hi = Math.max(...ys);
     const pad = 0.1 * (hi - lo || Math.abs(hi) || 1);
     return [lo - pad, hi + pad];
   }
 
-  function buildTraces(t) {
+  function buildTraces(t, m) {
+    const fmt = m ? v => "$" + v.toFixed(m.digits) + m.unit
+                  : v => v.toFixed(current.digits) + (isShare(current) ? "%" : "");
     return DATA.map((src, i) => {
       const s = series(src);
+      const y = m ? s.y.map(v => v / m.scale) : s.y;
       return {
         x: s.x,
-        y: s.y,
+        y: y,
         name: src.name,
         type: "scatter",
         mode: "lines+markers",
         line: { color: COLORS[i], width: 2, dash: DASHES[i] },
         marker: { color: COLORS[i], symbol: SYMBOLS[i], size: 10, line: { color: t.plot, width: 2 } },
-        text: s.y.map(y => "<b>" + fmt(y) + (isShare(current) ? "%" : "") + "</b>  " + src.name),
+        text: y.map(v => "<b>" + fmt(v) + "</b>  " + src.name),
         hovertemplate: "%{text}<extra></extra>",
       };
     });
   }
 
   // On narrow screens the title wraps onto two lines
-  function buildLayout(t) {
+  function buildLayout(t, m, traces) {
     const el      = document.getElementById("chart");
     const narrow  = el.offsetWidth < 560;
     const marginT = narrow ? 75 : MARGIN_T;
     const plotH   = Math.max((el.offsetHeight || 480) - marginT - MARGIN_B, 80);
     const years   = series(DATA[0]).x;
-    const range   = yRange();
     const sep     = narrow ? "<br>" : " – ";
+    const title   = !isShare(current) ? "Gini Coefficient of Net Worth" + sep + "Canada"
+                  : (m ? "Average Net Worth" : "Share of Total Net Worth") + sep + current.label + " – Canada";
+    const ytitle  = !isShare(current) ? "Gini Coefficient"
+                  : m ? "Average Net Worth (2023 $, " + m.name + ")" : "Share of Total Net Worth (%)";
     return {
-      title: { text: isShare(current) ? "Share of Total Net Worth" + sep + current.label + " – Canada"
-                                      : "Gini Coefficient of Net Worth" + sep + "Canada" },
+      title: { text: title },
       font: { color: t.text },
       xaxis: {
         title: { text: "Year" },
@@ -202,8 +224,8 @@
         spikecolor: t.text,
       },
       yaxis: {
-        title: { text: isShare(current) ? "Share of Total Net Worth (%)" : "Gini Coefficient" },
-        range: range,
+        title: { text: ytitle },
+        range: yRange(traces.flatMap(tr => tr.y)),
         gridcolor: t.grid,
         zeroline: false,
       },
@@ -218,30 +240,50 @@
 
   function drawChart() {
     const t = darkMode.matches ? THEMES.dark : THEMES.light;
-    Plotly.react("chart", buildTraces(t), buildLayout(t), { responsive: true });
+    const m = isAverage() ? money() : null;
+    const traces = buildTraces(t, m);
+    Plotly.react("chart", traces, buildLayout(t, m, traces), { responsive: true });
   }
 
+  function button(label, onClick) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "measure-tab";
+    btn.textContent = label;
+    btn.addEventListener("click", () => { onClick(); syncButtons(); drawChart(); });
+    return btn;
+  }
+
+  const viewTabs = document.getElementById("view-tabs");
   const tabs = document.getElementById("measure-tabs");
+  const viewButtons = VIEWS.map(v => button(v.label, () => {
+    view = v;
+    if (isAverage() && !isShare(current)) current = MEASURES[2];
+  }));
+  viewButtons.forEach(btn => viewTabs.appendChild(btn));
+
   const rows = [];
-  MEASURES.forEach(m => {
+  const measureButtons = MEASURES.map(m => {
     if (!rows[m.row]) {
       rows[m.row] = document.createElement("div");
       rows[m.row].className = "measure-row";
       tabs.appendChild(rows[m.row]);
     }
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "measure-tab";
-    btn.textContent = m.label;
-    btn.setAttribute("aria-pressed", String(m === current));
-    btn.addEventListener("click", () => {
-      current = m;
-      tabs.querySelectorAll(".measure-tab").forEach(b => b.setAttribute("aria-pressed", String(b === btn)));
-      drawChart();
-    });
+    const btn = button(m.label, () => { current = m; });
     rows[m.row].appendChild(btn);
+    return btn;
   });
 
+  // The Gini has no average, so its button is disabled in the average view
+  function syncButtons() {
+    viewButtons.forEach((b, i) => b.setAttribute("aria-pressed", String(VIEWS[i] === view)));
+    measureButtons.forEach((b, i) => {
+      b.setAttribute("aria-pressed", String(MEASURES[i] === current));
+      b.disabled = isAverage() && !isShare(MEASURES[i]);
+    });
+  }
+
+  syncButtons();
   drawChart();
   darkMode.addEventListener("change", drawChart);
 

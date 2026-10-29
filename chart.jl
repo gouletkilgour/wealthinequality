@@ -1,20 +1,23 @@
 using CSV, DataFrames
 
-# Writes output/wealth_inequality.html, an interactive chart comparing the wealth
-# shares and Gini coefficient from sfs.jl (SFS), sfs_nbsa.jl (SFS + NBSA),
-# sfs_nbsa_forbes.jl (SFS + NBSA + Forbes) and sfs_nbsa_forbes_cb.jl (SFS + NBSA + Forbes
+# Writes output/wealth_inequality.html and its published copy docs/index.html, an interactive
+# chart comparing the wealth shares and Gini coefficient from sfs.jl (SFS), sfs_nbsa.jl (SFS +
+# NBSA), sfs_nbsa_forbes.jl (SFS + NBSA + Forbes) and sfs_nbsa_forbes_cb.jl (SFS + NBSA + Forbes
 # + Canadian Business), with a button for each measure, including the shares between the 50th
-# and 80th and the 80th and 90th percentiles. Run those four scripts first.
+# and 80th and the 80th and 90th percentiles, and a toggle between each group's share of total
+# net worth and its average net worth in 2023 dollars. Run those four scripts first.
 # Apart from Plotly, which
 # loads from its CDN, the page is self-contained, so it can be published as is.
 
 const OUTDIR = joinpath(@__DIR__, "output")
+const DOCSDIR = joinpath(@__DIR__, "docs")
 
-# One line per source, drawn in this order
-const SOURCES = ["SFS" => "sfs_wealth_inequality.csv",
-                 "SFS + NBSA" => "sfs_nbsa_wealth_inequality.csv",
-                 "SFS + NBSA + Forbes" => "sfs_nbsa_forbes_wealth_inequality.csv",
-                 "SFS + NBSA + Forbes + Canadian Business" => "sfs_nbsa_forbes_cb_wealth_inequality.csv"]
+# One line per source, drawn in this order, with the prefix of its _wealth_inequality.csv and
+# _wealth_summary.csv
+const SOURCES = ["SFS" => "sfs",
+                 "SFS + NBSA" => "sfs_nbsa",
+                 "SFS + NBSA + Forbes" => "sfs_nbsa_forbes",
+                 "SFS + NBSA + Forbes + Canadian Business" => "sfs_nbsa_forbes_cb"]
 
 json(x::Real) = string(x)
 json(::Missing) = "null"
@@ -26,8 +29,20 @@ json(d::AbstractDict) = "{" * join((json(k) * ":" * json(v) for (k, v) in d), ",
 # the top 20% is the share of the families between the 50th and 80th percentiles
 const BANDS = ["p50_p80" => ("top_50pct", "top_20pct"), "p80_p90" => ("top_20pct", "top_10pct")]
 
-# measure => (x = years, y = estimates)
-function load_source(name, file)
+# The fraction of families in each group. The groups hold exactly this fraction of the weight,
+# so a group's average net worth is its share times the mean net worth divided by its size.
+const GROUP_SIZES = Dict("top_0_01pct" => 0.0001, "top_0_1pct" => 0.001, "top_1pct" => 0.01,
+                         "top_5pct" => 0.05, "top_10pct" => 0.10, "top_20pct" => 0.20,
+                         "top_50pct" => 0.50, "p80_p90" => 0.10, "p50_p80" => 0.30)
+
+# Annual CPI of the survey years (Table 18-10-0005-01, all-items, 2002 = 100), as in
+# sfs_nbsa_forbes.jl, to express average net worth in 2023 dollars
+const CPI = Dict(2012 => 121.7, 2016 => 128.4, 2019 => 136.0, 2023 => 157.1)
+const BASE_YEAR = 2023
+
+# measure => (x = years, y = estimates), for the shares and Gini and for the average net worth
+function load_source(name, prefix)
+    file = prefix * "_wealth_inequality.csv"
     df = sort(CSV.read(joinpath(OUTDIR, file), DataFrame), :year)
     series = Dict(k.measure => (collect(g.year), collect(g.estimate)) for (k, g) in pairs(groupby(df, :measure)))
     for (band, (upper, lower)) in BANDS
@@ -36,13 +51,19 @@ function load_source(name, file)
         series[band] = (years, a .- b)
     end
     measures = Dict(k => Dict("x" => x, "y" => round.(y, digits = 4)) for (k, (x, y)) in series)
-    return Dict("name" => name, "measures" => measures)
+    summary = CSV.read(joinpath(OUTDIR, prefix * "_wealth_summary.csv"), DataFrame)
+    mean = Dict(t => m * CPI[BASE_YEAR] / CPI[t] for (t, m) in zip(summary.year, summary.mean_networth))
+    averages = Dict(k => Dict("x" => x, "y" => round.(Int, y ./ 100 .* getindex.(Ref(mean), x) ./ GROUP_SIZES[k]))
+                    for (k, (x, y)) in series if haskey(GROUP_SIZES, k))
+    return Dict("name" => name, "measures" => measures, "averages" => averages)
 end
 
 function main()
-    data = json([load_source(name, file) for (name, file) in SOURCES])
-    write(joinpath(OUTDIR, "wealth_inequality.html"), page(data))
-    println("Wrote output/wealth_inequality.html")
+    data = json([load_source(name, prefix) for (name, prefix) in SOURCES])
+    html = page(data)
+    write(joinpath(OUTDIR, "wealth_inequality.html"), html)
+    write(joinpath(DOCSDIR, "index.html"), html)
+    println("Wrote output/wealth_inequality.html and docs/index.html")
 end
 
 page(data) = """<!DOCTYPE html>
@@ -137,6 +158,8 @@ page(data) = """<!DOCTYPE html>
 
     .measure-tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
+    .measure-tab:disabled { opacity: 0.35; cursor: not-allowed; }
+
     #chart { height: 520px; }
 
     .source { font-size: 0.75rem; color: var(--muted); }
@@ -156,7 +179,9 @@ page(data) = """<!DOCTYPE html>
   <section>
     <div class="section-label">Chart</div>
     <div class="chart-controls">
-      <span class="chart-ctrl-label" id="measure-label">Measure:</span>
+      <span class="chart-ctrl-label" id="view-label">Measure:</span>
+      <div class="measure-row" id="view-tabs" role="group" aria-labelledby="view-label"></div>
+      <span class="chart-ctrl-label" id="measure-label">Group:</span>
       <div class="measure-tabs" id="measure-tabs" role="group" aria-labelledby="measure-label"></div>
     </div>
     <div id="chart"></div>
@@ -193,50 +218,68 @@ page(data) = """<!DOCTYPE html>
     dark:  { paper: "#15161a", plot: "#1e1f24", grid: "#33343a", text: "#c8c8c8" },
   };
 
+  const VIEWS = [
+    { key: "share",   label: "Share of total net worth" },
+    { key: "average", label: "Average net worth" },
+  ];
+
   const MARGIN_T = 50, MARGIN_B = 70, MARGIN_L = 60;
   const darkMode = window.matchMedia("(prefers-color-scheme: dark)");
   let current = MEASURES[2];
+  let view = VIEWS[0];
 
-  const isShare = m => m.key !== "gini";
-  const series  = src => src.measures[current.key];
-  const fmt     = v => v.toFixed(current.digits);
+  const isShare   = m => m.key !== "gini";
+  const isAverage = () => view.key === "average";
+  const series    = src => (isAverage() ? src.averages : src.measures)[current.key];
 
-  function yRange() {
-    const ys = DATA.flatMap(src => series(src).y);
+  // Average net worth is drawn in millions of dollars once the largest value reaches a million,
+  // and in thousands below that
+  function money() {
+    const hi = Math.max(...DATA.flatMap(src => series(src).y));
+    return hi >= 1e6 ? { scale: 1e6, unit: "M", name: "millions", digits: hi >= 1e7 ? 1 : 2 }
+                     : { scale: 1e3, unit: "K", name: "thousands", digits: 0 };
+  }
+
+  function yRange(ys) {
     const lo = Math.min(...ys), hi = Math.max(...ys);
     const pad = 0.1 * (hi - lo || Math.abs(hi) || 1);
     return [lo - pad, hi + pad];
   }
 
-  function buildTraces(t) {
+  function buildTraces(t, m) {
+    const fmt = m ? v => "\$" + v.toFixed(m.digits) + m.unit
+                  : v => v.toFixed(current.digits) + (isShare(current) ? "%" : "");
     return DATA.map((src, i) => {
       const s = series(src);
+      const y = m ? s.y.map(v => v / m.scale) : s.y;
       return {
         x: s.x,
-        y: s.y,
+        y: y,
         name: src.name,
         type: "scatter",
         mode: "lines+markers",
         line: { color: COLORS[i], width: 2, dash: DASHES[i] },
         marker: { color: COLORS[i], symbol: SYMBOLS[i], size: 10, line: { color: t.plot, width: 2 } },
-        text: s.y.map(y => "<b>" + fmt(y) + (isShare(current) ? "%" : "") + "</b>  " + src.name),
+        text: y.map(v => "<b>" + fmt(v) + "</b>  " + src.name),
         hovertemplate: "%{text}<extra></extra>",
       };
     });
   }
 
   // On narrow screens the title wraps onto two lines
-  function buildLayout(t) {
+  function buildLayout(t, m, traces) {
     const el      = document.getElementById("chart");
     const narrow  = el.offsetWidth < 560;
     const marginT = narrow ? 75 : MARGIN_T;
     const plotH   = Math.max((el.offsetHeight || 480) - marginT - MARGIN_B, 80);
     const years   = series(DATA[0]).x;
-    const range   = yRange();
     const sep     = narrow ? "<br>" : " – ";
+    const title   = !isShare(current) ? "Gini Coefficient of Net Worth" + sep + "Canada"
+                  : (m ? "Average Net Worth" : "Share of Total Net Worth") + sep + current.label + " – Canada";
+    const ytitle  = !isShare(current) ? "Gini Coefficient"
+                  : m ? "Average Net Worth (2023 \$, " + m.name + ")" : "Share of Total Net Worth (%)";
     return {
-      title: { text: isShare(current) ? "Share of Total Net Worth" + sep + current.label + " – Canada"
-                                      : "Gini Coefficient of Net Worth" + sep + "Canada" },
+      title: { text: title },
       font: { color: t.text },
       xaxis: {
         title: { text: "Year" },
@@ -249,8 +292,8 @@ page(data) = """<!DOCTYPE html>
         spikecolor: t.text,
       },
       yaxis: {
-        title: { text: isShare(current) ? "Share of Total Net Worth (%)" : "Gini Coefficient" },
-        range: range,
+        title: { text: ytitle },
+        range: yRange(traces.flatMap(tr => tr.y)),
         gridcolor: t.grid,
         zeroline: false,
       },
@@ -265,30 +308,50 @@ page(data) = """<!DOCTYPE html>
 
   function drawChart() {
     const t = darkMode.matches ? THEMES.dark : THEMES.light;
-    Plotly.react("chart", buildTraces(t), buildLayout(t), { responsive: true });
+    const m = isAverage() ? money() : null;
+    const traces = buildTraces(t, m);
+    Plotly.react("chart", traces, buildLayout(t, m, traces), { responsive: true });
   }
 
+  function button(label, onClick) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "measure-tab";
+    btn.textContent = label;
+    btn.addEventListener("click", () => { onClick(); syncButtons(); drawChart(); });
+    return btn;
+  }
+
+  const viewTabs = document.getElementById("view-tabs");
   const tabs = document.getElementById("measure-tabs");
+  const viewButtons = VIEWS.map(v => button(v.label, () => {
+    view = v;
+    if (isAverage() && !isShare(current)) current = MEASURES[2];
+  }));
+  viewButtons.forEach(btn => viewTabs.appendChild(btn));
+
   const rows = [];
-  MEASURES.forEach(m => {
+  const measureButtons = MEASURES.map(m => {
     if (!rows[m.row]) {
       rows[m.row] = document.createElement("div");
       rows[m.row].className = "measure-row";
       tabs.appendChild(rows[m.row]);
     }
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "measure-tab";
-    btn.textContent = m.label;
-    btn.setAttribute("aria-pressed", String(m === current));
-    btn.addEventListener("click", () => {
-      current = m;
-      tabs.querySelectorAll(".measure-tab").forEach(b => b.setAttribute("aria-pressed", String(b === btn)));
-      drawChart();
-    });
+    const btn = button(m.label, () => { current = m; });
     rows[m.row].appendChild(btn);
+    return btn;
   });
 
+  // The Gini has no average, so its button is disabled in the average view
+  function syncButtons() {
+    viewButtons.forEach((b, i) => b.setAttribute("aria-pressed", String(VIEWS[i] === view)));
+    measureButtons.forEach((b, i) => {
+      b.setAttribute("aria-pressed", String(MEASURES[i] === current));
+      b.disabled = isAverage() && !isShare(MEASURES[i]);
+    });
+  }
+
+  syncButtons();
   drawChart();
   darkMode.addEventListener("change", drawChart);
 
