@@ -27,6 +27,7 @@ function main()
     summary = DataFrame(quarter = String[], date = Date[], surveys = String[], forbes_year = Int[], records = Int[],
                         families = Float64[], total_networth_millions = Float64[], mean_networth = Float64[],
                         median_networth = Float64[], share_negative_networth = Float64[])
+    pct = DataFrame(quarter = String[], date = Date[], percentile = Int[], networth = Float64[])
     tail = DataFrame(quarter = String[], survey = Int[], survey_share = Float64[], forbes_year = Int[],
                      w_min = Float64[], forbes_entries = Int[],
                      forbes_min = Float64[], forbes_total_billions = Float64[], sfs_records_above_w_min = Int[],
@@ -67,13 +68,14 @@ function main()
         push!(results, (label, date, "gini", est["gini"]))
 
         x, w = hfd.networth, hfd.weight
+        append!(pct, DataFrame(quarter = label, date = date, percentile = PERCENTILES, networth = percentiles(x, w)))
         surveys = join(("$(d.s.year) × $(round(d.share, digits = 4))" for d in details), " + ")
         push!(summary, (label, date, surveys, year, count(hfd.source .== "SFS"), sum(w), est["total_networth"] / 1e6,
                         est["total_networth"] / sum(w), weighted_median(x, w), sum(w[x .< 0]) / sum(w)))
     end
 
     files = ["sfs_nbsa_forbes_quarterly_$(k).csv" => t for (k, t) in ("wealth_inequality" => results,
-             "summary" => summary, "tail" => tail, "calibration" => calibration)]
+             "summary" => summary, "tail" => tail, "calibration" => calibration, "percentiles" => pct)]
     for (file, t) in files
         CSV.write(joinpath(OUTDIR, file), t)
     end

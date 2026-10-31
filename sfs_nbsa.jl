@@ -4,6 +4,7 @@ function main()
     mkpath(OUTDIR)
     nbsa = load_nbsa()
     results, summary = results_tables()
+    pct = DataFrame(year = Int[], percentile = Int[], networth = Float64[])
     aligned = DataFrame()
     alignment = DataFrame(year = Int[], nbsa_quarter = String[], category = String[],
                           sfs_billions = Float64[], nbsa_billions = Float64[],
@@ -48,12 +49,14 @@ function main()
         end
 
         add_results!(results, summary, s.year, x, ws, est, se)
+        append!(pct, DataFrame(year = s.year, percentile = PERCENTILES, networth = percentiles(x, ws)))
     end
 
     CSV.write(joinpath(OUTDIR, "sfs_nbsa_aligned.csv"), aligned)
     CSV.write(joinpath(OUTDIR, "sfs_nbsa_alignment.csv"), alignment)
     CSV.write(joinpath(OUTDIR, "sfs_nbsa_wealth_inequality.csv"), results)
     CSV.write(joinpath(OUTDIR, "sfs_nbsa_wealth_summary.csv"), summary)
+    CSV.write(joinpath(OUTDIR, "sfs_nbsa_percentiles.csv"), pct)
 
     println("\nSFS vs NBSA household sector (\$ billions)")
     @printf("%-6s %-9s %-13s %10s %10s %9s %8s\n", "year", "quarter", "category", "SFS", "NBSA", "coverage", "factor")
@@ -62,7 +65,7 @@ function main()
                 r.year, r.nbsa_quarter, r.category, r.sfs_billions, r.nbsa_billions, r.coverage, r.adjustment_factor)
     end
     print_results(results)
-    println("\nWrote output/sfs_nbsa_aligned.csv, sfs_nbsa_alignment.csv, sfs_nbsa_wealth_inequality.csv and sfs_nbsa_wealth_summary.csv")
+    println("\nWrote output/sfs_nbsa_aligned.csv, sfs_nbsa_alignment.csv, sfs_nbsa_wealth_inequality.csv, sfs_nbsa_wealth_summary.csv and sfs_nbsa_percentiles.csv")
 end
 
 main()

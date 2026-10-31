@@ -145,6 +145,16 @@ function weighted_median(x, w)
     return x[searchsortedfirst(cw, cw[end] / 2)]
 end
 
+# Net worth at each whole percentile from 0 (the poorest family) to 100 (the richest), defined as
+# in weighted_median: the first family whose cumulative weight reaches that fraction of the total.
+# x must be sorted.
+const PERCENTILES = 0:100
+
+function percentiles(x, w)
+    cw = cumsum(w)
+    return [x[min(searchsortedfirst(cw, cw[end] * p / 100), length(x))] for p in PERCENTILES]
+end
+
 function bootstrap_weights(s::SurveyYear, ids, weights)
     layout = parse_layout(joinpath(DATA, s.bslayout))
     bs_vars = sort([v for v in keys(layout) if startswith(v, "BSW_")], by = v -> parse(Int, v[5:end]))

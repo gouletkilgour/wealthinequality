@@ -5,7 +5,8 @@ using CSV, DataFrames
 # NBSA), sfs_nbsa_forbes.jl (SFS + NBSA + Forbes) and sfs_nbsa_forbes_cb.jl (SFS + NBSA + Forbes
 # + Canadian Business), with a button for each measure, including the shares between the 50th
 # and 80th and the 80th and 90th percentiles, and a toggle between each group's share of total
-# net worth and its average net worth in 2023 dollars. Run those four scripts first.
+# net worth, its average net worth in 2023 dollars and a slider for the net worth at each percentile.
+# Run those four scripts first.
 # Apart from Plotly, which
 # loads from its CDN, the page is self-contained, so it can be published as is.
 
@@ -37,11 +38,12 @@ const GROUP_SIZES = Dict("top_0_01pct" => 0.0001, "top_0_1pct" => 0.001, "top_1p
                          "bottom_50pct" => 0.50)
 
 # Annual CPI of the survey years (Table 18-10-0005-01, all-items, 2002 = 100), as in
-# sfs_nbsa_forbes.jl, to express average net worth in 2023 dollars
+# sfs_nbsa_forbes.jl, to express net worth in 2023 dollars
 const CPI = Dict(2012 => 121.7, 2016 => 128.4, 2019 => 136.0, 2023 => 157.1)
 const BASE_YEAR = 2023
 
-# measure => (x = years, y = estimates), for the shares and Gini and for the average net worth
+# measure => (x = years, y = estimates), for the shares and Gini and for the average net worth, and
+# percentile => (x = years, y = net worth at that percentile in 2023 dollars)
 function load_source(name, prefix)
     file = prefix * "_wealth_inequality.csv"
     df = sort(CSV.read(joinpath(OUTDIR, file), DataFrame), :year)
@@ -58,7 +60,11 @@ function load_source(name, prefix)
     mean = Dict(t => m * CPI[BASE_YEAR] / CPI[t] for (t, m) in zip(summary.year, summary.mean_networth))
     averages = Dict(k => Dict("x" => x, "y" => round.(Int, y ./ 100 .* getindex.(Ref(mean), x) ./ GROUP_SIZES[k]))
                     for (k, (x, y)) in series if haskey(GROUP_SIZES, k))
-    return Dict("name" => name, "measures" => measures, "averages" => averages)
+    p = sort(CSV.read(joinpath(OUTDIR, prefix * "_percentiles.csv"), DataFrame), :year)
+    percentiles = Dict(string(k.percentile) => Dict("x" => collect(g.year),
+                                                    "y" => round.(Int, g.networth .* CPI[BASE_YEAR] ./ getindex.(Ref(CPI), g.year)))
+                       for (k, g) in pairs(groupby(p, :percentile)))
+    return Dict("name" => name, "measures" => measures, "averages" => averages, "percentiles" => percentiles)
 end
 
 function main()
@@ -163,6 +169,14 @@ page(data) = """<!DOCTYPE html>
 
     .measure-tab:disabled { opacity: 0.35; cursor: not-allowed; }
 
+    .control-group { display: flex; flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+
+    .control-group[hidden] { display: none; }
+
+    #percentile-controls { align-self: stretch; }
+
+    #percentile { width: 100%; max-width: 420px; accent-color: var(--accent); }
+
     #chart { height: 520px; }
 
     .source { font-size: 0.75rem; color: var(--muted); }
@@ -184,8 +198,14 @@ page(data) = """<!DOCTYPE html>
     <div class="chart-controls">
       <span class="chart-ctrl-label" id="view-label">Measure:</span>
       <div class="measure-row" id="view-tabs" role="group" aria-labelledby="view-label"></div>
-      <span class="chart-ctrl-label" id="measure-label">Group:</span>
-      <div class="measure-tabs" id="measure-tabs" role="group" aria-labelledby="measure-label"></div>
+      <div class="control-group" id="group-controls">
+        <span class="chart-ctrl-label" id="measure-label">Group:</span>
+        <div class="measure-tabs" id="measure-tabs" role="group" aria-labelledby="measure-label"></div>
+      </div>
+      <div class="control-group" id="percentile-controls" hidden>
+        <label class="chart-ctrl-label" for="percentile">Percentile: <output id="percentile-value" for="percentile"></output></label>
+        <input type="range" id="percentile" min="0" max="100" step="1" value="50" />
+      </div>
     </div>
     <div id="chart"></div>
   </section>
@@ -225,23 +245,37 @@ page(data) = """<!DOCTYPE html>
   const VIEWS = [
     { key: "share",   label: "Share of total net worth" },
     { key: "average", label: "Average net worth" },
+    { key: "percentile", label: "Percentile" },
   ];
 
   const MARGIN_T = 50, MARGIN_B = 70, MARGIN_L = 60;
   const darkMode = window.matchMedia("(prefers-color-scheme: dark)");
   let current = MEASURES[2];
   let view = VIEWS[0];
+  let pct = 50;
 
-  const isShare   = m => m.key !== "gini";
-  const isAverage = () => view.key === "average";
-  const series    = src => (isAverage() ? src.averages : src.measures)[current.key];
+  const isShare      = m => m.key !== "gini";
+  const isAverage    = () => view.key === "average";
+  const isPercentile = () => view.key === "percentile";
+  const series       = src => isPercentile() ? src.percentiles[pct]
+                                             : (isAverage() ? src.averages : src.measures)[current.key];
 
-  // Average net worth is drawn in millions of dollars once the largest value reaches a million,
-  // and in thousands below that
+  const ordinal = n => n + ((n % 100 >= 11 && n % 100 <= 13) ? "th" : ["th", "st", "nd", "rd"][n % 10] || "th");
+  // Each hover value gets its own unit, to three significant digits
+  function dollars(v) {
+    const a = Math.abs(v);
+    if (a < 1e3) return (v < 0 ? "−\$" : "\$") + Math.round(a);
+    const [scale, unit] = a >= 1e9 ? [1e9, "B"] : a >= 1e6 ? [1e6, "M"] : [1e3, "K"];
+    const x = a / scale;
+    return (v < 0 ? "−\$" : "\$") + x.toFixed(x >= 100 ? 0 : x >= 10 ? 1 : 2) + unit;
+  }
+
+  // The axis is in billions, millions or thousands of dollars, by the size of the largest amount
   function money() {
-    const hi = Math.max(...DATA.flatMap(src => series(src).y));
-    return hi >= 1e6 ? { scale: 1e6, unit: "M", name: "millions", digits: hi >= 1e7 ? 1 : 2 }
-                     : { scale: 1e3, unit: "K", name: "thousands", digits: 0 };
+    const hi = Math.max(...DATA.flatMap(src => series(src).y.map(Math.abs)));
+    return hi >= 1e9 ? { scale: 1e9, name: "billions" }
+         : hi >= 1e6 ? { scale: 1e6, name: "millions" }
+         : { scale: 1e3, name: "thousands" };
   }
 
   function yRange(ys) {
@@ -251,8 +285,7 @@ page(data) = """<!DOCTYPE html>
   }
 
   function buildTraces(t, m) {
-    const fmt = m ? v => "\$" + v.toFixed(m.digits) + m.unit
-                  : v => v.toFixed(current.digits) + (isShare(current) ? "%" : "");
+    const fmt = m ? dollars : v => v.toFixed(current.digits) + (isShare(current) ? "%" : "");
     return DATA.map((src, i) => {
       const s = series(src);
       const y = m ? s.y.map(v => v / m.scale) : s.y;
@@ -264,7 +297,7 @@ page(data) = """<!DOCTYPE html>
         mode: "lines+markers",
         line: { color: COLORS[i], width: 2, dash: DASHES[i] },
         marker: { color: COLORS[i], symbol: SYMBOLS[i], size: 10, line: { color: t.plot, width: 2 } },
-        text: y.map(v => "<b>" + fmt(v) + "</b>  " + src.name),
+        text: s.y.map(v => "<b>" + fmt(v) + "</b>  " + src.name),
         hovertemplate: "%{text}<extra></extra>",
       };
     });
@@ -278,9 +311,11 @@ page(data) = """<!DOCTYPE html>
     const plotH   = Math.max((el.offsetHeight || 480) - marginT - MARGIN_B, 80);
     const years   = series(DATA[0]).x;
     const sep     = narrow ? "<br>" : " – ";
-    const title   = !isShare(current) ? "Gini Coefficient of Net Worth" + sep + "Canada"
+    const title   = isPercentile() ? "Net Worth at the " + ordinal(pct) + " Percentile" + sep + "Canada"
+                  : !isShare(current) ? "Gini Coefficient of Net Worth" + sep + "Canada"
                   : (m ? "Average Net Worth" : "Share of Total Net Worth") + sep + current.label + " – Canada";
-    const ytitle  = !isShare(current) ? "Gini Coefficient"
+    const ytitle  = isPercentile() ? "Net Worth (2023 \$, " + m.name + ")"
+                  : !isShare(current) ? "Gini Coefficient"
                   : m ? "Average Net Worth (2023 \$, " + m.name + ")" : "Share of Total Net Worth (%)";
     return {
       title: { text: title },
@@ -312,7 +347,7 @@ page(data) = """<!DOCTYPE html>
 
   function drawChart() {
     const t = darkMode.matches ? THEMES.dark : THEMES.light;
-    const m = isAverage() ? money() : null;
+    const m = view.key === "share" ? null : money();
     const traces = buildTraces(t, m);
     Plotly.react("chart", traces, buildLayout(t, m, traces), { responsive: true });
   }
@@ -353,7 +388,17 @@ page(data) = """<!DOCTYPE html>
       b.setAttribute("aria-pressed", String(MEASURES[i] === current));
       b.disabled = isAverage() && !isShare(MEASURES[i]);
     });
+    document.getElementById("group-controls").hidden = isPercentile();
+    document.getElementById("percentile-controls").hidden = !isPercentile();
+    document.getElementById("percentile-value").textContent = ordinal(pct);
   }
+
+  // The slider replaces the group buttons in the percentile view
+  document.getElementById("percentile").addEventListener("input", e => {
+    pct = +e.target.value;
+    syncButtons();
+    drawChart();
+  });
 
   syncButtons();
   drawChart();

@@ -49,13 +49,13 @@ Canadian Business magazine published an annual list of the 100 richest Canadians
 
 # Wealth Inequality: SFS PUMF
 
-`sfs.jl` takes the raw SFS PUMF data and produces `output/sfs_wealth_inequality.csv` and `output/sfs_wealth_summary.csv`.
+`sfs.jl` takes the raw SFS PUMF data and produces `output/sfs_wealth_inequality.csv`, `output/sfs_wealth_summary.csv` and `output/sfs_percentiles.csv`. Every script writes a `_percentiles.csv` with the net worth at each whole percentile from 0 (the poorest family) to 100 (the richest), taken as the first family whose cumulative weight reaches that fraction of the total, as for the median.
 
 For 2012, 2016, 2019 and 2023, it computes the top 0.01%, 0.1%, 1%, 5%, 10%, 20% and 50% wealth shares and the Gini coefficient of net worth across families , weighted by the survey weights. Standard errors use the 1,000 bootstrap weights, which are available for 2016 onward only. Shares for the top 0.1% and above rest on very few survey records and should be read with caution.
 
 # Wealth Inequality: SFS PUMF + NBSA
 
-`sfs_nbsa.jl` takes the raw SFS PUMF data and aligns it with the NBSA, following Appendix A.1 of PBO (2020), *Estimating the Top Tail of the Family Wealth Distribution in Canada*. It produces `output/sfs_nbsa_aligned.csv` (the aligned family-level data), `output/sfs_nbsa_alignment.csv` (SFS and NBSA totals and adjustment factors), `output/sfs_nbsa_wealth_inequality.csv` and `output/sfs_nbsa_wealth_summary.csv`.
+`sfs_nbsa.jl` takes the raw SFS PUMF data and aligns it with the NBSA, following Appendix A.1 of PBO (2020), *Estimating the Top Tail of the Family Wealth Distribution in Canada*. It produces `output/sfs_nbsa_aligned.csv` (the aligned family-level data), `output/sfs_nbsa_alignment.csv` (SFS and NBSA totals and adjustment factors), `output/sfs_nbsa_wealth_inequality.csv`, `output/sfs_nbsa_wealth_summary.csv` and `output/sfs_nbsa_percentiles.csv`.
 
 Each family's assets and debts are grouped into financial assets (including employer pensions on a termination basis and business equity), non-financial assets and debts. Each category is then scaled by an adjustment factor, NBSA total ÷ SFS weighted total, so that the SFS totals match the NBSA household sector (market value). The survey years are matched to the NBSA at Q4 for 2012, 2016 and 2019, and at Q2 for 2023, following each survey's collection period. Wealth shares, Gini and standard errors are computed as in `sfs.jl`, with the adjustment factors recomputed for each bootstrap replicate.
 
@@ -69,7 +69,7 @@ The 2016 SFS totals match PBO's Table A1-1, but the adjustment factors differ fr
 - `output/sfs_nbsa_forbes_integrated.csv`: the integrated family-level data (SFS, synthetic and Forbes families).
 - `output/sfs_nbsa_forbes_tail.csv`: the Pareto threshold, α and convergence for each year.
 - `output/sfs_nbsa_forbes_calibration.csv`: the adjustment factors, in the format of PBO's Table A4-1.
-- `output/sfs_nbsa_forbes_wealth_inequality.csv` and `output/sfs_nbsa_forbes_wealth_summary.csv`.
+- `output/sfs_nbsa_forbes_wealth_inequality.csv`, `output/sfs_nbsa_forbes_wealth_summary.csv` and `output/sfs_nbsa_forbes_percentiles.csv`.
 
 The procedure for each year:
 
@@ -184,4 +184,4 @@ It produces:
 | Top 10% share | 55.6 | 55.9 | 57.2 | 54.8 | 54.3 | 56.5 | 56.4 |
 | Gini | 0.741 | 0.734 | 0.741 | 0.713 | 0.712 | 0.729 | 0.728 |
 
-`chart_quarterly.jl` writes `output/wealth_inequality_quarterly.html`, an interactive chart of the two quarterly series, SFS + NBSA and SFS + NBSA + Forbes, with the same measures as the annual chart, and copies it to `docs/quarterly.html`. Both charts can show each group's share of total net worth or its average net worth in 2023 dollars, which is the share times the mean net worth divided by the group's size, deflated with the annual CPI (Table 18-10-0005-01) for the annual chart and the quarterly average of the monthly CPI (Table 18-10-0004-01) for the quarterly chart. Run `sfs_nbsa_quarterly.jl` and `sfs_nbsa_forbes_quarterly.jl` first.
+`chart_quarterly.jl` writes `output/wealth_inequality_quarterly.html`, an interactive chart of the two quarterly series, SFS + NBSA and SFS + NBSA + Forbes, with the same measures as the annual chart, and copies it to `docs/quarterly.html`. Both charts can show each group's share of total net worth or its average net worth in 2023 dollars, which is the share times the mean net worth divided by the group's size, deflated with the annual CPI (Table 18-10-0005-01) for the annual chart and the quarterly average of the monthly CPI (Table 18-10-0004-01) for the quarterly chart. A third measure, Percentile, replaces the group buttons with a slider and draws the net worth at that percentile, also in 2023 dollars. Run `sfs_nbsa_quarterly.jl` and `sfs_nbsa_forbes_quarterly.jl` first.

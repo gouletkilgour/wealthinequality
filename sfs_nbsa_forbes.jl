@@ -123,6 +123,7 @@ function main(; load_list = load_forbes, prefix = "sfs_nbsa_forbes", list_name =
     mkpath(OUTDIR)
     nbsa = load_nbsa()
     results, summary = results_tables()
+    pct = DataFrame(year = Int[], percentile = Int[], networth = Float64[])
     integrated = DataFrame()
     tail = DataFrame(:year => Int[], :w_min => Float64[], Symbol(key, "_entries") => Int[],
                      Symbol(key, "_min") => Float64[], Symbol(key, "_total_billions") => Float64[],
@@ -154,6 +155,7 @@ function main(; load_list = load_forbes, prefix = "sfs_nbsa_forbes", list_name =
         end
 
         add_results!(results, summary, s.year, hfd.networth, hfd.weight, est, se; survey = hfd.source .== "SFS")
+        append!(pct, DataFrame(year = s.year, percentile = PERCENTILES, networth = percentiles(hfd.networth, hfd.weight)))
         append!(integrated, hcat(DataFrame(year = fill(s.year, nrow(hfd))), hfd))
 
         push!(tail, (s.year, wmin, nrow(richlist), minimum(richlist.networth), sum(richlist.networth) / 1e9,
@@ -167,7 +169,8 @@ function main(; load_list = load_forbes, prefix = "sfs_nbsa_forbes", list_name =
     end
 
     files = ["$(prefix)_$(k).csv" => t for (k, t) in ("integrated" => integrated, "tail" => tail,
-             "calibration" => calibration, "wealth_inequality" => results, "wealth_summary" => summary)]
+             "calibration" => calibration, "wealth_inequality" => results, "wealth_summary" => summary,
+             "percentiles" => pct)]
     for (file, t) in files
         CSV.write(joinpath(OUTDIR, file), t)
     end

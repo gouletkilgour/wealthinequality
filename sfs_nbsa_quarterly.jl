@@ -203,6 +203,7 @@ function main()
     summary = DataFrame(quarter = String[], date = Date[], surveys = String[], records = Int[],
                         families = Float64[], total_networth_millions = Float64[], mean_networth = Float64[],
                         median_networth = Float64[], share_negative_networth = Float64[])
+    pct = DataFrame(quarter = String[], date = Date[], percentile = Int[], networth = Float64[])
     alignment = DataFrame(quarter = String[], survey = Int[], survey_share = Float64[], category = String[],
                           sfs_billions = Float64[], nbsa_billions = Float64[], adjustment_factor = Float64[])
     reweighting = DataFrame(quarter = String[], survey = Int[], region = String[], age_group = String[],
@@ -221,6 +222,7 @@ function main()
             push!(results, (label, date, group_name(p), est[group_name(p)]))
         end
         push!(results, (label, date, "gini", est["gini"]))
+        append!(pct, DataFrame(quarter = label, date = date, percentile = PERCENTILES, networth = percentiles(x, w)))
 
         surveys = join(("$(d.s.year) × $(round(d.share, digits = 4))" for d in details), " + ")
         push!(summary, (label, date, surveys, nrow(hfd), sum(w), est["total_networth"] / 1e6, est["total_networth"] / sum(w),
@@ -244,7 +246,8 @@ function main()
     end
 
     files = ["sfs_nbsa_quarterly_$(k).csv" => t for (k, t) in ("wealth_inequality" => results, "summary" => summary,
-             "alignment" => alignment, "reweighting" => reweighting, "dhea_quintiles" => quintiles)]
+             "alignment" => alignment, "reweighting" => reweighting, "dhea_quintiles" => quintiles,
+             "percentiles" => pct)]
     for (file, t) in files
         CSV.write(joinpath(OUTDIR, file), t)
     end

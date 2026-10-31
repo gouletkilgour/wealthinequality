@@ -3,8 +3,8 @@ using CSV, DataFrames
 # Writes output/wealth_inequality_quarterly.html and its published copy docs/quarterly.html: the
 # quarterly series from sfs_nbsa_quarterly.jl (SFS + NBSA) and sfs_nbsa_forbes_quarterly.jl (SFS +
 # NBSA + Forbes), drawn in the colours of the same series on the annual chart (chart.jl), with a
-# button for each of its measures and the same toggle between share and average net worth in 2023
-# dollars. Run those two scripts first. Apart from Plotly, which loads
+# button for each of its measures and the same choice of share, average net worth in 2023 dollars or
+# the net worth at a percentile. Run those two scripts first. Apart from Plotly, which loads
 # from its CDN, the page is self-contained.
 
 const OUTDIR = joinpath(@__DIR__, "output")
@@ -31,7 +31,7 @@ const GROUP_SIZES = Dict("top_0_01pct" => 0.0001, "top_0_1pct" => 0.001, "top_1p
                          "bottom_50pct" => 0.50)
 
 # The CPI of each quarter, the average of its three months (Table 18-10-0004-01, all-items,
-# 2002 = 100), to express average net worth in dollars of 2023, whose annual CPI is 157.1
+# 2002 = 100), to express net worth in dollars of 2023, whose annual CPI is 157.1
 const CPI = Dict(
     "2012Q1" => 121.2, "2012Q2" => 121.97, "2012Q3" => 121.77, "2012Q4" => 121.77,
     "2013Q1" => 122.3, "2013Q2" => 122.9, "2013Q3" => 123.17, "2013Q4" => 122.9,
@@ -50,7 +50,8 @@ const CPI = Dict(
     "2026Q1" => 166.1)
 const BASE_CPI = 157.1
 
-# The quarters a file covers, and measure => estimates and measure => average net worth in that order
+# The quarters a file covers, and measure => estimates, measure => average net worth and
+# percentile => net worth at that percentile in 2023 dollars, in that order
 function load_source(prefix)
     q = CSV.read(joinpath(OUTDIR, prefix * "_wealth_inequality.csv"), DataFrame)
     quarters = unique(q.quarter)
@@ -62,7 +63,12 @@ function load_source(prefix)
     summary = CSV.read(joinpath(OUTDIR, prefix * "_summary.csv"), DataFrame)
     mean = getindex.(Ref(Dict(zip(summary.quarter, summary.mean_networth))), quarters) .* BASE_CPI ./ getindex.(Ref(CPI), quarters)
     averages = Dict(k => round.(Int, y ./ 100 .* mean ./ GROUP_SIZES[k]) for (k, y) in series if haskey(GROUP_SIZES, k))
-    return quarters, Dict(k => round.(y, digits = 4) for (k, y) in series), averages
+    p = CSV.read(joinpath(OUTDIR, prefix * "_percentiles.csv"), DataFrame)
+    percentiles = Dict(map(collect(pairs(groupby(p, :percentile)))) do (k, g)
+        g.quarter == quarters || error("$prefix: the percentiles cover different quarters")
+        string(k.percentile) => round.(Int, g.networth .* BASE_CPI ./ getindex.(Ref(CPI), quarters))
+    end)
+    return quarters, Dict(k => round.(y, digits = 4) for (k, y) in series), averages, percentiles
 end
 
 function main()
@@ -70,8 +76,8 @@ function main()
     quarters = first(last(loaded[1]))
     all(first(last(l)) == quarters for l in loaded) || error("the quarterly files cover different quarters")
     data = json(Dict("quarters" => quarters,
-                     "series" => [Dict("name" => name, "measures" => m, "averages" => a)
-                                  for (name, (_, m, a)) in loaded]))
+                     "series" => [Dict("name" => name, "measures" => m, "averages" => a, "percentiles" => p)
+                                  for (name, (_, m, a, p)) in loaded]))
     html = page(data)
     write(joinpath(OUTDIR, "wealth_inequality_quarterly.html"), html)
     write(joinpath(DOCSDIR, "quarterly.html"), html)
@@ -170,6 +176,14 @@ page(data) = """<!DOCTYPE html>
 
     .measure-tab:disabled { opacity: 0.35; cursor: not-allowed; }
 
+    .control-group { display: flex; flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+
+    .control-group[hidden] { display: none; }
+
+    #percentile-controls { align-self: stretch; }
+
+    #percentile { width: 100%; max-width: 420px; accent-color: var(--accent); }
+
     .chart { height: 520px; }
 
     @media (max-width: 600px) {
@@ -188,8 +202,14 @@ page(data) = """<!DOCTYPE html>
     <div class="chart-controls">
       <span class="chart-ctrl-label" id="view-label">Measure:</span>
       <div class="measure-row" id="view-tabs" role="group" aria-labelledby="view-label"></div>
-      <span class="chart-ctrl-label" id="measure-label">Group:</span>
-      <div class="measure-tabs" id="measure-tabs" role="group" aria-labelledby="measure-label"></div>
+      <div class="control-group" id="group-controls">
+        <span class="chart-ctrl-label" id="measure-label">Group:</span>
+        <div class="measure-tabs" id="measure-tabs" role="group" aria-labelledby="measure-label"></div>
+      </div>
+      <div class="control-group" id="percentile-controls" hidden>
+        <label class="chart-ctrl-label" for="percentile">Percentile: <output id="percentile-value" for="percentile"></output></label>
+        <input type="range" id="percentile" min="0" max="100" step="1" value="50" />
+      </div>
     </div>
     <div class="chart" id="chart-top"></div>
   </section>
@@ -221,6 +241,7 @@ page(data) = """<!DOCTYPE html>
   const VIEWS = [
     { key: "share",   label: "Share of total net worth" },
     { key: "average", label: "Average net worth" },
+    { key: "percentile", label: "Percentile" },
   ];
 
   const THEMES = {
@@ -233,17 +254,29 @@ page(data) = """<!DOCTYPE html>
   const Q = DATA.quarters;
   let measure = MEASURES[2];
   let view = VIEWS[0];
+  let pct = 50;
 
   const isShare = m => m.key !== "gini";
   const isAverage = () => view.key === "average";
-  const values = src => (isAverage() ? src.averages : src.measures)[measure.key];
+  const isPercentile = () => view.key === "percentile";
+  const values = src => isPercentile() ? src.percentiles[pct] : (isAverage() ? src.averages : src.measures)[measure.key];
 
-  // Average net worth is drawn in millions of dollars once the largest value reaches a million,
-  // and in thousands below that, as on the annual page
+  const ordinal = n => n + ((n % 100 >= 11 && n % 100 <= 13) ? "th" : ["th", "st", "nd", "rd"][n % 10] || "th");
+  // Each hover value gets its own unit, to three significant digits
+  function dollars(v) {
+    const a = Math.abs(v);
+    if (a < 1e3) return (v < 0 ? "−\$" : "\$") + Math.round(a);
+    const [scale, unit] = a >= 1e9 ? [1e9, "B"] : a >= 1e6 ? [1e6, "M"] : [1e3, "K"];
+    const x = a / scale;
+    return (v < 0 ? "−\$" : "\$") + x.toFixed(x >= 100 ? 0 : x >= 10 ? 1 : 2) + unit;
+  }
+
+  // The axis is in billions, millions or thousands of dollars, by the size of the largest amount, as on the annual page
   function money() {
-    const hi = Math.max(...DATA.series.flatMap(values));
-    return hi >= 1e6 ? { scale: 1e6, unit: "M", name: "millions", digits: hi >= 1e7 ? 1 : 2 }
-                     : { scale: 1e3, unit: "K", name: "thousands", digits: 0 };
+    const hi = Math.max(...DATA.series.flatMap(src => values(src).map(Math.abs)));
+    return hi >= 1e9 ? { scale: 1e9, name: "billions" }
+         : hi >= 1e6 ? { scale: 1e6, name: "millions" }
+         : { scale: 1e3, name: "thousands" };
   }
   const theme = () => darkMode.matches ? THEMES.dark : THEMES.light;
 
@@ -251,10 +284,11 @@ page(data) = """<!DOCTYPE html>
   function buildTraces(fmt, scale) {
     return DATA.series.map((src, i) => {
       const y = values(src).map(v => v / scale);
+      const text = values(src).map(v => "<b>" + fmt(v) + "</b>  " + src.name);
       return {
         x: Q, y: y, name: src.name, type: "scatter", mode: "lines",
         line: { color: COLORS[i], width: 2, dash: "solid" },
-        text: y.map(v => "<b>" + fmt(v) + "</b>  " + src.name),
+        text: text,
         hovertemplate: "%{text}<extra></extra>",
       };
     });
@@ -297,13 +331,14 @@ page(data) = """<!DOCTYPE html>
 
   function drawTop() {
     const t = theme(), el = document.getElementById("chart-top");
-    const m = isAverage() ? money() : null;
-    const fmt = m ? v => "\$" + v.toFixed(m.digits) + m.unit
-                  : v => v.toFixed(measure.digits) + (isShare(measure) ? "%" : "");
+    const m = view.key === "share" ? null : money();
+    const fmt = m ? dollars : v => v.toFixed(measure.digits) + (isShare(measure) ? "%" : "");
     const traces = buildTraces(fmt, m ? m.scale : 1);
-    const title = !isShare(measure) ? "Gini Coefficient of Net Worth"
+    const title = isPercentile() ? "Net Worth at the " + ordinal(pct) + " Percentile"
+                : !isShare(measure) ? "Gini Coefficient of Net Worth"
                 : (m ? "Average Net Worth – " : "Share of Total Net Worth – ") + measure.label;
-    const ytitle = !isShare(measure) ? "Gini Coefficient"
+    const ytitle = isPercentile() ? "Net Worth (2023 \$, " + m.name + ")"
+                 : !isShare(measure) ? "Gini Coefficient"
                  : m ? "Average Net Worth (2023 \$, " + m.name + ")" : "Share of Total Net Worth (%)";
     Plotly.react(el, traces, layout(el, t, title, ytitle, range(traces.flatMap(tr => tr.y))), { responsive: true });
   }
@@ -344,7 +379,17 @@ page(data) = """<!DOCTYPE html>
       b.setAttribute("aria-pressed", String(MEASURES[i] === measure));
       b.disabled = isAverage() && !isShare(MEASURES[i]);
     });
+    document.getElementById("group-controls").hidden = isPercentile();
+    document.getElementById("percentile-controls").hidden = !isPercentile();
+    document.getElementById("percentile-value").textContent = ordinal(pct);
   }
+
+  // The slider replaces the group buttons in the percentile view
+  document.getElementById("percentile").addEventListener("input", e => {
+    pct = +e.target.value;
+    syncButtons();
+    drawTop();
+  });
 
   syncButtons();
   drawTop();

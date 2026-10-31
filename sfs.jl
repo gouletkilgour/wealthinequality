@@ -9,6 +9,7 @@ end
 function main()
     mkpath(OUTDIR)
     results, summary = results_tables()
+    pct = DataFrame(year = Int[], percentile = Int[], networth = Float64[])
 
     for s in SURVEYS
         println("Computing $(s.year)...")
@@ -24,12 +25,14 @@ function main()
         end
 
         add_results!(results, summary, s.year, x, w, est, se)
+        append!(pct, DataFrame(year = s.year, percentile = PERCENTILES, networth = percentiles(x, w)))
     end
 
     CSV.write(joinpath(OUTDIR, "sfs_wealth_inequality.csv"), results)
     CSV.write(joinpath(OUTDIR, "sfs_wealth_summary.csv"), summary)
+    CSV.write(joinpath(OUTDIR, "sfs_percentiles.csv"), pct)
     print_results(results)
-    println("\nWrote output/sfs_wealth_inequality.csv and output/sfs_wealth_summary.csv")
+    println("\nWrote output/sfs_wealth_inequality.csv, output/sfs_wealth_summary.csv and output/sfs_percentiles.csv")
 end
 
 main()
