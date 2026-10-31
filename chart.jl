@@ -167,7 +167,7 @@ page(data) = """<!DOCTYPE html>
 
     .measure-tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-    .measure-tab:disabled { opacity: 0.35; cursor: not-allowed; }
+    .measure-row[hidden] { display: none; }
 
     .control-group { display: flex; flex-direction: column; align-items: flex-start; gap: 0.5rem; }
 
@@ -381,13 +381,15 @@ page(data) = """<!DOCTYPE html>
     return btn;
   });
 
-  // The Gini has no average, so its button is disabled in the average view
+  // The Gini has no average, so its button, and the row it sits alone in, are hidden in the
+  // average view
   function syncButtons() {
     viewButtons.forEach((b, i) => b.setAttribute("aria-pressed", String(VIEWS[i] === view)));
     measureButtons.forEach((b, i) => {
       b.setAttribute("aria-pressed", String(MEASURES[i] === current));
-      b.disabled = isAverage() && !isShare(MEASURES[i]);
+      b.hidden = isAverage() && !isShare(MEASURES[i]);
     });
+    rows.forEach(r => { r.hidden = [...r.children].every(b => b.hidden); });
     document.getElementById("group-controls").hidden = isPercentile();
     document.getElementById("percentile-controls").hidden = !isPercentile();
     document.getElementById("percentile-value").textContent = ordinal(pct);
