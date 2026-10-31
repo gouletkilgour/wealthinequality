@@ -33,7 +33,8 @@ const BANDS = ["p50_p80" => ("top_50pct", "top_20pct"), "p80_p90" => ("top_20pct
 # so a group's average net worth is its share times the mean net worth divided by its size.
 const GROUP_SIZES = Dict("top_0_01pct" => 0.0001, "top_0_1pct" => 0.001, "top_1pct" => 0.01,
                          "top_5pct" => 0.05, "top_10pct" => 0.10, "top_20pct" => 0.20,
-                         "top_50pct" => 0.50, "p80_p90" => 0.10, "p50_p80" => 0.30)
+                         "top_50pct" => 0.50, "p80_p90" => 0.10, "p50_p80" => 0.30,
+                         "bottom_50pct" => 0.50)
 
 # Annual CPI of the survey years (Table 18-10-0005-01, all-items, 2002 = 100), as in
 # sfs_nbsa_forbes.jl, to express average net worth in 2023 dollars
@@ -50,6 +51,8 @@ function load_source(name, prefix)
         years == years_lower || error("$file: $upper and $lower cover different years")
         series[band] = (years, a .- b)
     end
+    years, top_50 = series["top_50pct"]
+    series["bottom_50pct"] = (years, 100 .- top_50)   # what the top 50% does not hold
     measures = Dict(k => Dict("x" => x, "y" => round.(y, digits = 4)) for (k, (x, y)) in series)
     summary = CSV.read(joinpath(OUTDIR, prefix * "_wealth_summary.csv"), DataFrame)
     mean = Dict(t => m * CPI[BASE_YEAR] / CPI[t] for (t, m) in zip(summary.year, summary.mean_networth))
@@ -200,6 +203,7 @@ page(data) = """<!DOCTYPE html>
     { key: "top_10pct",   label: "Top 10%",   digits: 1, row: 0 },
     { key: "top_20pct",   label: "Top 20%",   digits: 1, row: 0 },
     { key: "top_50pct",   label: "Top 50%",   digits: 1, row: 0 },
+    { key: "bottom_50pct", label: "Bottom 50%", digits: 1, row: 0 },
     { key: "p80_p90",     label: "Upper middle class (P80–P90)", digits: 1, row: 1 },
     { key: "p50_p80",     label: "Middle class (P50–P80)",       digits: 1, row: 1 },
     { key: "gini",        label: "Gini",      digits: 3, row: 2 },

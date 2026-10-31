@@ -27,7 +27,8 @@ const BANDS = ["p50_p80" => ("top_50pct", "top_20pct"), "p80_p90" => ("top_20pct
 # The fraction of families in each group, to turn a share into an average net worth, as in chart.jl
 const GROUP_SIZES = Dict("top_0_01pct" => 0.0001, "top_0_1pct" => 0.001, "top_1pct" => 0.01,
                          "top_5pct" => 0.05, "top_10pct" => 0.10, "top_20pct" => 0.20,
-                         "top_50pct" => 0.50, "p80_p90" => 0.10, "p50_p80" => 0.30)
+                         "top_50pct" => 0.50, "p80_p90" => 0.10, "p50_p80" => 0.30,
+                         "bottom_50pct" => 0.50)
 
 # The CPI of each quarter, the average of its three months (Table 18-10-0004-01, all-items,
 # 2002 = 100), to express average net worth in dollars of 2023, whose annual CPI is 157.1
@@ -57,6 +58,7 @@ function load_source(prefix)
     for (band, (upper, lower)) in BANDS
         series[band] = series[upper] .- series[lower]
     end
+    series["bottom_50pct"] = 100 .- series["top_50pct"]   # what the top 50% does not hold
     summary = CSV.read(joinpath(OUTDIR, prefix * "_summary.csv"), DataFrame)
     mean = getindex.(Ref(Dict(zip(summary.quarter, summary.mean_networth))), quarters) .* BASE_CPI ./ getindex.(Ref(CPI), quarters)
     averages = Dict(k => round.(Int, y ./ 100 .* mean ./ GROUP_SIZES[k]) for (k, y) in series if haskey(GROUP_SIZES, k))
@@ -205,6 +207,7 @@ page(data) = """<!DOCTYPE html>
     { key: "top_10pct",   label: "Top 10%",   digits: 1, row: 0 },
     { key: "top_20pct",   label: "Top 20%",   digits: 1, row: 0 },
     { key: "top_50pct",   label: "Top 50%",   digits: 1, row: 0 },
+    { key: "bottom_50pct", label: "Bottom 50%", digits: 1, row: 0 },
     { key: "p80_p90",     label: "Upper middle class (P80–P90)", digits: 1, row: 1 },
     { key: "p50_p80",     label: "Middle class (P50–P80)",       digits: 1, row: 1 },
     { key: "gini",        label: "Gini",      digits: 3, row: 2 },
